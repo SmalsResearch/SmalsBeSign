@@ -1,6 +1,8 @@
 package be.smals.research.bulksign.desktopapp;
 
 
+import be.smals.research.bulksign.desktopapp.signverify.TestBatchSignature;
+
 import java.util.stream.IntStream;
 
 /**
@@ -12,6 +14,8 @@ public class Main {
         printCount(10);
         System.out.println("Hello Carlos!");
         printCount(10);
+
+        TestBatchSignature.main(args);
     }
 
     public static void printCount(int lines) {
