@@ -12,7 +12,6 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import java.io.File;
-import java.util.stream.IntStream;
 
 /**
  * Created by kova on 26/07/2016.
@@ -25,7 +24,7 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        GridPane root = FXMLLoader.load(getClass().getResource("views/main.fxml"));
+        GridPane root = FXMLLoader.load(getClass().getClassLoader().getResource("main.fxml"));
         primaryStage.setTitle("BulkSign Desktop");
 
         FileChooser fileChooser = new FileChooser();
