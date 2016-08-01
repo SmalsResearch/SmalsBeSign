@@ -70,6 +70,12 @@ public class MainController {
         }
 
     }
+
+    /**
+     * Defines the selected file
+     *
+     * @param event click on the selectFile button
+     */
     @FXML
     private void handleSelectFileButtonAction(ActionEvent event) {
         File file = fileChooser.showOpenDialog(this.stage);
