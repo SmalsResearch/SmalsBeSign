@@ -14,6 +14,8 @@ import java.io.IOException;
 
 /**
  * Main screen controller
+ *
+ * Handles events from main screen
  */
 public class MainController {
 
@@ -27,11 +29,19 @@ public class MainController {
 
     private File selectedFile;
 
+    /**
+     * Constructor
+     */
     public MainController () {
         fileChooser = new FileChooser();
         fileChooser.setTitle("Select a file");
     }
 
+    /**
+     * Sign the selected file
+     *
+     * @param event click on signFile button
+     */
     @FXML
     private void handleSignFileButtonAction(ActionEvent event) {
 

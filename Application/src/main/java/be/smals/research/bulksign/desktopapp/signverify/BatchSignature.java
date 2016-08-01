@@ -44,20 +44,26 @@ public class BatchSignature {
                 CK_ATTRIBUTE[] attributes = new CK_ATTRIBUTE[2];
                 attributes[0] = new CK_ATTRIBUTE();
                 attributes[0].type = PKCS11Constants.CKA_CLASS;
-                attributes[0].pValue = new Long(PKCS11Constants.CKO_PRIVATE_KEY);
+                attributes[0].pValue = PKCS11Constants.CKO_PRIVATE_KEY;
                 attributes[1] = new CK_ATTRIBUTE();
                 attributes[1].type = PKCS11Constants.CKA_ID;
                 attributes[1].pValue = 3;
-
+                System.out.println("Debug (1)");
                 pkcs11.C_FindObjectsInit(p11_session, attributes);
+                System.out.println("Debug (2)");
 
                 long[] keyHandles = pkcs11.C_FindObjects(p11_session, 1);
                 long signatureKey = keyHandles[0];
+                System.out.println("Debug (3)");
 
                 pkcs11.C_FindObjectsFinal(p11_session);
 
+                System.out.println("BEFORE COMPUTEMASTERDIGEST - DONE");
+
                 //Compute the Master Digest (a String) using the ComputeMasterDigest method
                 String MasterDigest = ComputeMasterDigest.main(FISArray);
+
+                System.out.println("AFTER COMPUTEMASTERDIGEST - DONE");
 
                 System.out.print("Master Digest = ");
                 System.out.println(MasterDigest);
