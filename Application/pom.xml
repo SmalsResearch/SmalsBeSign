@@ -9,6 +9,11 @@
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
+    <properties>
+        <mainClass>be.smals.research.bulksign.desktopapp.Main</mainClass>
+    </properties>
+
+
     <dependencies>
         <dependency>
             <groupId>org.bouncycastle</groupId>
@@ -33,7 +38,8 @@
                 <artifactId>javafx-maven-plugin</artifactId>
                 <version>8.5.0</version>
                 <configuration>
-                    <!--<mainClass>todo</mainClass>-->
+                    <mainClass>${mainClass]</mainClass>
+                    <vendor>Smals Research</vendor>
                     <verbose>true</verbose>
                     <allPermissions>true</allPermissions>
                 </configuration>
@@ -47,7 +53,7 @@
                         <index>true</index>
                         <manifest>
                             <addClasspath>true</addClasspath>
-                            <mainClass>be.smals.research.bulksign.desktopapp.Main</mainClass>
+                            <mainClass>${mainClass}</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
@@ -73,7 +79,7 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <mainClass>be.smals.research.bulksign.desktopapp.Main</mainClass>
+                    <mainClass>${mainClass}</mainClass>
                 </configuration>
             </plugin>
         </plugins>
