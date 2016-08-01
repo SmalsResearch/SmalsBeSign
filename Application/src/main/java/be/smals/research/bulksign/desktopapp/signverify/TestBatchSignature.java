@@ -35,9 +35,14 @@ public class TestBatchSignature {
         input[1] = new FileInputStream("C:\\Users\\tm\\Documents\\2015 - Signature en batch\\Travail Julien Cathalo\\Tests\\Test2.txt");
         input[2] = new FileInputStream("C:\\Users\\tm\\Documents\\2015 - Signature en batch\\Travail Julien Cathalo\\Tests\\Test3.txt");
         */
+            input[0] = new FileInputStream("target\\bulksign.application-1.0-SNAPSHOT.jar");
+            input[1] = new FileInputStream("target\\bulksign.application-1.0-SNAPSHOT.jar");
+            input[2] = new FileInputStream("target\\bulksign.application-1.0-SNAPSHOT.jar");
+            /*
             input[0] = new FileInputStream("C:\\Users\\tm\\Documents\\2015 - Signature en batch\\Travail Julien Cathalo\\Tests\\BCSS\\2015BSM994.pdf");
             input[1] = new FileInputStream("C:\\Users\\tm\\Documents\\2015 - Signature en batch\\Travail Julien Cathalo\\Tests\\BCSS\\BCSS 2015 Convention T�l�travail CHEVALIER Jacques.pdf");
             input[2] = new FileInputStream("C:\\Users\\tm\\Documents\\2015 - Signature en batch\\Travail Julien Cathalo\\Tests\\BCSS\\KSZ 2015 Telewerkovereenkomst PUTTEMANS Tom.pdf");
+            */
 
             byte[] signature = BatchSignature.main(input);
         
@@ -56,7 +61,7 @@ public class TestBatchSignature {
         /*Write the signature into a file*/
 
             File file = null;
-            file = new File("C:\\Users\\tm\\Documents\\2015 - Signature en batch\\Travail Julien Cathalo\\Tests\\BCSS\\Output.sig");
+            file = new File("target\\Output.sig");
             FileOutputStream file_output = new FileOutputStream(file);
             DataOutputStream data_out = new DataOutputStream(file_output);
             data_out.write(signature);
