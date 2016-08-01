@@ -1,17 +1,7 @@
 package be.smals.research.bulksign.desktopapp;
 
 
-import javafx.application.Application;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.layout.GridPane;
-import javafx.stage.FileChooser;
-import javafx.stage.Stage;
-
-import java.io.File;
+import java.util.stream.IntStream;
 
 /**
  * Created by kova on 26/07/2016.
@@ -19,7 +9,9 @@ import java.io.File;
 public class Main extends Application{
 
     public static void main(String[] args) {
-        launch(args);
+        printCount(10);
+        System.out.println("Hello Carlos!");
+        printCount(10);
     }
 
     @Override
