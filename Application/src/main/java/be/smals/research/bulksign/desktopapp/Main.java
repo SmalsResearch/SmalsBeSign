@@ -24,7 +24,7 @@ public class Main extends Application{
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        GridPane root = FXMLLoader.load(getClass().getResource("views/main.fxml"));
+        GridPane root = FXMLLoader.load(getClass().getResource("be/smals/research/bulksign/desktopapp/views/main.fxml"));
         primaryStage.setTitle("BulkSign Desktop");
 
         FileChooser fileChooser = new FileChooser();
@@ -40,7 +40,7 @@ public class Main extends Application{
                     public void handle(final ActionEvent e) {
                         File file = fileChooser.showOpenDialog(primaryStage);
                         if (file != null) {
-                            System.out.println("File Selected ! ");
+                            System.out.println("File Selected !");
                         }
                     }
                 });
