@@ -35,10 +35,6 @@ public class TestComputeMasterDigest {
 
         } catch (IOException e) {
             System.out.print("Exception");
-
         }
-
     }
-
-
 }

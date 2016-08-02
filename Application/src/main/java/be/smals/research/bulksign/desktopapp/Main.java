@@ -8,6 +8,8 @@ import javafx.scene.Scene;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 
+import java.security.Security;
+
 /**
  * Created by kova on 26/07/2016.
  */
@@ -19,6 +21,7 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
+        Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
         FXMLLoader loader   = new FXMLLoader(getClass().getClassLoader().getResource("views/main.fxml"));
         GridPane root       = loader.load();
         primaryStage.setTitle("BulkSign Desktop");

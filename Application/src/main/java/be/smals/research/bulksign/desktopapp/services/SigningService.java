@@ -5,6 +5,8 @@ import sun.security.pkcs11.wrapper.*;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.security.SecureRandom;
+import java.security.Signature;
 
 
 /*
@@ -50,29 +52,34 @@ public class SigningService {
 
             try {
                 //Find the signature private key
-                long signatureKey = this.findSignaturePrivateKey(p11_session);
+//                long signatureKey = this.findeSignaturePrivateKey(p11_session);
+                long signatureKey = MockKeyService.getInstance().getKey();
 
-                pkcs11.C_FindObjectsFinal(p11_session);
 
                 //Compute the Master Digest (a String) using the ComputeMasterDigest method
-                String masterDigest = ComputeMasterDigest.main(fileInputStreams);
-
-                this.outputDigest(masterDigest);
+                String masterDigest = MasterDigestService.getInstance().compute(fileInputStreams);
 
                 //Initialize the signature
-                CK_MECHANISM mechanism = new CK_MECHANISM();
-                mechanism.mechanism = PKCS11Constants.CKM_SHA1_RSA_PKCS;
-                mechanism.pParameter = null;
-                pkcs11.C_SignInit(p11_session, mechanism, signatureKey);
+//                CK_MECHANISM mechanism = new CK_MECHANISM();
+//                mechanism.mechanism = PKCS11Constants.CKM_SHA1_RSA_PKCS;
+//                mechanism.pParameter = null;
+
+//                pkcs11.C_SignInit(p11_session, mechanism, signatureKey);
+                Signature signatureProvider = Signature.getInstance("SHA1withRSA", "BC");
+                signatureProvider.initSign(MockKeyService.getInstance().getPrivateKey(), new SecureRandom());
+                signatureProvider.update(masterDigest.getBytes());
+
 
                 //Sign the data after converting the Master Digest string into a byte array
-                byte[] signature = pkcs11.C_Sign(p11_session, masterDigest.getBytes());
+//                byte[] signature = pkcs11.C_Sign(p11_session, masterDigest.getBytes());
+                byte[] signature = signatureProvider.sign();
 
                 System.out.println("Batch SigningService succesfull !");
 
                 return (signature);
 
             } catch (Exception e) {
+                e.printStackTrace();
                 System.out.println("[Catch] Exception: " + e.getMessage());
                 return (signErrorOutput);
             } finally {
@@ -115,8 +122,8 @@ public class SigningService {
         attributes[1].pValue = 3;
 
         this.pkcs11.C_FindObjectsInit(p11_session, attributes);
-
         long[] keyHandles = pkcs11.C_FindObjects(p11_session, 1);
+        pkcs11.C_FindObjectsFinal(p11_session);
 
         return keyHandles[0];
     }
