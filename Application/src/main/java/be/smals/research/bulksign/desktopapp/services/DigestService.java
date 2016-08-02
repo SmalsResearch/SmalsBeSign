@@ -6,19 +6,20 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
 
 /**
- * Service used to compute the digest of all files to sign
+ * Service used to computeMasterDigest the digest of files to sign
  *
  */
-public class MasterDigestService {
+public class DigestService {
 
-    private static MasterDigestService instance = new MasterDigestService();
+    private static DigestService instance = new DigestService();
 
-    private MasterDigestService() {}
-    public static MasterDigestService getInstance() {
+    private DigestService() {}
+    public static DigestService getInstance() {
         if (instance == null)
-            instance = new MasterDigestService();
+            instance = new DigestService();
         return instance;
     }
 
@@ -30,7 +31,7 @@ public class MasterDigestService {
      * @throws IOException when closing the streams
      * @throws NoSuchAlgorithmException when looking for the hash algorithm
      */
-    public String compute (FileInputStream[] fileInputStreams) throws IOException, NoSuchAlgorithmException {
+    public String computeMasterDigest(FileInputStream[] fileInputStreams) throws IOException, NoSuchAlgorithmException, NoSuchProviderException {
 
         /*Create an array that will store the individual digest of each file
          * meaning that
@@ -40,7 +41,7 @@ public class MasterDigestService {
 
         for (int i = 0; i < fileInputStreams.length; i++) {
             FileInputStream fileInputStream = fileInputStreams[i];
-            individualDigest[i] = createIndividualDigest(fileInputStream);
+            individualDigest[i] = computeIndividualDigest(fileInputStream);
             outputIndividualDigest(individualDigest[i], i);
             fileInputStream.close();
         }
@@ -77,12 +78,12 @@ public class MasterDigestService {
      * @throws IOException when closing the streams
      * @throws NoSuchAlgorithmException when looking for the hash algorithm
      */
-    private String createIndividualDigest (FileInputStream individualFile) throws NoSuchAlgorithmException, IOException {
+    private String computeIndividualDigest(FileInputStream individualFile) throws NoSuchAlgorithmException, IOException, NoSuchProviderException {
         /* Compute a hash of File[i]*/
         int read;
         byte[] buffer = new byte[8192];
 
-        MessageDigest digest = MessageDigest.getInstance("SHA-256");
+        MessageDigest digest = MessageDigest.getInstance("SHA-256", "BC");
         while ((read = individualFile.read(buffer)) > 0) {
             digest.update(buffer, 0, read);
         }

@@ -55,7 +55,8 @@ public class SigningService {
                 PrivateKey privateKey = MockKeyService.getInstance().getPrivateKey();
 
                 //Compute the Master Digest (a String) using the ComputeMasterDigest method
-                String masterDigest = MasterDigestService.getInstance().compute(fileInputStreams);
+                String masterDigest = DigestService.getInstance().computeMasterDigest(fileInputStreams);
+                outputDigest(masterDigest);
 
                 //Initialize the signature
 //                this.initializeSignature(p11_session, signatureKey);

@@ -35,4 +35,7 @@ public class MockKeyService extends KeyService {
     public PrivateKey getPrivateKey() {
         return this.privateKey;
     }
+    public PublicKey getPublicKey() {
+        return this.publicKey;
+    }
 }
