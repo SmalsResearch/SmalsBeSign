@@ -26,7 +26,7 @@ public class Main extends Application {
         MainController controller = loader.getController();
         controller.setStage(primaryStage);
 
-        primaryStage.setScene(new Scene(root, 800, 480));
+        primaryStage.setScene(new Scene(root, 600, 320));
         primaryStage.show();
     }
 }

@@ -76,7 +76,7 @@ public class BatchSignature {
                 //Sign the data after converting the Master Digest string into a byte array
                 byte[] signature = pkcs11.C_Sign(p11_session, MasterDigest.getBytes());
 
-                System.out.println("Batch Signing succesfull !");
+                System.out.println("Batch SigningService succesfull !");
 
                 return (signature);
             } catch (Exception e) {

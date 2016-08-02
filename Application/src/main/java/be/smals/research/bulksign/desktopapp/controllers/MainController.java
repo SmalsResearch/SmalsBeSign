@@ -1,6 +1,6 @@
 package be.smals.research.bulksign.desktopapp.controllers;
 
-import be.smals.research.bulksign.desktopapp.signverify.BatchSignature;
+import be.smals.research.bulksign.desktopapp.services.SigningService;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -19,11 +19,10 @@ import java.io.IOException;
  */
 public class MainController {
 
+    private SigningService signingService;
     private FileChooser fileChooser;
-    @FXML
-    private Button signFileButton;
-    @FXML
-    private Label selectedFileLabel;
+    @FXML private Button signFileButton;
+    @FXML private Label selectedFileLabel;
 
     private Stage stage;
 
@@ -33,8 +32,15 @@ public class MainController {
      * Constructor
      */
     public MainController () {
-        fileChooser = new FileChooser();
-        fileChooser.setTitle("Select a file");
+        try {
+            this.signingService = new SigningService();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (PKCS11Exception e) {
+            e.printStackTrace();
+        }
+        this.fileChooser    = new FileChooser();
+        this.fileChooser.setTitle("Select a file");
     }
 
     /**
@@ -49,24 +55,16 @@ public class MainController {
             Alert noFileSelectedDialog = new Alert(Alert.AlertType.INFORMATION, "No file to sign", ButtonType.CLOSE);
             noFileSelectedDialog.showAndWait();
         } else {
-            FileInputStream[] input = new FileInputStream[1];
+            FileInputStream[] inputFiles = new FileInputStream[1];
 
             try {
-                input[0] = new FileInputStream(this.selectedFile);
+                inputFiles[0] = new FileInputStream(this.selectedFile);
 
-                try {
-                    byte[] signature = BatchSignature.main(input);
-                    outputSignature(signature);
-
-                } catch (IOException ioException) {
-                    ioException.printStackTrace();
-                } catch (PKCS11Exception pkcs11Exception) {
-                    pkcs11Exception.printStackTrace();
-                }
+                byte[] signature = this.signingService.sign(inputFiles);
+                outputSignature(signature);
             } catch (IOException e1) {
                 e1.printStackTrace();
             }
-
         }
 
     }
@@ -81,7 +79,7 @@ public class MainController {
         File file = fileChooser.showOpenDialog(this.stage);
         if (file != null) {
             this.selectedFile = file;
-            //this.selectedFileLabel.setText(file.getName());
+            this.selectedFileLabel.textProperty().set(file.getName());
         } else {
             System.out.println("ERROR - No file found.");
         }

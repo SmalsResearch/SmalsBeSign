@@ -15,7 +15,7 @@ import sun.security.pkcs11.wrapper.PKCS11Exception;
  * Tests the BatchSignature class
  * 
  * Takes 3 files from the hard drive
- * Returns the corresponding MasterDigest and BatchSignature
+ * Returns the corresponding MasterDigest and SigningService
  * 
  *  
  * @author juca
@@ -37,9 +37,9 @@ public class TestBatchSignature {
         input[1] = new FileInputStream("C:\\Users\\tm\\Documents\\2015 - Signature en batch\\Travail Julien Cathalo\\Tests\\Test2.txt");
         input[2] = new FileInputStream("C:\\Users\\tm\\Documents\\2015 - Signature en batch\\Travail Julien Cathalo\\Tests\\Test3.txt");
         */
-            input[0] = new FileInputStream(TestBatchSignature.class.getClassLoader().getResource("testFiles\\file.txt").getPath());
-            input[1] = new FileInputStream(TestBatchSignature.class.getClassLoader().getResource("testFiles\\file.txt").getPath());
-            input[2] = new FileInputStream(TestBatchSignature.class.getClassLoader().getResource("testFiles\\file.txt").getPath());
+            input[0] = new FileInputStream("C:\\Users\\cea\\Desktop\\pubKey.txt");
+            input[1] = new FileInputStream("C:\\Users\\cea\\Desktop\\pubKey.txt");
+            input[2] = new FileInputStream("C:\\Users\\cea\\Desktop\\pubKey.txt");
             /*
             input[0] = new FileInputStream("C:\\Users\\tm\\Documents\\2015 - Signature en batch\\Travail Julien Cathalo\\Tests\\BCSS\\2015BSM994.pdf");
             input[1] = new FileInputStream("C:\\Users\\tm\\Documents\\2015 - Signature en batch\\Travail Julien Cathalo\\Tests\\BCSS\\BCSS 2015 Convention T�l�travail CHEVALIER Jacques.pdf");
