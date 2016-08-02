@@ -12,12 +12,9 @@ import sun.security.pkcs11.wrapper.PKCS11Exception;
 
 import java.io.*;
 import java.math.BigInteger;
-import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
-import java.security.interfaces.RSAPublicKey;
 import java.security.spec.InvalidKeySpecException;
-import java.security.spec.RSAPublicKeySpec;
 
 /**
  * Main screen controller
@@ -57,7 +54,6 @@ public class MainController {
         this.signFileChooser.setTitle("Select a file");
         this.verifyFileChooser.setTitle("Select the signature file");
     }
-
     @FXML
     private void handleVerifyFileButtonAction (ActionEvent event) {
         if (this.selectedSignFile == null || this.selectedVerifyFile == null){
@@ -65,50 +61,50 @@ public class MainController {
             noFileSelectedDialog.showAndWait();
         } else {
             String MasterDigest = "c3f7c5a873a3f763fec69add38bc48835a475639a263042d7269d20ffb7fafee";
-            /* Modulus and pubExp of the public key used to sign*/
-            BigInteger modulus = new BigInteger("95099863606005976866430829628947691169181414536044822663514146236363189484868479038765230330544286836853478245670270453709068745482695225683666031954181177729573100887158579643353159710420254746103592570767926512143089393115103159904644719399002044705720254566168147379698895092832292865563385058248455055373", 10);
-            BigInteger pubExp = new BigInteger("65537", 10);
 
-//                KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-//
-//                RSAPublicKeySpec pubKeySpec = new RSAPublicKeySpec(modulus, pubExp);
-//                RSAPublicKey key = (RSAPublicKey) keyFactory.generatePublic(pubKeySpec);
+//            try {
+//                BigInteger modulus = new BigInteger("95099863606005976866430829628947691169181414536044822663514146236363189484868479038765230330544286836853478245670270453709068745482695225683666031954181177729573100887158579643353159710420254746103592570767926512143089393115103159904644719399002044705720254566168147379698895092832292865563385058248455055373", 10);
+//                BigInteger pubExp = new BigInteger("65537", 10);
+//                PublicKey key = verifySigningService.getPublicKey(modulus, pubExp);
+//            } catch (NoSuchAlgorithmException |InvalidKeySpecException e) {
+//                Alert errorDialog = new Alert(Alert.AlertType.ERROR, "Unable to retrieve the public key.", ButtonType.CLOSE);
+//                errorDialog.showAndWait();
+//            }
             PublicKey key = MockKeyService.getInstance().getPublicKey();
             try {
                 //create FileInputStream object
-                FileInputStream fin = new FileInputStream(this.selectedVerifyFile);
-
+                FileInputStream signatureFile = new FileInputStream(this.selectedVerifyFile);
                 byte signature[] = new byte[(int) this.selectedVerifyFile.length()];
+                signatureFile.read(signature);
+                signatureFile.close();
 
-                fin.read(signature);
-                fin.close();
-
-                this.outputInformations(MasterDigest, key, signature);
+                this.outputInformation(MasterDigest, key, signature);
 
                 FileInputStream file = new FileInputStream(this.selectedSignFile);
                 boolean isValid = verifySigningService.verifySigning( file, signature, MasterDigest, key);
-                if (isValid == true)
-                    System.out.println("The Batch Signature is valid.");
-                else
-                    System.out.println ("Invalid Batch Signature (cause : invalid Digital Signature of Master Digest)");
-                System.out.println(" ");
+                if (isValid) {
+                    Alert confirmationDialog = new Alert(Alert.AlertType.CONFIRMATION, "The Signature is valid !", ButtonType.CLOSE);
+                    confirmationDialog.showAndWait();
+                } else {
+                    Alert errorDialog = new Alert(Alert.AlertType.ERROR, "Invalid Signature \n Cause : invalid Digital Signature of Master Digest", ButtonType.CLOSE);
+                    errorDialog.showAndWait();
+                }
 
                 file.close();
-
             } catch (Exception e) {
                 e.printStackTrace(System.err);
             }
 
         }
     }
-
     /**
      * Pint to console masterDigest, key and signature
+     *
      * @param masterDigest
      * @param key
      * @param signature
      */
-    private void outputInformations(String masterDigest, PublicKey key, byte[] signature) {
+    private void outputInformation(String masterDigest, PublicKey key, byte[] signature) {
         System.out.println("Signature : ");
         for (int i = 0; i < signature.length; i++) {
             System.out.print(signature[i]);
@@ -128,7 +124,6 @@ public class MainController {
 
         System.out.println("Starting Batch Signature Verification on file 0...");
     }
-
     @FXML
     private void handleSelectVerifyFileButtonAction (ActionEvent event) {
         File file = this.verifyFileChooser.showOpenDialog(this.stage);
@@ -139,7 +134,6 @@ public class MainController {
             System.out.println("ERROR - No file found.");
         }
     }
-
     /**
      * Sign the selected file
      *
@@ -169,7 +163,6 @@ public class MainController {
         }
 
     }
-
     /**
      * Defines the selected file
      *
@@ -185,11 +178,9 @@ public class MainController {
             System.out.println("ERROR - No file found.");
         }
     }
-
     public void setStage (Stage stage) {
         this.stage = stage;
     }
-
     private void outputSignature (byte[] signature) {
 
         /* Display the signature length and value */
