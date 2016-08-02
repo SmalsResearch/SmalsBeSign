@@ -1,7 +1,9 @@
 package be.smals.research.bulksign.desktopapp.services;
 
+import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.security.*;
+import java.security.spec.InvalidKeySpecException;
 
 public class MockKeyService extends KeyService {
 
@@ -37,5 +39,10 @@ public class MockKeyService extends KeyService {
     }
     public PublicKey getPublicKey() {
         return this.publicKey;
+    }
+
+    @Override
+    public PublicKey getPublicKey(BigInteger modulus, BigInteger publicExponent) throws NoSuchAlgorithmException, InvalidKeySpecException {
+        return null;
     }
 }

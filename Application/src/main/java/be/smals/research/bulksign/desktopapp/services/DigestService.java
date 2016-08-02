@@ -78,7 +78,7 @@ public class DigestService {
      * @throws IOException when closing the streams
      * @throws NoSuchAlgorithmException when looking for the hash algorithm
      */
-    private String computeIndividualDigest(FileInputStream individualFile) throws NoSuchAlgorithmException, IOException, NoSuchProviderException {
+    public String computeIndividualDigest(FileInputStream individualFile) throws NoSuchAlgorithmException, IOException, NoSuchProviderException {
         /* Compute a hash of File[i]*/
         int read;
         byte[] buffer = new byte[8192];

@@ -51,7 +51,6 @@ public class SigningService {
             try {
                 //Find the signature private key
 //                long signatureKey = this.findeSignaturePrivateKey(p11_session);
-                long signatureKey = MockKeyService.getInstance().getKey();
                 PrivateKey privateKey = MockKeyService.getInstance().getPrivateKey();
 
                 //Compute the Master Digest (a String) using the ComputeMasterDigest method
@@ -66,7 +65,7 @@ public class SigningService {
 //                byte[] signature = pkcs11.C_Sign(p11_session, masterDigest.getBytes());
                 byte[] signature = MockSigningService.getInstance().sign();
 
-                System.out.println("Batch SigningService succesfull !");
+                System.out.println("Batch SigningService successful !");
 
                 return (signature);
 
