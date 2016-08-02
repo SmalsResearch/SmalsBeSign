@@ -8,9 +8,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import sun.security.pkcs11.wrapper.PKCS11Exception;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.*;
 
 /**
  * Main screen controller
@@ -43,6 +41,11 @@ public class MainController {
         this.fileChooser.setTitle("Select a file");
     }
 
+    @FXML
+    private void handleVerifyFileButtonAction (ActionEvent event) {
+
+    }
+
     /**
      * Sign the selected file
      *
@@ -61,7 +64,11 @@ public class MainController {
                 inputFiles[0] = new FileInputStream(this.selectedFile);
 
                 byte[] signature = this.signingService.sign(inputFiles);
-                outputSignature(signature);
+                this.outputSignature(signature);
+
+                for (FileInputStream file : inputFiles)
+                     file.close();
+
             } catch (IOException e1) {
                 e1.printStackTrace();
             }
@@ -103,16 +110,20 @@ public class MainController {
         }
         System.out.println("");
 
-        /* Display the signature length and value */
-        System.out.print("Length of generated signature (in bytes):");
-        System.out.println(signature.length);
-        System.out.println("");
-        System.out.print("Value of generated signature: ");
-
-        for (int i = 0; i < signature.length; i++) {
-            System.out.print(signature[i]);
-            System.out.print(" ");
+        /*Write the signature into a file*/
+        File file = null;
+        file = new File("C:\\Users\\cea\\Desktop\\Output.sig");
+        FileOutputStream file_output = null;
+        try {
+            file_output = new FileOutputStream(file);
+            DataOutputStream data_out = new DataOutputStream(file_output);
+            data_out.write(signature);
+            file_output.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        System.out.println("");
+
     }
 }

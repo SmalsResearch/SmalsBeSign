@@ -1,12 +1,10 @@
 package be.smals.research.bulksign.desktopapp.services;
 
-import be.smals.research.bulksign.desktopapp.signverify.ComputeMasterDigest;
 import sun.security.pkcs11.wrapper.*;
 
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.security.SecureRandom;
-import java.security.Signature;
+import java.security.PrivateKey;
 
 
 /*
@@ -54,25 +52,18 @@ public class SigningService {
                 //Find the signature private key
 //                long signatureKey = this.findeSignaturePrivateKey(p11_session);
                 long signatureKey = MockKeyService.getInstance().getKey();
-
+                PrivateKey privateKey = MockKeyService.getInstance().getPrivateKey();
 
                 //Compute the Master Digest (a String) using the ComputeMasterDigest method
                 String masterDigest = MasterDigestService.getInstance().compute(fileInputStreams);
 
                 //Initialize the signature
-//                CK_MECHANISM mechanism = new CK_MECHANISM();
-//                mechanism.mechanism = PKCS11Constants.CKM_SHA1_RSA_PKCS;
-//                mechanism.pParameter = null;
-
-//                pkcs11.C_SignInit(p11_session, mechanism, signatureKey);
-                Signature signatureProvider = Signature.getInstance("SHA1withRSA", "BC");
-                signatureProvider.initSign(MockKeyService.getInstance().getPrivateKey(), new SecureRandom());
-                signatureProvider.update(masterDigest.getBytes());
-
+//                this.initializeSignature(p11_session, signatureKey);
+                MockSigningService.getInstance().initSign (masterDigest);
 
                 //Sign the data after converting the Master Digest string into a byte array
 //                byte[] signature = pkcs11.C_Sign(p11_session, masterDigest.getBytes());
-                byte[] signature = signatureProvider.sign();
+                byte[] signature = MockSigningService.getInstance().sign();
 
                 System.out.println("Batch SigningService succesfull !");
 
@@ -128,6 +119,11 @@ public class SigningService {
         return keyHandles[0];
     }
 
-
+    private void initializeSignature(long p11_session, long signatureKey) throws PKCS11Exception {
+        CK_MECHANISM mechanism = new CK_MECHANISM();
+        mechanism.mechanism = PKCS11Constants.CKM_SHA1_RSA_PKCS;
+        mechanism.pParameter = null;
+        pkcs11.C_SignInit(p11_session, mechanism, signatureKey);
+    }
 }
                

@@ -3,9 +3,6 @@ package be.smals.research.bulksign.desktopapp.services;
 import java.nio.ByteBuffer;
 import java.security.*;
 
-/**
- * Created by cea on 02/08/2016.
- */
 public class MockKeyService extends KeyService {
 
     private static MockKeyService instance = new MockKeyService();
@@ -15,8 +12,8 @@ public class MockKeyService extends KeyService {
     private MockKeyService () {
         KeyPairGenerator keyPairGenerator = null;
         try {
-            keyPairGenerator = KeyPairGenerator.getInstance("RSA");
-        } catch (NoSuchAlgorithmException e) {
+            keyPairGenerator = KeyPairGenerator.getInstance("RSA", "BC");
+        } catch (NoSuchAlgorithmException|NoSuchProviderException e) {
             e.printStackTrace();
         }
         keyPairGenerator.initialize(2048);
@@ -34,11 +31,8 @@ public class MockKeyService extends KeyService {
     public long getKey() {
         return ByteBuffer.wrap(this.privateKey.getEncoded()).getLong();
     }
-
     @Override
     public PrivateKey getPrivateKey() {
         return this.privateKey;
     }
-
-
 }
