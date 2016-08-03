@@ -1,7 +1,15 @@
 package be.smals.research.bulksign.desktopapp.services;
 
+import be.smals.research.bulksign.desktopapp.SigningOutput;
 import be.smals.research.bulksign.desktopapp.exception.BulkSignException;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.xml.sax.SAXException;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.security.*;
@@ -10,8 +18,9 @@ public class VerifySigningService {
 
     public VerifySigningService () {}
 
-    public boolean verifySigning (FileInputStream file, byte[] signature, String masterDigest, PublicKey key) throws NoSuchProviderException, NoSuchAlgorithmException, IOException, BulkSignException, InvalidKeyException, SignatureException {
-
+    public boolean verifySigning (FileInputStream file, byte[] signature, String masterDigest, PublicKey key)
+            throws NoSuchProviderException, NoSuchAlgorithmException, IOException, BulkSignException,
+                    InvalidKeyException, SignatureException {
         /* Compute Individual Digest of document */
         String individualDigest = DigestService.getInstance().computeIndividualDigest(file);
 
@@ -37,6 +46,19 @@ public class VerifySigningService {
         return signer.verify(signature);
     }
 
+    public SigningOutput getSigningOutput (File signingOutputFile) throws ParserConfigurationException, IOException, SAXException {
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder builder = factory.newDocumentBuilder();
+        Document document = builder.parse(signingOutputFile);
+
+        document.getDocumentElement().normalize();
+
+        Element signingOutputElement    = (Element) document.getElementsByTagName("SigningOutput");
+        String masterDigest             = signingOutputElement.getElementsByTagName("MasterDigest").item(0).getTextContent();
+        byte[] signature                = signingOutputElement.getElementsByTagName("Signature").item(0).getTextContent().getBytes();
+
+        return new SigningOutput(masterDigest, signature);
+    }
     private boolean isIndividualDigestPartOfMasterDigest(String masterDigest, String individualDigest) {
         System.out.print("The size of MasterDigest is:  ");
         System.out.println(masterDigest.length());

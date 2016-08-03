@@ -6,6 +6,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import sun.security.pkcs11.wrapper.PKCS11Exception;
@@ -29,6 +30,7 @@ public class SignController {
     private List<File> filesToSign;
 
     @FXML private Label fileCountLabel;
+    @FXML private ListView filesListView;
 
     /**
      * Constructor
@@ -72,7 +74,7 @@ public class SignController {
                 fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Signature files (SIG)", "*.sig"));
                 File fileToSave = fileChooser.showSaveDialog(this.stage);
                 if (fileToSave != null) {
-                    this.signingService.saveSignature(signature, fileToSave.getPath());
+                    this.signingService.saveSigningOutput(signature, fileToSave.getPath());
                     Alert saveAlert = new Alert(Alert.AlertType.CONFIRMATION, "Signature successfully saved !", ButtonType.CLOSE);
                     saveAlert.setTitle("Save Notification");
                     saveAlert.setHeaderText("Saved !");
@@ -109,6 +111,7 @@ public class SignController {
         if (files != null) {
             this.filesToSign.addAll(files);
             this.fileCountLabel.textProperty().set(this.filesToSign.size() + " file(s) to sign");
+            this.populateListView();
         } else {
             System.out.println("INFO - No file selected");
         }
@@ -116,17 +119,11 @@ public class SignController {
     public void setStage (Stage stage) {
         this.stage = stage;
     }
-    private void outputSignature (byte[] signature) {
-        /* Display the signature length and value */
-        System.out.print("Length of generated signature (in bytes):");
-        System.out.println(signature.length);
-        System.out.println("");
-        System.out.print("Value of generated signature: ");
-
-        for (int i = 0; i < signature.length; i++) {
-            System.out.print(signature[i]);
-            System.out.print(" ");
+    private void populateListView () {
+        this.filesToSign.clear();
+        for ( File file : this.filesToSign) {
+            Label fileLabel = new Label(file.getAbsolutePath());
+            this.filesListView.getItems().addAll(fileLabel);
         }
-        System.out.println("");
     }
 }

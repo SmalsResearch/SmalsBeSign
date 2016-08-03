@@ -93,14 +93,14 @@ public class SigningService {
         }
     }
 
-    public void saveSignature (byte[] signature, String filePath) throws IOException, ParserConfigurationException, TransformerException {
+    public void saveSigningOutput(byte[] signature, String filePath) throws IOException, ParserConfigurationException, TransformerException {
         // XML - Create
         DocumentBuilderFactory factory  = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder         =  factory.newDocumentBuilder();
 
         // Root element
         Document document = builder.newDocument();
-        Element rootElement = document.createElement("SignOutput");
+        Element rootElement = document.createElement("SigningOutput");
         document.appendChild(rootElement);
         // MasterDigest
         Element masterDigestElement = document.createElement("MasterDigest");

@@ -11,6 +11,12 @@ import java.security.spec.RSAPublicKeySpec;
 
 public class EIDKeyService extends KeyService {
 
+    public static EIDKeyService instance = new EIDKeyService();
+
+    private EIDKeyService () {}
+    public static EIDKeyService getInstance () {
+        return instance;
+    }
     @Override
     public long getKey() {
         return 0;
@@ -34,6 +40,6 @@ public class EIDKeyService extends KeyService {
         RSAPublicKeySpec pubKeySpec = new RSAPublicKeySpec(modulus, publicExponent);
         RSAPublicKey key = (RSAPublicKey) keyFactory.generatePublic(pubKeySpec);
 
-        return MockKeyService.getInstance().getPublicKey();
+        return key;
     }
 }
