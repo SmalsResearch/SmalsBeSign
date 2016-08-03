@@ -3,6 +3,7 @@ package be.smals.research.bulksign.desktopapp;
 
 import be.smals.research.bulksign.desktopapp.controllers.MainController;
 import be.smals.research.bulksign.desktopapp.controllers.SignController;
+import be.smals.research.bulksign.desktopapp.controllers.VerifyController;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -68,6 +69,20 @@ public class Main extends Application {
                     root.setCenter(signPane);
 
                     SignController controller = signViewLoader.getController();
+                    controller.setStage(primaryStage);
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
+            }
+        });
+        verifyMenuItem.setOnAction( new EventHandler<ActionEvent>() {
+            @Override public void handle(ActionEvent e) {
+                FXMLLoader verifyViewLoader   = new FXMLLoader(getClass().getClassLoader().getResource("views/verify.fxml"));
+                try {
+                    Parent verifyPane       = verifyViewLoader.load();
+                    root.setCenter(verifyPane);
+
+                    VerifyController controller = verifyViewLoader.getController();
                     controller.setStage(primaryStage);
                 } catch (IOException e1) {
                     e1.printStackTrace();

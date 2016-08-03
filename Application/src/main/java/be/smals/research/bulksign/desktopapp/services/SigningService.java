@@ -1,9 +1,19 @@
 package be.smals.research.bulksign.desktopapp.services;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import sun.security.pkcs11.wrapper.*;
 
-import java.io.FileInputStream;
-import java.io.IOException;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import java.io.*;
 import java.security.PrivateKey;
 
 
@@ -22,6 +32,7 @@ import java.security.PrivateKey;
 public class SigningService {
 
     private PKCS11 pkcs11;
+    private String masterDigest;
 
     /**
      * Constructor
@@ -54,12 +65,11 @@ public class SigningService {
                 PrivateKey privateKey = MockKeyService.getInstance().getPrivateKey();
 
                 //Compute the Master Digest (a String) using the ComputeMasterDigest method
-                String masterDigest = DigestService.getInstance().computeMasterDigest(fileInputStreams);
-                outputDigest(masterDigest);
+                this.masterDigest = DigestService.getInstance().computeMasterDigest(fileInputStreams);
 
                 //Initialize the signature
 //                this.initializeSignature(p11_session, signatureKey);
-                MockSigningService.getInstance().initSign (masterDigest);
+                MockSigningService.getInstance().initSign (this.masterDigest);
 
                 //Sign the data after converting the Master Digest string into a byte array
 //                byte[] signature = pkcs11.C_Sign(p11_session, masterDigest.getBytes());
@@ -81,6 +91,31 @@ public class SigningService {
             System.out.println("[Catch] Exception: " + e.getMessage());
             return (signErrorOutput);
         }
+    }
+
+    public void saveSignature (byte[] signature, String filePath) throws IOException, ParserConfigurationException, TransformerException {
+        // XML - Create
+        DocumentBuilderFactory factory  = DocumentBuilderFactory.newInstance();
+        DocumentBuilder builder         =  factory.newDocumentBuilder();
+
+        // Root element
+        Document document = builder.newDocument();
+        Element rootElement = document.createElement("SignOutput");
+        document.appendChild(rootElement);
+        // MasterDigest
+        Element masterDigestElement = document.createElement("MasterDigest");
+        masterDigestElement.appendChild(document.createTextNode(this.masterDigest));
+        rootElement.appendChild(masterDigestElement);
+        // Signature
+        Element signatureElement = document.createElement("Signature");
+        signatureElement.appendChild(document.createTextNode(new String(signature)));
+        rootElement.appendChild(signatureElement);
+        // XML - Write
+        TransformerFactory transformerFactory   = TransformerFactory.newInstance();
+        Transformer transformer                 = transformerFactory.newTransformer();
+        DOMSource source                        = new DOMSource(document);
+        StreamResult result               = new StreamResult(new File(filePath));
+        transformer.transform(source, result);
     }
 
     /**
