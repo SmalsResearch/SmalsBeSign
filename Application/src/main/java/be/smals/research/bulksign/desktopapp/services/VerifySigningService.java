@@ -6,6 +6,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
+import javax.xml.bind.DatatypeConverter;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -53,10 +54,10 @@ public class VerifySigningService {
 
         document.getDocumentElement().normalize();
 
-        Element signingOutputElement    = (Element) document.getElementsByTagName("SigningOutput");
+        Element signingOutputElement    = (Element) document.getElementsByTagName("SigningOutput").item(0);
         String masterDigest             = signingOutputElement.getElementsByTagName("MasterDigest").item(0).getTextContent();
-        byte[] signature                = signingOutputElement.getElementsByTagName("Signature").item(0).getTextContent().getBytes();
-
+        byte[] signature                = DatatypeConverter.parseBase64Binary(signingOutputElement.getElementsByTagName("Signature").item(0).getTextContent());
+        System.out.println(masterDigest);
         return new SigningOutput(masterDigest, signature);
     }
     private boolean isIndividualDigestPartOfMasterDigest(String masterDigest, String individualDigest) {

@@ -51,21 +51,10 @@ public class VerifyController {
             SigningOutput signingOutput = null;
             try {
                 signingOutput = verifySigningService.getSigningOutput(this.signatureFile);
-            } catch (IOException|SAXException|ParserConfigurationException e) {
-                Alert corruptedFileDialog = new Alert(Alert.AlertType.ERROR, "Le signature file is corrupted !", ButtonType.CLOSE);
-                corruptedFileDialog.setTitle("Corrupted file");
-                corruptedFileDialog.showAndWait();
-                System.exit(0);
-            }
-            String MasterDigest = signingOutput.masterDigest;
-
-//            PublicKey key = EIDKeyService.getInstance().getPublicKey(modulus, publicExponent);
-            PublicKey key = MockKeyService.getInstance().getPublicKey();
-            try {
-                FileInputStream signatureFile = new FileInputStream(this.signatureFile);
-                byte signature[] = new byte[(int) this.signatureFile.length()];
-                signatureFile.read(signature);
-                signatureFile.close();
+                String MasterDigest = signingOutput.masterDigest;
+//                PublicKey key = EIDKeyService.getInstance().getPublicKey(modulus, publicExponent);
+                PublicKey key = MockKeyService.getInstance().getPublicKey();
+                byte signature[] = signingOutput.signature;
 
                 FileInputStream file = new FileInputStream(this.signedFile);
                 boolean isValid = verifySigningService.verifySigning( file, signature, MasterDigest, key);
@@ -78,13 +67,18 @@ public class VerifyController {
                 }
 
                 file.close();
+            } catch (IOException|SAXException|ParserConfigurationException e) {
+                Alert corruptedFileDialog = new Alert(Alert.AlertType.ERROR, "Le signature file is corrupted !", ButtonType.CLOSE);
+                corruptedFileDialog.setTitle("Corrupted file");
+                corruptedFileDialog.showAndWait();
+                e.printStackTrace();
             } catch (Exception e) {
-                e.printStackTrace(System.err);
+                e.printStackTrace();
             }
+
 
         }
     }
-
     @FXML
     private void handleSelectVerifyFileButtonAction (ActionEvent event) {
         this.fileChooser.setTitle("Select the signature file");

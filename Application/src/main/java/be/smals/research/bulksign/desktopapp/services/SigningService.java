@@ -4,6 +4,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import sun.security.pkcs11.wrapper.*;
 
+import javax.xml.bind.DatatypeConverter;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -14,6 +15,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.*;
+import java.nio.charset.Charset;
 import java.security.PrivateKey;
 
 
@@ -100,6 +102,7 @@ public class SigningService {
 
         // Root element
         Document document = builder.newDocument();
+        document.setXmlVersion("1.1");
         Element rootElement = document.createElement("SigningOutput");
         document.appendChild(rootElement);
         // MasterDigest
@@ -108,7 +111,7 @@ public class SigningService {
         rootElement.appendChild(masterDigestElement);
         // Signature
         Element signatureElement = document.createElement("Signature");
-        signatureElement.appendChild(document.createTextNode(new String(signature)));
+        signatureElement.appendChild(document.createTextNode(DatatypeConverter.printBase64Binary(signature)));
         rootElement.appendChild(signatureElement);
         // XML - Write
         TransformerFactory transformerFactory   = TransformerFactory.newInstance();

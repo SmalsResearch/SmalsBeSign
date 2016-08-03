@@ -120,7 +120,7 @@ public class SignController {
         this.stage = stage;
     }
     private void populateListView () {
-        this.filesToSign.clear();
+        this.filesListView.getItems().clear();
         for ( File file : this.filesToSign) {
             Label fileLabel = new Label(file.getAbsolutePath());
             this.filesListView.getItems().addAll(fileLabel);
