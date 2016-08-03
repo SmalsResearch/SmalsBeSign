@@ -12,8 +12,10 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
+import javafx.scene.layout.BorderStroke;
+import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -36,57 +38,51 @@ public class Main extends Application {
         BorderPane root       = loader.load();
         primaryStage.setTitle("BulkSign Desktop");
 
-        MenuBar menuBar = new MenuBar();
-        Menu fileMenu = new Menu("File");
-        Menu aboutMenu = new Menu("About");
-        Menu taskMenu = new Menu("Task");
-        MenuItem exitMenuItem = new MenuItem("Exit...");
-        MenuItem signMenuItem = new MenuItem("Sign");
+        MenuBar menuBar         = new MenuBar();
+        Menu fileMenu           = new Menu("File");
+        Menu aboutMenu          = new Menu("About");
+        Menu taskMenu           = new Menu("Task");
+        MenuItem exitMenuItem   = new MenuItem("Exit...");
+        MenuItem signMenuItem   = new MenuItem("Sign");
         MenuItem verifyMenuItem = new MenuItem("Verify");
         fileMenu.getItems().addAll(exitMenuItem);
         taskMenu.getItems().addAll(signMenuItem, verifyMenuItem);
         menuBar.getMenus().addAll(fileMenu, taskMenu, aboutMenu);
+
         root.setTop(menuBar);
 
-        exitMenuItem.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                Alert exitAlert = new Alert(Alert.AlertType.WARNING, "You are about to leave...", ButtonType.YES, ButtonType.CANCEL);
-                exitAlert.setTitle("Exit the application");
-                exitAlert.setHeaderText("Are you sure ?");
-                Optional<ButtonType> choice = exitAlert.showAndWait();
-                if (choice.get() == ButtonType.YES)
-                    Platform.exit();
-                else
-                    exitAlert.close();
+        exitMenuItem.setOnAction(event -> {
+            Alert exitAlert = new Alert(Alert.AlertType.WARNING, "You are about to leave...", ButtonType.YES, ButtonType.CANCEL);
+            exitAlert.setTitle("Exit the application");
+            exitAlert.setHeaderText("Are you sure ?");
+            Optional<ButtonType> choice = exitAlert.showAndWait();
+            if (choice.get() == ButtonType.YES)
+                Platform.exit();
+            else
+                exitAlert.close();
+        });
+        signMenuItem.setOnAction( event -> {
+            FXMLLoader signViewLoader   = new FXMLLoader(getClass().getClassLoader().getResource("views/sign.fxml"));
+            try {
+                Parent signPane       = signViewLoader.load();
+                root.setCenter(signPane);
+
+                SignController controller = signViewLoader.getController();
+                controller.setStage(primaryStage);
+            } catch (IOException e1) {
+                e1.printStackTrace();
             }
         });
-        signMenuItem.setOnAction( new EventHandler<ActionEvent>() {
-            @Override public void handle(ActionEvent e) {
-                FXMLLoader signViewLoader   = new FXMLLoader(getClass().getClassLoader().getResource("views/sign.fxml"));
-                try {
-                    Parent signPane       = signViewLoader.load();
-                    root.setCenter(signPane);
+        verifyMenuItem.setOnAction( event -> {
+            FXMLLoader verifyViewLoader   = new FXMLLoader(getClass().getClassLoader().getResource("views/verify.fxml"));
+            try {
+                Parent verifyPane       = verifyViewLoader.load();
+                root.setCenter(verifyPane);
 
-                    SignController controller = signViewLoader.getController();
-                    controller.setStage(primaryStage);
-                } catch (IOException e1) {
-                    e1.printStackTrace();
-                }
-            }
-        });
-        verifyMenuItem.setOnAction( new EventHandler<ActionEvent>() {
-            @Override public void handle(ActionEvent e) {
-                FXMLLoader verifyViewLoader   = new FXMLLoader(getClass().getClassLoader().getResource("views/verify.fxml"));
-                try {
-                    Parent verifyPane       = verifyViewLoader.load();
-                    root.setCenter(verifyPane);
-
-                    VerifyController controller = verifyViewLoader.getController();
-                    controller.setStage(primaryStage);
-                } catch (IOException e1) {
-                    e1.printStackTrace();
-                }
+                VerifyController controller = verifyViewLoader.getController();
+                controller.setStage(primaryStage);
+            } catch (IOException e1) {
+                e1.printStackTrace();
             }
         });
 
