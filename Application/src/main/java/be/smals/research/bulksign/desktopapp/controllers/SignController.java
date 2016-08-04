@@ -5,6 +5,8 @@ import be.smals.research.bulksign.desktopapp.utilities.FileListItem;
 import be.smals.research.bulksign.desktopapp.utilities.SigningOutput;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
@@ -13,6 +15,8 @@ import javafx.scene.control.ListView;
 import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import org.jpedal.examples.viewer.Commands;
+import org.jpedal.examples.viewer.OpenViewerFX;
 import sun.security.pkcs11.wrapper.PKCS11Exception;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -34,7 +38,7 @@ public class SignController {
     private SigningService signingService;
     private FileChooser fileChooser;
     private List<File> filesToSign;
-//    private PDFViewer pdfViewer;
+    private OpenViewerFX viewerFx;
 
     @FXML private Label fileCountLabel;
     @FXML private ListView filesListView;
@@ -129,6 +133,9 @@ public class SignController {
     }
     public void setStage (Stage stage) {
         this.stage = stage;
+        this.viewerFx = new OpenViewerFX(readerPane, null);
+
+        this.viewerFx.setupViewer();
     }
     /**
      * Populates the ListView with the files selected by the user
@@ -138,6 +145,14 @@ public class SignController {
         List<FileListItem> fileListItems = new ArrayList<>();
         for ( File file : this.filesToSign) {
             FileListItem listItem = new FileListItem(file);
+            listItem.setViewButtonAction(new EventHandler() {
+                @Override
+                public void handle(Event event) {
+                    Object[] args = {file};
+                    viewerFx.executeCommand(Commands.OPENFILE, args);
+                }
+            });
+
             fileListItems.add(listItem);
         }
         this.filesListView.setItems(FXCollections.observableList(fileListItems));
