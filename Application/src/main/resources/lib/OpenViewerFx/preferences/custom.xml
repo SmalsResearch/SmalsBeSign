@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<properties>
+    <recentfiles/>
+    <showfirsttimepopup value="false"/>
+    <showsaveformsmessage value="false"/>
+    <showitextmessage value="false"/>
+    <showddmessage value="false"/>
+    <searchWindowType value="0"/>
+    <borderType value="1"/>
+    <useHiResPrinting value="true"/>
+    <showDownloadWindow value="true"/>
+    <DPI value="48"/>
+    <autoScroll value="true"/>
+    <pageMode value="1"/>
+    <displaytipsonstartup value="false"/>
+    <automaticupdate value="false"/>
+    <currentversion value=""/>
+    <showtiffmessage value="true"/>
+    <maxmultiviewers value="2"/>
+
+
+
+    <ShowMenubar value="false"/>
+    <ShowButtons value="false"/>
+    <ShowDisplayoptions value="false"/>
+    <ShowNavigationbar value="true"/>
+    <ShowSidetabbar value="true"/>
+</properties>

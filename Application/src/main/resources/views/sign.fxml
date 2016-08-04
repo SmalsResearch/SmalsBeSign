@@ -42,7 +42,7 @@
       <Separator orientation="VERTICAL" GridPane.columnIndex="1" />
       <Separator orientation="VERTICAL" GridPane.columnIndex="1" GridPane.rowIndex="1" />
       <Separator orientation="VERTICAL" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-      <Pane fx:id="readerPane" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+      <Pane fx:id="readerPane" GridPane.columnIndex="2" GridPane.rowSpan="2147483647" />
       </children>
    <padding>
       <Insets bottom="24.0" left="24.0" right="24.0" top="24.0" />

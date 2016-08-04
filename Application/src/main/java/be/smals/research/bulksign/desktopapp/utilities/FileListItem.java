@@ -6,6 +6,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
+import javafx.stage.FileChooser;
 
 import java.io.File;
 
@@ -24,13 +25,30 @@ public class FileListItem extends HBox {
         this.file           = file;
         this.namelabel      = new Label(file.getName());
         this.selectCheckBox = new CheckBox();
+
         this.viewButton     = new Button("Preview");
+
         this.namelabel.setMaxWidth(Double.MAX_VALUE);
         HBox.setHgrow(this.namelabel, Priority.ALWAYS);
 
-        this.getChildren().addAll(this.selectCheckBox, this.namelabel, this.viewButton);
+        this.getChildren().addAll(this.selectCheckBox, this.namelabel);
+        if (this.getFileExtension(file.getName()).equalsIgnoreCase("pdf")) {
+            this.getChildren().add(this.viewButton);
+        }
     }
 
+    private String getFileExtension (String fileName) {
+        String extension = "";
+        int i = fileName.lastIndexOf('.');
+        // files without extension
+        int p = Math.max(fileName.lastIndexOf('/'), fileName.lastIndexOf('\\'));
+
+        if (i >= p) {
+            extension = fileName.substring(i+1);
+        }
+
+        return extension;
+    }
     public boolean isSelected () {
         return this.selectCheckBox.isSelected();
     }
