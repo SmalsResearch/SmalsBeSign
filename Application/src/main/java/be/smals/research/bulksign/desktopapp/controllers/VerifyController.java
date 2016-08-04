@@ -1,6 +1,6 @@
 package be.smals.research.bulksign.desktopapp.controllers;
 
-import be.smals.research.bulksign.desktopapp.SigningOutput;
+import be.smals.research.bulksign.desktopapp.utilities.SigningOutput;
 import be.smals.research.bulksign.desktopapp.services.MockKeyService;
 import be.smals.research.bulksign.desktopapp.services.VerifySigningService;
 import javafx.event.ActionEvent;

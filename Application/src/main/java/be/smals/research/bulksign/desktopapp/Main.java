@@ -6,25 +6,17 @@ import be.smals.research.bulksign.desktopapp.controllers.SignController;
 import be.smals.research.bulksign.desktopapp.controllers.VerifyController;
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.BorderStroke;
-import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.security.Security;
 import java.util.Optional;
 
-/**
- * Created by kova on 26/07/2016.
- */
 public class Main extends Application {
 
     public static void main(String[] args) {
@@ -40,14 +32,13 @@ public class Main extends Application {
 
         MenuBar menuBar         = new MenuBar();
         Menu fileMenu           = new Menu("File");
-        Menu aboutMenu          = new Menu("About");
         Menu taskMenu           = new Menu("Task");
         MenuItem exitMenuItem   = new MenuItem("Exit...");
         MenuItem signMenuItem   = new MenuItem("Sign");
         MenuItem verifyMenuItem = new MenuItem("Verify");
+        menuBar.getMenus().addAll(fileMenu, taskMenu);
         fileMenu.getItems().addAll(exitMenuItem);
         taskMenu.getItems().addAll(signMenuItem, verifyMenuItem);
-        menuBar.getMenus().addAll(fileMenu, taskMenu, aboutMenu);
 
         root.setTop(menuBar);
 
@@ -56,7 +47,7 @@ public class Main extends Application {
             exitAlert.setTitle("Exit the application");
             exitAlert.setHeaderText("Are you sure ?");
             Optional<ButtonType> choice = exitAlert.showAndWait();
-            if (choice.get() == ButtonType.YES)
+            if (choice.isPresent() && choice.get() == ButtonType.YES)
                 Platform.exit();
             else
                 exitAlert.close();

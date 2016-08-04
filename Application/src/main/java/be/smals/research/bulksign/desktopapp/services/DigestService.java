@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
+import java.security.Security;
 
 /**
  * Service used to computeMasterDigest the digest of files to sign
@@ -16,7 +17,9 @@ public class DigestService {
 
     private static DigestService instance = new DigestService();
 
-    private DigestService() {}
+    private DigestService() {
+        Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
+    }
     public static DigestService getInstance() {
         if (instance == null)
             instance = new DigestService();
@@ -48,8 +51,8 @@ public class DigestService {
 
         String masterDigest = "";
 		/* Compute the Master Digest as a concatenation of the IndividualDigest strings.*/
-        for (int j = 0; j < individualDigest.length; j++) {
-            masterDigest += individualDigest[j];
+        for (String anIndividualDigest : individualDigest) {
+            masterDigest += anIndividualDigest;
         }
 
         return (masterDigest);

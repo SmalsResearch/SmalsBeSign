@@ -1,6 +1,7 @@
 package be.smals.research.bulksign.desktopapp.controllers;
 
 import be.smals.research.bulksign.desktopapp.services.SigningService;
+import be.smals.research.bulksign.desktopapp.utilities.SigningOutput;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
@@ -39,9 +40,7 @@ public class SignController {
         this.filesToSign = new ArrayList<>();
         try {
             this.signingService         = new SigningService();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (PKCS11Exception e) {
+        } catch (IOException | PKCS11Exception e) {
             e.printStackTrace();
         }
 
@@ -74,7 +73,8 @@ public class SignController {
                 fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Signature files (SIG)", "*.sig"));
                 File fileToSave = fileChooser.showSaveDialog(this.stage);
                 if (fileToSave != null) {
-                    this.signingService.saveSigningOutput(signature, fileToSave.getPath());
+                    SigningOutput signingOutput = new SigningOutput(null, signature);
+                    this.signingService.saveSigningOutput(signingOutput, fileToSave.getPath());
                     Alert saveAlert = new Alert(Alert.AlertType.CONFIRMATION, "Signature successfully saved !", ButtonType.CLOSE);
                     saveAlert.setTitle("Save Notification");
                     saveAlert.setHeaderText("Saved !");
@@ -90,11 +90,7 @@ public class SignController {
                 for (FileInputStream file : inputFiles)
                      file.close();
 
-            } catch (IOException e1) {
-                e1.printStackTrace();
-            } catch (ParserConfigurationException e) {
-                e.printStackTrace();
-            } catch (TransformerException e) {
+            } catch (IOException | ParserConfigurationException | TransformerException e) {
                 e.printStackTrace();
             }
         }
@@ -109,11 +105,9 @@ public class SignController {
     private void handleSelectSignFileButtonAction(ActionEvent event) {
         List<File> files = fileChooser.showOpenMultipleDialog(this.stage);
         if (files != null) {
-            this.filesToSign.addAll(files);
+            files.stream().filter(file -> !this.filesToSign.contains(file)).forEach(file -> this.filesToSign.add(file));
             this.fileCountLabel.textProperty().set(this.filesToSign.size() + " file(s) to sign");
             this.populateListView();
-        } else {
-            System.out.println("INFO - No file selected");
         }
     }
     public void setStage (Stage stage) {
@@ -123,7 +117,7 @@ public class SignController {
         this.filesListView.getItems().clear();
         for ( File file : this.filesToSign) {
             Label fileLabel = new Label(file.getAbsolutePath());
-            this.filesListView.getItems().addAll(fileLabel);
+            this.filesListView.getItems().add(fileLabel);
         }
     }
 }

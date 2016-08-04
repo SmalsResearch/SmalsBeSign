@@ -1,10 +1,10 @@
 package be.smals.research.bulksign.desktopapp.signverify;
 
-import java.io.*;
-import java.math.BigInteger;
-import java.security.MessageDigest;
-
 import org.bouncycastle.util.encoders.Hex;
+
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.security.MessageDigest;
 
 /*
  * Copyright (c) Smals

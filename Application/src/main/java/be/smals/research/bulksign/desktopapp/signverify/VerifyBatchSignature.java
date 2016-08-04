@@ -1,13 +1,12 @@
 package be.smals.research.bulksign.desktopapp.signverify;
 
+import org.bouncycastle.util.encoders.Hex;
+
 import java.io.FileInputStream;
-import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.PublicKey;
 import java.security.Security;
 import java.security.Signature;
-
-import org.bouncycastle.util.encoders.Hex;
 
 /*
  * Copyright (c) Smals

@@ -1,12 +1,8 @@
 package be.smals.research.bulksign.desktopapp.signverify;
 
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-
 import sun.security.pkcs11.wrapper.PKCS11Exception;
+
+import java.io.*;
 
 
 /*
@@ -72,9 +68,7 @@ public class TestBatchSignature {
             input[0].close();
             input[1].close();
             input[2].close();
-        } catch (IOException e) {
-            e.printStackTrace(System.err);
-        } catch (PKCS11Exception e) {
+        } catch (IOException|PKCS11Exception e) {
             e.printStackTrace(System.err);
         } catch (Exception e) {
             e.printStackTrace(System.err);

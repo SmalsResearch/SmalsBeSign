@@ -1,5 +1,6 @@
 package be.smals.research.bulksign.desktopapp.services;
 
+import be.smals.research.bulksign.desktopapp.utilities.SigningOutput;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import sun.security.pkcs11.wrapper.*;
@@ -9,14 +10,13 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import java.io.*;
-import java.nio.charset.Charset;
-import java.security.PrivateKey;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 
 
 /*
@@ -42,7 +42,7 @@ public class SigningService {
     public SigningService() throws IOException, PKCS11Exception {
         String osName = System.getProperty("os.name");
 
-        if (-1 != osName.indexOf("Windows"))
+        if (osName.contains("Windows"))
             pkcs11 = PKCS11.getInstance("beidpkcs11.dll", "C_GetFunctionList", null, false);
         else
             pkcs11 = PKCS11.getInstance("libbeidpkcs11.so", "C_GetFunctionList", null, false);
@@ -63,8 +63,7 @@ public class SigningService {
 
             try {
                 //Find the signature private key
-//                long signatureKey = this.findeSignaturePrivateKey(p11_session);
-                PrivateKey privateKey = MockKeyService.getInstance().getPrivateKey();
+//                long signatureKey = this.findSignaturePrivateKey(p11_session);
 
                 //Compute the Master Digest (a String) using the ComputeMasterDigest method
                 this.masterDigest = DigestService.getInstance().computeMasterDigest(fileInputStreams);
@@ -76,8 +75,6 @@ public class SigningService {
                 //Sign the data after converting the Master Digest string into a byte array
 //                byte[] signature = pkcs11.C_Sign(p11_session, masterDigest.getBytes());
                 byte[] signature = MockSigningService.getInstance().sign();
-
-                System.out.println("Batch SigningService successful !");
 
                 return (signature);
 
@@ -95,7 +92,7 @@ public class SigningService {
         }
     }
 
-    public void saveSigningOutput(byte[] signature, String filePath) throws IOException, ParserConfigurationException, TransformerException {
+    public void saveSigningOutput(SigningOutput signingOutput, String filePath) throws IOException, ParserConfigurationException, TransformerException {
         // XML - Create
         DocumentBuilderFactory factory  = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder         =  factory.newDocumentBuilder();
@@ -107,32 +104,18 @@ public class SigningService {
         document.appendChild(rootElement);
         // MasterDigest
         Element masterDigestElement = document.createElement("MasterDigest");
-        masterDigestElement.appendChild(document.createTextNode(this.masterDigest));
+        masterDigestElement.appendChild(document.createTextNode(signingOutput.masterDigest == null ? this.masterDigest : signingOutput.masterDigest));
         rootElement.appendChild(masterDigestElement);
         // Signature
         Element signatureElement = document.createElement("Signature");
-        signatureElement.appendChild(document.createTextNode(DatatypeConverter.printBase64Binary(signature)));
+        signatureElement.appendChild(document.createTextNode(DatatypeConverter.printBase64Binary(signingOutput.signature)));
         rootElement.appendChild(signatureElement);
         // XML - Write
         TransformerFactory transformerFactory   = TransformerFactory.newInstance();
         Transformer transformer                 = transformerFactory.newTransformer();
         DOMSource source                        = new DOMSource(document);
-        StreamResult result               = new StreamResult(new File(filePath));
+        StreamResult result                     = new StreamResult(new File(filePath));
         transformer.transform(source, result);
-    }
-
-    /**
-     * Outputs the master digest
-     *
-     * @param masterDigest master digest
-     */
-    private void outputDigest(String masterDigest) {
-        System.out.print("Master Digest = ");
-        System.out.println(masterDigest);
-        System.out.println("");
-        System.out.print("Length of MasterDigest = ");
-        System.out.println(masterDigest.length());
-        System.out.println("");
     }
 
     /**

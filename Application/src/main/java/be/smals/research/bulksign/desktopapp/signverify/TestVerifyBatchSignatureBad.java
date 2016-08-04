@@ -97,9 +97,7 @@ public class TestVerifyBatchSignatureBad {
             }
         } catch (FileNotFoundException e) {
             System.out.println("File not found" + e);
-        } catch (InvalidKeySpecException e1) {
-            e1.printStackTrace();
-        } catch (NoSuchAlgorithmException e1) {
+        } catch (InvalidKeySpecException | NoSuchAlgorithmException e1) {
             e1.printStackTrace();
         }
     }

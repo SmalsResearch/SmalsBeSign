@@ -1,8 +1,5 @@
-package be.smals.research.bulksign.desktopapp;
+package be.smals.research.bulksign.desktopapp.utilities;
 
-/**
- * Created by cea on 03/08/2016.
- */
 public class SigningOutput {
 
     public String masterDigest;

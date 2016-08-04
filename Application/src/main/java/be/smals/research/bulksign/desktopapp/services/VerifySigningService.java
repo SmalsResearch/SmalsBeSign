@@ -1,6 +1,6 @@
 package be.smals.research.bulksign.desktopapp.services;
 
-import be.smals.research.bulksign.desktopapp.SigningOutput;
+import be.smals.research.bulksign.desktopapp.utilities.SigningOutput;
 import be.smals.research.bulksign.desktopapp.exception.BulkSignException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -57,7 +57,6 @@ public class VerifySigningService {
         Element signingOutputElement    = (Element) document.getElementsByTagName("SigningOutput").item(0);
         String masterDigest             = signingOutputElement.getElementsByTagName("MasterDigest").item(0).getTextContent();
         byte[] signature                = DatatypeConverter.parseBase64Binary(signingOutputElement.getElementsByTagName("Signature").item(0).getTextContent());
-        System.out.println(masterDigest);
         return new SigningOutput(masterDigest, signature);
     }
     private boolean isIndividualDigestPartOfMasterDigest(String masterDigest, String individualDigest) {
