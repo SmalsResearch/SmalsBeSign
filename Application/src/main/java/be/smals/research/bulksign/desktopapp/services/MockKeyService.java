@@ -12,6 +12,8 @@ public class MockKeyService extends KeyService {
     private PublicKey publicKey;
 
     private MockKeyService () {
+        Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
+
         KeyPairGenerator keyPairGenerator = null;
         try {
             keyPairGenerator = KeyPairGenerator.getInstance("RSA", "BC");

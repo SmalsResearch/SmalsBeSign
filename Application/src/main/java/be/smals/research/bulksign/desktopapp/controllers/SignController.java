@@ -8,6 +8,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import sun.security.pkcs11.wrapper.PKCS11Exception;
@@ -32,6 +33,7 @@ public class SignController {
 
     @FXML private Label fileCountLabel;
     @FXML private ListView filesListView;
+    @FXML private Pane readerPane;
 
     /**
      * Constructor
@@ -46,6 +48,7 @@ public class SignController {
 
         this.fileChooser = new FileChooser();
         this.fileChooser.setTitle("Select a file");
+
     }
     /**
      * Sign the selected file
@@ -127,7 +130,7 @@ public class SignController {
     private void populateListView () {
         this.filesListView.getItems().clear();
         for ( File file : this.filesToSign) {
-            Label fileLabel = new Label(file.getAbsolutePath());
+            Label fileLabel = new Label(file.getName());
             this.filesListView.getItems().add(fileLabel);
         }
     }

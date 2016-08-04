@@ -7,30 +7,32 @@
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.RowConstraints?>
 
 <GridPane xmlns="http://javafx.com/javafx/8.0.101" xmlns:fx="http://javafx.com/fxml/1" fx:controller="be.smals.research.bulksign.desktopapp.controllers.SignController">
      <columnConstraints>
-       <ColumnConstraints hgrow="SOMETIMES" percentWidth="75.0" />
+       <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" percentWidth="30.0" />
       <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" percentWidth="5.0" />
-       <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" percentWidth="20.0" />
+       <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" percentWidth="65.0" />
      </columnConstraints>
      <rowConstraints>
-       <RowConstraints valignment="CENTER" vgrow="SOMETIMES" />
-       <RowConstraints valignment="CENTER" vgrow="SOMETIMES" />
+       <RowConstraints percentHeight="10.0" valignment="CENTER" vgrow="SOMETIMES" />
+       <RowConstraints percentHeight="75.0" valignment="CENTER" vgrow="SOMETIMES" />
+      <RowConstraints percentHeight="15.0" valignment="CENTER" vgrow="SOMETIMES" />
      </rowConstraints>
       <children>
-         <Button fx:id="selectFileButton" mnemonicParsing="false" onAction="#handleSignFilesButtonAction" text="Sign Files" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER">
+         <Button fx:id="selectFileButton" mnemonicParsing="false" onAction="#handleSignFilesButtonAction" text="Sign Files" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER">
             <GridPane.margin>
                <Insets />
             </GridPane.margin>
         </Button>
-         <Button fx:id="selectSignFileButton" layoutX="10.0" layoutY="43.0" mnemonicParsing="false" onAction="#handleSelectFilesToSignButtonAction" text="Add files..." textAlignment="CENTER" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
+         <Button fx:id="selectSignFileButton" layoutX="10.0" layoutY="43.0" mnemonicParsing="false" onAction="#handleSelectFilesToSignButtonAction" text="Add files..." textAlignment="CENTER" GridPane.halignment="RIGHT" GridPane.valignment="CENTER">
             <GridPane.margin>
                <Insets />
             </GridPane.margin>
          </Button>
-         <Label fx:id="fileCountLabel" text="No file selected">
+         <Label fx:id="fileCountLabel" text="No file selected" GridPane.halignment="LEFT">
             <GridPane.margin>
                <Insets />
             </GridPane.margin>
@@ -39,6 +41,8 @@
           <ListView fx:id="filesListView" GridPane.rowIndex="1" />
       <Separator orientation="VERTICAL" GridPane.columnIndex="1" />
       <Separator orientation="VERTICAL" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+      <Separator orientation="VERTICAL" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+      <Pane fx:id="readerPane" GridPane.columnIndex="2" GridPane.rowIndex="1" />
       </children>
    <padding>
       <Insets bottom="24.0" left="24.0" right="24.0" top="24.0" />
