@@ -2,6 +2,7 @@ package be.smals.research.bulksign.desktopapp.controllers;
 
 import be.smals.research.bulksign.desktopapp.services.SigningService;
 import be.smals.research.bulksign.desktopapp.utilities.SigningOutput;
+import com.qoppa.pdfViewerFX.PDFViewer;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
@@ -15,7 +16,9 @@ import sun.security.pkcs11.wrapper.PKCS11Exception;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,6 +33,7 @@ public class SignController {
     private SigningService signingService;
     private FileChooser fileChooser;
     private List<File> filesToSign;
+    private PDFViewer pdfViewer;
 
     @FXML private Label fileCountLabel;
     @FXML private ListView filesListView;
@@ -48,7 +52,6 @@ public class SignController {
 
         this.fileChooser = new FileChooser();
         this.fileChooser.setTitle("Select a file");
-
     }
     /**
      * Sign the selected file

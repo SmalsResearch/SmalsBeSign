@@ -18,19 +18,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 
-
-/*
-* Copyright (c) Smals
-*
-*  Input : 1 set of document (as an array of file input streams),
-*  
-*  Output : 1 batch signature (as byte array), 
-*  
-* @author juca
-* 
-* 
-*/
-
 public class SigningService {
 
     private PKCS11 pkcs11;
@@ -60,20 +47,13 @@ public class SigningService {
         try {
             //Open the P11 session
             long p11_session = pkcs11.C_OpenSession(0, PKCS11Constants.CKF_SERIAL_SESSION, null, null);
-
             try {
-                //Find the signature private key
-//                long signatureKey = this.findSignaturePrivateKey(p11_session);
-
-                //Compute the Master Digest (a String) using the ComputeMasterDigest method
                 this.masterDigest = DigestService.getInstance().computeMasterDigest(fileInputStreams);
 
-                //Initialize the signature
-//                this.initializeSignature(p11_session, signatureKey);
+//                EIDSigningService.getInstance().initSign(pkcs11, p11_session);
                 MockSigningService.getInstance().initSign (this.masterDigest);
 
-                //Sign the data after converting the Master Digest string into a byte array
-//                byte[] signature = pkcs11.C_Sign(p11_session, masterDigest.getBytes());
+//                byte[] signature = EIDSigningService.getInstance().sign(pkcs11, p11_session, this.masterDigest);
                 byte[] signature = MockSigningService.getInstance().sign();
 
                 return (signature);
