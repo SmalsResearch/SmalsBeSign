@@ -20,12 +20,12 @@
        <RowConstraints valignment="CENTER" vgrow="SOMETIMES" />
      </rowConstraints>
       <children>
-         <Button fx:id="selectFileButton" mnemonicParsing="false" onAction="#handleSignFileButtonAction" text="Sign Files" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER">
+         <Button fx:id="selectFileButton" mnemonicParsing="false" onAction="#handleSignFilesButtonAction" text="Sign Files" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER">
             <GridPane.margin>
                <Insets />
             </GridPane.margin>
         </Button>
-         <Button fx:id="selectSignFileButton" layoutX="10.0" layoutY="43.0" mnemonicParsing="false" onAction="#handleSelectSignFileButtonAction" text="Add files..." textAlignment="CENTER" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
+         <Button fx:id="selectSignFileButton" layoutX="10.0" layoutY="43.0" mnemonicParsing="false" onAction="#handleSelectFilesToSignButtonAction" text="Add files..." textAlignment="CENTER" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
             <GridPane.margin>
                <Insets />
             </GridPane.margin>

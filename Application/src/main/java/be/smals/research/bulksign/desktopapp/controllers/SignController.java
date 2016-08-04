@@ -53,8 +53,7 @@ public class SignController {
      * @param event click on signFile button
      */
     @FXML
-    private void handleSignFileButtonAction(ActionEvent event) {
-
+    private void handleSignFilesButtonAction(ActionEvent event) {
         if (this.filesToSign.isEmpty()){
             Alert noFileSelectedDialog = new Alert(Alert.AlertType.INFORMATION, "Please, select at least one file.", ButtonType.CLOSE);
             noFileSelectedDialog.setTitle("No file to sign");
@@ -69,23 +68,7 @@ public class SignController {
                 }
 
                 byte[] signature = this.signingService.sign(inputFiles);
-                fileChooser.setTitle("Save the signature output");
-                fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Signature files (SIG)", "*.sig"));
-                File fileToSave = fileChooser.showSaveDialog(this.stage);
-                if (fileToSave != null) {
-                    SigningOutput signingOutput = new SigningOutput(null, signature);
-                    this.signingService.saveSigningOutput(signingOutput, fileToSave.getPath());
-                    Alert saveAlert = new Alert(Alert.AlertType.CONFIRMATION, "Signature successfully saved !", ButtonType.CLOSE);
-                    saveAlert.setTitle("Save Notification");
-                    saveAlert.setHeaderText("Saved !");
-                    saveAlert.showAndWait();
-                } else {
-                    Alert saveCanceledAlert = new Alert(Alert.AlertType.INFORMATION, "Save aborted", ButtonType.CLOSE);
-                    saveCanceledAlert.setTitle("Save canceled");
-                    saveCanceledAlert.setHeaderText(null);
-                    saveCanceledAlert.showAndWait();
-                }
-
+                this.saveSigningOutput(signature);
 
                 for (FileInputStream file : inputFiles)
                      file.close();
@@ -94,15 +77,14 @@ public class SignController {
                 e.printStackTrace();
             }
         }
-
     }
+    @FXML
     /**
      * Defines the selected file
      *
      * @param event click on the selectFile button
      */
-    @FXML
-    private void handleSelectSignFileButtonAction(ActionEvent event) {
+    private void handleSelectFilesToSignButtonAction(ActionEvent event) {
         List<File> files = fileChooser.showOpenMultipleDialog(this.stage);
         if (files != null) {
             files.stream().filter(file -> !this.filesToSign.contains(file)).forEach(file -> this.filesToSign.add(file));
@@ -110,9 +92,38 @@ public class SignController {
             this.populateListView();
         }
     }
+    /**
+     * Handles the output file saving process
+     *
+     * @param signature
+     * @throws IOException
+     * @throws ParserConfigurationException
+     * @throws TransformerException
+     */
+    private void saveSigningOutput(byte[] signature) throws IOException, ParserConfigurationException, TransformerException {
+        fileChooser.setTitle("Save the signature output");
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Signature files (SIG)", "*.sig"));
+        File fileToSave = fileChooser.showSaveDialog(this.stage);
+        if (fileToSave != null) {
+            SigningOutput signingOutput = new SigningOutput(null, signature);
+            this.signingService.saveSigningOutput(signingOutput, fileToSave.getPath());
+            Alert saveAlert = new Alert(Alert.AlertType.CONFIRMATION, "Signature successfully saved !", ButtonType.CLOSE);
+            saveAlert.setTitle("Save Notification");
+            saveAlert.setHeaderText("Saved !");
+            saveAlert.showAndWait();
+        } else {
+            Alert saveCanceledAlert = new Alert(Alert.AlertType.INFORMATION, "Save aborted", ButtonType.CLOSE);
+            saveCanceledAlert.setTitle("Save canceled");
+            saveCanceledAlert.setHeaderText(null);
+            saveCanceledAlert.showAndWait();
+        }
+    }
     public void setStage (Stage stage) {
         this.stage = stage;
     }
+    /**
+     * Populates the ListView with the files selected by the user
+     */
     private void populateListView () {
         this.filesListView.getItems().clear();
         for ( File file : this.filesToSign) {
