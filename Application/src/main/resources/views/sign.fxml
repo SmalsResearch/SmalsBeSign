@@ -38,7 +38,7 @@
             </GridPane.margin>
          </Label>
 
-          <ListView fx:id="filesListView" GridPane.rowIndex="1" />
+          <ListView fx:id="filesListView" GridPane.halignment="LEFT" GridPane.rowIndex="1" />
       <Separator orientation="VERTICAL" GridPane.columnIndex="1" />
       <Separator orientation="VERTICAL" GridPane.columnIndex="1" GridPane.rowIndex="1" />
       <Separator orientation="VERTICAL" GridPane.columnIndex="1" GridPane.rowIndex="2" />

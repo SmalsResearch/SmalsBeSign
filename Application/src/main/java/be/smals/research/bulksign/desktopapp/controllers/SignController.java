@@ -1,8 +1,9 @@
 package be.smals.research.bulksign.desktopapp.controllers;
 
 import be.smals.research.bulksign.desktopapp.services.SigningService;
+import be.smals.research.bulksign.desktopapp.utilities.FileListItem;
 import be.smals.research.bulksign.desktopapp.utilities.SigningOutput;
-import com.qoppa.pdfViewerFX.PDFViewer;
+import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
@@ -33,7 +34,7 @@ public class SignController {
     private SigningService signingService;
     private FileChooser fileChooser;
     private List<File> filesToSign;
-    private PDFViewer pdfViewer;
+//    private PDFViewer pdfViewer;
 
     @FXML private Label fileCountLabel;
     @FXML private ListView filesListView;
@@ -60,17 +61,18 @@ public class SignController {
      */
     @FXML
     private void handleSignFilesButtonAction(ActionEvent event) {
-        if (this.filesToSign.isEmpty()){
+        List<File> selectedFiles = this.getSelectedFiles ();
+        if (selectedFiles.isEmpty()){
             Alert noFileSelectedDialog = new Alert(Alert.AlertType.INFORMATION, "Please, select at least one file.", ButtonType.CLOSE);
             noFileSelectedDialog.setTitle("No file to sign");
             noFileSelectedDialog.setHeaderText(null);
             noFileSelectedDialog.showAndWait();
         } else {
-            FileInputStream[] inputFiles = new FileInputStream[this.filesToSign.size()];
+            FileInputStream[] inputFiles = new FileInputStream[selectedFiles.size()];
 
             try {
-                for ( int i=0; i < this.filesToSign.size(); i++ ) {
-                    inputFiles[i] = new FileInputStream(this.filesToSign.get(i));
+                for ( int i=0; i < selectedFiles.size(); i++ ) {
+                    inputFiles[i] = new FileInputStream(selectedFiles.get(i));
                 }
 
                 byte[] signature = this.signingService.sign(inputFiles);
@@ -110,6 +112,7 @@ public class SignController {
         fileChooser.setTitle("Save the signature output");
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Signature files (SIG)", "*.sig"));
         File fileToSave = fileChooser.showSaveDialog(this.stage);
+        fileChooser.getExtensionFilters().clear();
         if (fileToSave != null) {
             SigningOutput signingOutput = new SigningOutput(null, signature);
             this.signingService.saveSigningOutput(signingOutput, fileToSave.getPath());
@@ -132,9 +135,25 @@ public class SignController {
      */
     private void populateListView () {
         this.filesListView.getItems().clear();
+        List<FileListItem> fileListItems = new ArrayList<>();
         for ( File file : this.filesToSign) {
-            Label fileLabel = new Label(file.getName());
-            this.filesListView.getItems().add(fileLabel);
+            FileListItem listItem = new FileListItem(file);
+            fileListItems.add(listItem);
         }
+        this.filesListView.setItems(FXCollections.observableList(fileListItems));
+    }
+    /**
+     * Returns selected files from the file list
+     *
+     * @return the list of files
+     */
+    private List<File> getSelectedFiles () {
+        List<File> selectedFiles = new ArrayList<>();
+        for ( Object item : this.filesListView.getItems() ){
+            FileListItem fileListItem = (FileListItem) item;
+            if (fileListItem.isSelected())
+                selectedFiles.add(fileListItem.getFile());
+        }
+        return selectedFiles;
     }
 }

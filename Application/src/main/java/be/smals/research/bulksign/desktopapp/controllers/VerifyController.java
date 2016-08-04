@@ -84,6 +84,7 @@ public class VerifyController {
         this.fileChooser.setTitle("Select the signature file");
         this.fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Signature files (SIG)", "*.sig"));
         File file = this.fileChooser.showOpenDialog(this.stage);
+        this.fileChooser.getExtensionFilters().clear();
         if (file != null) {
             this.signatureFile = file;
             this.signatureFileLabel.textProperty().set(file.getName());
@@ -99,7 +100,7 @@ public class VerifyController {
      */
     @FXML
     private void handleSelectSignFileButtonAction(ActionEvent event) {
-        File file = fileChooser.showOpenDialog(this.stage);
+        File file = this.fileChooser.showOpenDialog(this.stage);
         if (file != null) {
             this.signedFile = file;
             this.signedFileLabel.textProperty().set(file.getName());

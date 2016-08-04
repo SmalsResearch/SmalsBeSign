@@ -8,7 +8,6 @@ import java.security.*;
 class EIDSigningService {
 
     private static EIDSigningService instance = new EIDSigningService();
-    private Signature signatureService;
 
     private EIDSigningService() {}
     public static EIDSigningService getInstance () {

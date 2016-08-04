@@ -33,7 +33,7 @@ public class VerifySigningService {
         boolean found = this.isIndividualDigestPartOfMasterDigest(masterDigest, individualDigest);
 
         if (!found)
-            throw new BulkSignException("Invalid Batch Signature (cause : Individual Digest and Master Digest do not match)");
+            return false;
 
         /* Verify that Signature of Master Digest is Valid*/
         Signature signer = Signature.getInstance("SHA1withRSA", "BC");
@@ -59,6 +59,14 @@ public class VerifySigningService {
         byte[] signature                = DatatypeConverter.parseBase64Binary(signingOutputElement.getElementsByTagName("Signature").item(0).getTextContent());
         return new SigningOutput(masterDigest, signature);
     }
+
+    /**
+     * Returns true if the individualDigest is a part of the masterDigest
+     *
+     * @param masterDigest
+     * @param individualDigest
+     * @return
+     */
     private boolean isIndividualDigestPartOfMasterDigest(String masterDigest, String individualDigest) {
         System.out.print("The size of MasterDigest is:  ");
         System.out.println(masterDigest.length());
