@@ -134,6 +134,7 @@ public class SignController {
     }
     public void setStage (Stage stage) {
         this.stage = stage;
+
         this.viewerFx = new OpenViewerFX(readerPane, getClass().getClassLoader().getResource("lib/OpenViewerFx/preferences/custom.xml").getPath());
         this.viewerFx.getRoot().prefWidthProperty().bind(readerPane.widthProperty());
         this.viewerFx.getRoot().prefHeightProperty().bind(readerPane.heightProperty());
