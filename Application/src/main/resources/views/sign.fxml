@@ -2,9 +2,15 @@
 
 <?import com.jfoenix.controls.JFXButton?>
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<GridPane xmlns="http://javafx.com/javafx/8.0.101" xmlns:fx="http://javafx.com/fxml/1" fx:controller="be.smals.research.bulksign.desktopapp.controllers.SignController">
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.RowConstraints?>
+
+<GridPane stylesheets="@css/common.css" xmlns="http://javafx.com/javafx/8.0.101" xmlns:fx="http://javafx.com/fxml/1" fx:controller="be.smals.research.bulksign.desktopapp.controllers.SignController">
      <columnConstraints>
        <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" percentWidth="30.0" />
       <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" percentWidth="5.0" />
@@ -16,8 +22,11 @@
       <RowConstraints percentHeight="15.0" valignment="CENTER" vgrow="SOMETIMES" />
      </rowConstraints>
       <children>
-         <JFXButton fx:id="selectFileButton" buttonType="RAISED" mnemonicParsing="false" onAction="#handleSignFilesButtonAction" style="-fx-background-color: #52BBFE;" text="Sign Files" textAlignment="CENTER" textFill="WHITE" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER" />
-         <JFXButton fx:id="selectSignFileButton" layoutX="10.0" layoutY="43.0" mnemonicParsing="false" onAction="#handleSelectFilesToSignButtonAction" style="-fx-background-color: #52BBFE;" text="Add files..." textAlignment="CENTER" textFill="WHITE" GridPane.halignment="RIGHT" GridPane.valignment="CENTER" />
+         <JFXButton fx:id="signFilesButton" alignment="CENTER" buttonType="RAISED" contentDisplay="CENTER" mnemonicParsing="false" onAction="#handleSignFilesButtonAction" styleClass="button-raised" text="SIGN FILES" textAlignment="CENTER" textFill="WHITE" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER">
+         <opaqueInsets>
+            <Insets />
+         </opaqueInsets></JFXButton>
+         <JFXButton fx:id="selectSignFileButton" layoutX="10.0" layoutY="43.0" mnemonicParsing="false" onAction="#handleSelectFilesToSignButtonAction" styleClass="button-s" text="Add files..." textAlignment="CENTER" textFill="WHITE" GridPane.halignment="RIGHT" GridPane.valignment="CENTER" />
          <Label fx:id="fileCountLabel" text="No file selected" GridPane.halignment="LEFT">
             <GridPane.margin>
                <Insets />

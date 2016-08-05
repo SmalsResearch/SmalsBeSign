@@ -56,7 +56,7 @@ public class VerifySigningService {
 
         Element signingOutputElement    = (Element) document.getElementsByTagName("SigningOutput").item(0);
         String masterDigest             = signingOutputElement.getElementsByTagName("MasterDigest").item(0).getTextContent();
-        byte[] signature                = DatatypeConverter.parseBase64Binary(signingOutputElement.getElementsByTagName("Signature").item(0).getTextContent());
+        byte[] signature                = DatatypeConverter.parseHexBinary(signingOutputElement.getElementsByTagName("Signature").item(0).getTextContent());
         return new SigningOutput(masterDigest, signature);
     }
 

@@ -11,6 +11,7 @@ import javax.xml.bind.DatatypeConverter;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
@@ -92,11 +93,13 @@ public class SigningService {
         rootElement.appendChild(masterDigestElement);
         // Signature
         Element signatureElement = document.createElement("Signature");
-        signatureElement.appendChild(document.createTextNode(DatatypeConverter.printBase64Binary(signingOutput.signature)));
+        signatureElement.appendChild(document.createTextNode(DatatypeConverter.printHexBinary(signingOutput.signature)));
         rootElement.appendChild(signatureElement);
         // XML - Write
         TransformerFactory transformerFactory   = TransformerFactory.newInstance();
         Transformer transformer                 = transformerFactory.newTransformer();
+        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+        transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
         DOMSource source                        = new DOMSource(document);
         StreamResult result                     = new StreamResult(new File(filePath));
         transformer.transform(source, result);
@@ -123,7 +126,6 @@ public class SigningService {
 
         return keyHandles[0];
     }
-
     private void initializeSignature(long p11_session, long signatureKey) throws PKCS11Exception {
         CK_MECHANISM mechanism = new CK_MECHANISM();
         mechanism.mechanism = PKCS11Constants.CKM_SHA1_RSA_PKCS;
