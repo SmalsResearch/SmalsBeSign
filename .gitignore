@@ -62,7 +62,6 @@ bulksigndesktop/.idea
 ## File-based project format:
 *.iws
 *.iml
-**/*.iml
 
 ## Plugin-specific files:
 
