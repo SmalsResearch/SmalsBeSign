@@ -13,12 +13,24 @@
         <mainClass>be.smals.research.bulksign.desktopapp.Main</mainClass>
     </properties>
 
+    <repositories>
+        <repository>
+            <id>jfoenix</id>
+            <url>https://oss.sonatype.org/content/groups/public</url>
+        </repository>
+    </repositories>
+
 
     <dependencies>
         <dependency>
             <groupId>org.jpedal</groupId>
             <artifactId>OpenViewerFX</artifactId>
             <version>7.2.30</version>
+        </dependency>
+        <dependency>
+            <groupId>com.jfoenix</groupId>
+            <artifactId>jfoenix</artifactId>
+            <version>0.0.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.bouncycastle</groupId>

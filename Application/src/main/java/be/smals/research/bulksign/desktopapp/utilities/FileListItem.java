@@ -1,12 +1,11 @@
 package be.smals.research.bulksign.desktopapp.utilities;
 
+import com.jfoenix.controls.JFXCheckBox;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
-import javafx.stage.FileChooser;
 
 import java.io.File;
 
@@ -15,29 +14,28 @@ import java.io.File;
  */
 public class FileListItem extends HBox {
     private Label namelabel;
-    private CheckBox selectCheckBox;
+    private JFXCheckBox selectCheckBox;
     private Button viewButton;
     private File file;
+    private String fileExtension;
 
     public FileListItem (File file) {
         super();
 
         this.file           = file;
         this.namelabel      = new Label(file.getName());
-        this.selectCheckBox = new CheckBox();
+        this.selectCheckBox = new JFXCheckBox();
+        this.fileExtension = this.retrieveFileExtension(this.file.getName());
 
-        this.viewButton     = new Button("Preview");
+        this.viewButton = (this.fileExtension.equalsIgnoreCase("pdf")) ? new Button("Preview") : new Button("Open");
 
         this.namelabel.setMaxWidth(Double.MAX_VALUE);
         HBox.setHgrow(this.namelabel, Priority.ALWAYS);
 
-        this.getChildren().addAll(this.selectCheckBox, this.namelabel);
-        if (this.getFileExtension(file.getName()).equalsIgnoreCase("pdf")) {
-            this.getChildren().add(this.viewButton);
-        }
+        this.getChildren().addAll(this.selectCheckBox, this.namelabel, this.viewButton);
     }
 
-    private String getFileExtension (String fileName) {
+    private String retrieveFileExtension(String fileName) {
         String extension = "";
         int i = fileName.lastIndexOf('.');
         // files without extension
@@ -49,7 +47,8 @@ public class FileListItem extends HBox {
 
         return extension;
     }
-    public boolean isSelected () {
+
+    public boolean isFileSelected() {
         return this.selectCheckBox.isSelected();
     }
 
@@ -58,5 +57,8 @@ public class FileListItem extends HBox {
     }
     public File getFile() {
         return this.file;
+    }
+    public String getFileExtension () {
+        return this.fileExtension;
     }
 }

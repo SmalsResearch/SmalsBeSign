@@ -4,8 +4,8 @@ import be.smals.research.bulksign.desktopapp.services.SigningService;
 import be.smals.research.bulksign.desktopapp.utilities.FileListItem;
 import be.smals.research.bulksign.desktopapp.utilities.SigningOutput;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
@@ -21,6 +21,7 @@ import sun.security.pkcs11.wrapper.PKCS11Exception;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
+import java.awt.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -100,7 +101,7 @@ public class SignController {
         List<File> files = fileChooser.showOpenMultipleDialog(this.stage);
         if (files != null) {
             files.stream().filter(file -> !this.filesToSign.contains(file)).forEach(file -> this.filesToSign.add(file));
-            this.fileCountLabel.textProperty().set(this.filesToSign.size() + " file(s) to sign");
+            this.fileCountLabel.textProperty().set(this.filesToSign.size() + " file(s)");
             this.populateListView();
         }
     }
@@ -142,21 +143,40 @@ public class SignController {
      * Populates the ListView with the files selected by the user
      */
     private void populateListView () {
-        this.filesListView.getItems().clear();
+        ObservableList<FileListItem> items = this.filesListView.getItems();
+        List<File> files = this.getCurrentFiles(items);
         List<FileListItem> fileListItems = new ArrayList<>();
-        for ( File file : this.filesToSign) {
+        this.filesToSign.stream().filter(file -> !files.contains(file)).forEach(file -> {
             FileListItem listItem = new FileListItem(file);
-            listItem.setViewButtonAction(new EventHandler() {
-                @Override
-                public void handle(Event event) {
+            EventHandler event;
+            if (listItem.getFileExtension().equalsIgnoreCase("pdf")) {
+                event = event1 -> {
                     Object[] args = {file};
                     viewerFx.executeCommand(Commands.OPENFILE, args);
-                }
-            });
+                };
+            } else {
+                event = event1 -> {
+                    try {
+                        Desktop.getDesktop().open(file);
+                    } catch (IOException e) {
+                        Alert noAppAssociated = new Alert(Alert.AlertType.ERROR, e.getMessage());
+                        noAppAssociated.showAndWait();
+                    }
+                };
+            }
+            listItem.setViewButtonAction(event);
+
 
             fileListItems.add(listItem);
+        });
+        this.filesListView.getItems().addAll(FXCollections.observableList(fileListItems));
+    }
+    private List<File> getCurrentFiles (ObservableList<FileListItem> items) {
+        List<File> files = new ArrayList<>();
+        for (FileListItem item : items) {
+            files.add(item.getFile());
         }
-        this.filesListView.setItems(FXCollections.observableList(fileListItems));
+        return files;
     }
     /**
      * Returns selected files from the file list
@@ -167,7 +187,7 @@ public class SignController {
         List<File> selectedFiles = new ArrayList<>();
         for ( Object item : this.filesListView.getItems() ){
             FileListItem fileListItem = (FileListItem) item;
-            if (fileListItem.isSelected())
+            if (fileListItem.isFileSelected())
                 selectedFiles.add(fileListItem.getFile());
         }
         return selectedFiles;

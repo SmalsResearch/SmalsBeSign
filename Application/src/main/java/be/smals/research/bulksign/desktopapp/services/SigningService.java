@@ -1,5 +1,7 @@
 package be.smals.research.bulksign.desktopapp.services;
 
+import be.smals.research.bulksign.desktopapp.utilities.Settings;
+import be.smals.research.bulksign.desktopapp.utilities.Settings.Signer;
 import be.smals.research.bulksign.desktopapp.utilities.SigningOutput;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -49,12 +51,14 @@ public class SigningService {
             long p11_session = pkcs11.C_OpenSession(0, PKCS11Constants.CKF_SERIAL_SESSION, null, null);
             try {
                 this.masterDigest = DigestService.getInstance().computeMasterDigest(fileInputStreams);
-
-//                EIDSigningService.getInstance().initSign(pkcs11, p11_session);
-                MockSigningService.getInstance().initSign (this.masterDigest);
-
-//                byte[] signature = EIDSigningService.getInstance().sign(pkcs11, p11_session, this.masterDigest);
-                byte[] signature = MockSigningService.getInstance().sign();
+                byte[] signature;
+                if (Settings.getInstance().getSigner() == Signer.EID) {
+                    EIDSigningService.getInstance().initSign(pkcs11, p11_session);
+                    signature = EIDSigningService.getInstance().sign(pkcs11, p11_session, this.masterDigest);
+                } else {
+                    MockSigningService.getInstance().initSign(this.masterDigest);
+                    signature = MockSigningService.getInstance().sign();
+                }
 
                 return (signature);
 
