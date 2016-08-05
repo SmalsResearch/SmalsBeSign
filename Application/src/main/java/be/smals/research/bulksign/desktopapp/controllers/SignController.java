@@ -187,7 +187,7 @@ public class SignController {
         List<File> selectedFiles = new ArrayList<>();
         for ( Object item : this.filesListView.getItems() ){
             FileListItem fileListItem = (FileListItem) item;
-            if (fileListItem.isSelected())
+            if (fileListItem.isFileSelected())
                 selectedFiles.add(fileListItem.getFile());
         }
         return selectedFiles;

@@ -1,8 +1,8 @@
 package be.smals.research.bulksign.desktopapp.utilities;
 
+import com.jfoenix.controls.JFXCheckBox;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
@@ -14,7 +14,7 @@ import java.io.File;
  */
 public class FileListItem extends HBox {
     private Label namelabel;
-    private CheckBox selectCheckBox;
+    private JFXCheckBox selectCheckBox;
     private Button viewButton;
     private File file;
     private String fileExtension;
@@ -24,7 +24,7 @@ public class FileListItem extends HBox {
 
         this.file           = file;
         this.namelabel      = new Label(file.getName());
-        this.selectCheckBox = new CheckBox();
+        this.selectCheckBox = new JFXCheckBox();
         this.fileExtension = this.retrieveFileExtension(this.file.getName());
 
         this.viewButton = (this.fileExtension.equalsIgnoreCase("pdf")) ? new Button("Preview") : new Button("Open");
@@ -47,7 +47,8 @@ public class FileListItem extends HBox {
 
         return extension;
     }
-    public boolean isSelected () {
+
+    public boolean isFileSelected() {
         return this.selectCheckBox.isSelected();
     }
 
