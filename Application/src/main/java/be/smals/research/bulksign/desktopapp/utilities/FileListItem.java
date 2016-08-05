@@ -17,6 +17,7 @@ public class FileListItem extends HBox {
     private CheckBox selectCheckBox;
     private Button viewButton;
     private File file;
+    private String fileExtension;
 
     public FileListItem (File file) {
         super();
@@ -24,19 +25,17 @@ public class FileListItem extends HBox {
         this.file           = file;
         this.namelabel      = new Label(file.getName());
         this.selectCheckBox = new CheckBox();
+        this.fileExtension = this.retrieveFileExtension(this.file.getName());
 
-        this.viewButton     = new Button("Preview");
+        this.viewButton = (this.fileExtension.equalsIgnoreCase("pdf")) ? new Button("Preview") : new Button("Open");
 
         this.namelabel.setMaxWidth(Double.MAX_VALUE);
         HBox.setHgrow(this.namelabel, Priority.ALWAYS);
 
-        this.getChildren().addAll(this.selectCheckBox, this.namelabel);
-        if (this.getFileExtension(file.getName()).equalsIgnoreCase("pdf")) {
-            this.getChildren().add(this.viewButton);
-        }
+        this.getChildren().addAll(this.selectCheckBox, this.namelabel, this.viewButton);
     }
 
-    private String getFileExtension (String fileName) {
+    private String retrieveFileExtension(String fileName) {
         String extension = "";
         int i = fileName.lastIndexOf('.');
         // files without extension
@@ -57,5 +56,8 @@ public class FileListItem extends HBox {
     }
     public File getFile() {
         return this.file;
+    }
+    public String getFileExtension () {
+        return this.fileExtension;
     }
 }

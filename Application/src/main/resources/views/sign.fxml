@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import com.jfoenix.controls.JFXButton?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
@@ -22,7 +23,7 @@
       <RowConstraints percentHeight="15.0" valignment="CENTER" vgrow="SOMETIMES" />
      </rowConstraints>
       <children>
-         <Button fx:id="selectFileButton" mnemonicParsing="false" onAction="#handleSignFilesButtonAction" text="Sign Files" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER">
+         <Button fx:id="selectFileButton" mnemonicParsing="false" onAction="#handleSignFilesButtonAction" text="Sign Files" GridPane.halignment="LEFT" GridPane.rowIndex="2" GridPane.valignment="CENTER">
             <GridPane.margin>
                <Insets />
             </GridPane.margin>
@@ -43,6 +44,7 @@
       <Separator orientation="VERTICAL" GridPane.columnIndex="1" GridPane.rowIndex="1" />
       <Separator orientation="VERTICAL" GridPane.columnIndex="1" GridPane.rowIndex="2" />
       <Pane fx:id="readerPane" GridPane.columnIndex="2" GridPane.rowSpan="2147483647" />
+      <JFXButton mnemonicParsing="false" style="-fx-background-color: #5AC9B9;" text="Test JFXButton" textAlignment="CENTER" textFill="WHITE" GridPane.halignment="RIGHT" GridPane.rowIndex="2" />
       </children>
    <padding>
       <Insets bottom="24.0" left="24.0" right="24.0" top="24.0" />
