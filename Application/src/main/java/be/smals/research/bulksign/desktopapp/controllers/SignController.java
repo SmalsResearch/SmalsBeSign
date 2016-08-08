@@ -16,7 +16,8 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
-import javafx.scene.layout.GridPane;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -51,7 +52,6 @@ public class SignController {
     @FXML private Label fileCountLabel;
     @FXML private ListView filesListView;
     @FXML private Pane readerPane;
-    @FXML private GridPane rootSign;
 
     /**
      * Constructor
@@ -152,6 +152,12 @@ public class SignController {
         this.viewerFx.getRoot().prefWidthProperty().bind(readerPane.widthProperty());
         this.viewerFx.getRoot().prefHeightProperty().bind(readerPane.heightProperty());
         this.viewerFx.setupViewer();
+
+        // Update viewer look
+        BorderPane viewerPane = (BorderPane) this.readerPane.getChildren().get(0);
+        viewerPane.setTop(null);
+        HBox bottomPane = (HBox) viewerPane.getBottom();
+        bottomPane.getChildren().remove(0, 2);
     }
     /**
      * Populates the ListView with the files selected by the user
