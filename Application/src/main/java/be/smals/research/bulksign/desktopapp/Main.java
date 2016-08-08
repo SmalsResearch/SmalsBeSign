@@ -3,43 +3,24 @@ package be.smals.research.bulksign.desktopapp;
 
 import be.fedict.eid.applet.*;
 import be.fedict.eid.applet.Runtime;
-import be.fedict.eid.applet.sc.PcscEid;
-import be.fedict.eid.applet.shared.*;
+import be.fedict.eid.applet.shared.AuthSignRequestMessage;
+import be.fedict.eid.applet.shared.SignRequestMessage;
+import be.fedict.eid.applet.shared.SignatureDataMessage;
 import be.smals.research.bulksign.desktopapp.controllers.MainController;
-import be.smals.research.bulksign.desktopapp.controllers.SignController;
-import be.smals.research.bulksign.desktopapp.controllers.VerifyController;
+import be.smals.research.bulksign.desktopapp.services.SigningService;
 import be.smals.research.bulksign.desktopapp.utilities.Settings;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
-import javafx.scene.layout.BorderPane;
-import javafx.stage.Stage;
-import org.bouncycastle.util.encoders.Hex;
-import sun.security.pkcs11.wrapper.PKCS11Exception;
-
-import java.io.IOException;
-import java.security.Security;
-import java.util.Optional;
-
-import be.smals.research.bulksign.desktopapp.controllers.MainController;
-import be.smals.research.bulksign.desktopapp.utilities.Settings;
-import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
+import sun.security.pkcs11.wrapper.PKCS11Exception;
 
-import java.security.Security;
-
-
-import javax.smartcardio.CardException;
 import java.awt.*;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -48,12 +29,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.Security;
 import java.util.Arrays;
 import java.util.Locale;
-import java.util.Optional;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import java.util.stream.Stream;
-
-import java.util.List;
 
 public class Main extends Application {
 
@@ -69,12 +45,12 @@ public class Main extends Application {
             controller = new Controller(new View() {
                 @Override
                 public void addDetailMessage(String detailMessage) {
-                    System.out.println("*detail message: "+detailMessage);
+                    System.out.println("*detail message: " + detailMessage);
                 }
 
                 @Override
                 public void setStatusMessage(Status status, Messages.MESSAGE_ID messageId) {
-                    System.out.print("*status message: "+status);
+                    System.out.print("*status message: " + status);
                     System.out.println(" / " + messageId);
                 }
 
@@ -140,7 +116,7 @@ public class Main extends Application {
 
                 @Override
                 public String getParameter(String name) {
-                    System.out.println(">called getParameter: "+name);
+                    System.out.println(">called getParameter: " + name);
                     return null;
                 }
 
@@ -208,26 +184,26 @@ public class Main extends Application {
         }, new Messages(Locale.US));*/
         int inputlength = 160;
         byte[] input = new byte[inputlength];
-        IntStream.range(0,inputlength).forEach(i-> input[i] = (byte)i);
+        IntStream.range(0, inputlength).forEach(i -> input[i] = (byte) i);
         byte[] digest = getSha1(input);
-        System.out.println("INPUT: "+Arrays.toString(digest));
+        System.out.println("INPUT: " + Arrays.toString(digest));
         try {
             System.out.println("TRYING TO SIGN! ");
             InputStream[] inputs = new InputStream[1];
-            AuthSignRequestMessage request = new AuthSignRequestMessage(digest,"SHA-1","<-please sign->",false);
-            SignRequestMessage request1 = new SignRequestMessage(digest,"SHA-1","<--now sign for real-->",false,false,false);
+            AuthSignRequestMessage request = new AuthSignRequestMessage(digest, "SHA-1", "<-please sign->", false);
+            SignRequestMessage request1 = new SignRequestMessage(digest, "SHA-1", "<--now sign for real-->", false, false, false);
             //AuthSignResponseMessage authSignResponseMessage = (AuthSignResponseMessage) controller.performAuthnSignOperation(request);
             //inputs[0] = new ByteArrayInputStream(bts);
             //Settings.getInstance().setSigner(Settings.Signer.EID);
             byte[] result = null;//authSignResponseMessage.signatureValue;//signer.sign(inputs);
             //byte[] result = eidReader.sign(bts, "SHA-1-PSS",false);
-            System.out.println("OUTPUT: "+Arrays.toString(result));
+            System.out.println("OUTPUT: " + Arrays.toString(result));
             //System.out.println("LENGTH: "+result.length);
 
             SignatureDataMessage signatureDataMessage = (SignatureDataMessage) controller.performEidSignOperation(request1);
             result = signatureDataMessage.signatureValue;
-            System.out.println("OUTPUT: "+Arrays.toString(result));
-            System.out.println("LENGTH: "+result.length);
+            System.out.println("OUTPUT: " + Arrays.toString(result));
+            System.out.println("LENGTH: " + result.length);
             System.exit(0);
         } catch (Exception e) {
             e.printStackTrace();
@@ -259,7 +235,7 @@ public class Main extends Application {
     }
 
     private static byte[] getSha1(byte[] input) {
-        System.out.println("HASH: "+Arrays.toString(input));
+        System.out.println("HASH: " + Arrays.toString(input));
         MessageDigest digest = null;
         try {
             digest = MessageDigest.getInstance("SHA-1");
@@ -267,31 +243,31 @@ public class Main extends Application {
             e.printStackTrace();
         }
         byte[] result = digest.digest(input);
-        System.out.println("HASH: "+Arrays.toString(result));
+        System.out.println("HASH: " + Arrays.toString(result));
         return result;
     }
 
     @Override
     public void start(Stage primaryStage) throws Exception {
         Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
-        FXMLLoader loader   = new FXMLLoader(getClass().getClassLoader().getResource("views/main.fxml"));
-        BorderPane root       = loader.load();
+        FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("views/main.fxml"));
+        BorderPane root = loader.load();
         primaryStage.setTitle("BulkSign Desktop");
 
         MainController controller = loader.getController();
         controller.setStage(primaryStage);
 
-        MenuBar menuBar         = new MenuBar();
-        Menu fileMenu           = new Menu("File");
-        Menu taskMenu           = new Menu("Task");
-        Menu signerMenu         = new Menu("Signer");
+        MenuBar menuBar = new MenuBar();
+        Menu fileMenu = new Menu("File");
+        Menu taskMenu = new Menu("Task");
+        Menu signerMenu = new Menu("Signer");
         menuBar.getMenus().addAll(fileMenu, taskMenu, signerMenu);
-        MenuItem exitMenuItem   = new MenuItem("Exit...");
-        MenuItem signMenuItem   = new MenuItem("Sign");
+        MenuItem exitMenuItem = new MenuItem("Exit...");
+        MenuItem signMenuItem = new MenuItem("Sign");
         MenuItem verifyMenuItem = new MenuItem("Verify");
-        final ToggleGroup signerGroup   = new ToggleGroup();
-        RadioMenuItem eidMenuItem       = new RadioMenuItem("eID");
-        RadioMenuItem mockMenuItem      = new RadioMenuItem("Mock");
+        final ToggleGroup signerGroup = new ToggleGroup();
+        RadioMenuItem eidMenuItem = new RadioMenuItem("eID");
+        RadioMenuItem mockMenuItem = new RadioMenuItem("Mock");
         eidMenuItem.setUserData(Settings.Signer.EID);
         mockMenuItem.setUserData(Settings.Signer.MOCK);
         eidMenuItem.setToggleGroup(signerGroup);
@@ -303,13 +279,13 @@ public class Main extends Application {
         root.setTop(menuBar);
 
         exitMenuItem.setOnAction(event -> {
-            controller.exitMenuItemAction ();
+            controller.exitMenuItemAction();
         });
-        signMenuItem.setOnAction( event -> {
-            controller.signMenuItemAction ();
+        signMenuItem.setOnAction(event -> {
+            controller.signMenuItemAction();
         });
-        verifyMenuItem.setOnAction( event -> {
-            controller.verifyMenuItemAction ();
+        verifyMenuItem.setOnAction(event -> {
+            controller.verifyMenuItemAction();
         });
         signerGroup.selectedToggleProperty().addListener((ov, old_toggle, new_toggle) -> {
             if (signerGroup.getSelectedToggle() != null) {
