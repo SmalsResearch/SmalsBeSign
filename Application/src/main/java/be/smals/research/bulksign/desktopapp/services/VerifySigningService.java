@@ -12,9 +12,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.*;
 import java.security.*;
-import java.security.cert.CertificateException;
-import java.security.cert.CertificateFactory;
-import java.security.cert.X509Certificate;
+import java.security.cert.*;
 
 public class VerifySigningService {
 
@@ -23,29 +21,25 @@ public class VerifySigningService {
     public boolean verifySigning (FileInputStream file, byte[] signature, String masterDigest, PublicKey key)
             throws NoSuchProviderException, NoSuchAlgorithmException, IOException, BulkSignException,
                     InvalidKeyException, SignatureException {
-        /* Compute Individual Digest of document */
         String individualDigest = DigestService.getInstance().computeIndividualDigest(file);
 
-        /* Verify that Individual Digest is part of Master Digest.
-
-         To do this, read all the Digests that are concatenated in the Master Digest
-         and check if at least one of them is equal to the Individual Digest
-         */
+        // Verify that Individual Digest is part of Master Digest.
         boolean found = this.isIndividualDigestPartOfMasterDigest(masterDigest, individualDigest);
-
         if (!found)
             return false;
 
-        /* Verify that Signature of Master Digest is Valid*/
+        // Verify that Signature of Master Digest is Valid
         Signature signer = Signature.getInstance("SHA1withRSA", "BC");
-
         signer.initVerify(key);
-
         for (int j = 0; j < masterDigest.length(); j++) {
             signer.update(masterDigest.getBytes()[j]);
         }
 
         return signer.verify(signature);
+    }
+
+    public void verifyCertificate (X509Certificate certificate) throws CertificateNotYetValidException, CertificateExpiredException {
+        certificate.checkValidity();
     }
 
     public SigningOutput getSigningOutput (File signingOutputFile) throws ParserConfigurationException, IOException, SAXException, CertificateException, NoSuchProviderException {

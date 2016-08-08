@@ -185,8 +185,6 @@ public class SignController {
                 };
             }
             listItem.setViewButtonAction(event);
-
-
             fileListItems.add(listItem);
         });
         this.filesListView.getItems().addAll(FXCollections.observableList(fileListItems));
