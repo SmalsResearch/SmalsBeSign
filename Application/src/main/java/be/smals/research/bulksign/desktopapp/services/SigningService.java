@@ -23,6 +23,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
+import java.util.List;
 
 public class SigningService {
 
@@ -98,23 +99,31 @@ public class SigningService {
         signatureElement.appendChild(document.createTextNode(DatatypeConverter.printHexBinary(signingOutput.signature)));
         rootElement.appendChild(signatureElement);
         // Certificate
-        if (signingOutput.certificate != null) {
-            Element certificateElement = this.createCertificateXMLElement(signingOutput.certificate, document);
-            rootElement.appendChild(certificateElement);
+        if (signingOutput.certificateChain != null) {
+            Element certificateChainElement = this.createCertificateXMLElement(signingOutput.certificateChain, document);
+            rootElement.appendChild(certificateChainElement);
         }
         // XML - Write
         this.writeXMLDocument(filePath, document);
     }
 
-    private Element createCertificateXMLElement(X509Certificate certificate, Document document) throws CertificateEncodingException {
-        Element certificateElement = document.createElement("Certificate");
-//        Element certificateVersionElement = document.createElement("Version");
-//        certificateVersionElement.appendChild(document.createTextNode(certificate. getVersion() + ""));
-//        Element certificateSerialNumberElement = document.createElement("SerialNumber");
-//        certificateSerialNumberElement.appendChild(document.createTextNode(certificate.getSerialNumber() + ""));
-        byte[] encodedCertificate = certificate.getEncoded();
-        Text certificateElementContent = document.createTextNode(DatatypeConverter.printHexBinary(encodedCertificate));
-        certificateElement.appendChild(certificateElementContent);
+    private Element createCertificateXMLElement(List<X509Certificate> certificateChain, Document document) throws CertificateEncodingException {
+        Element certificateElement              = document.createElement("Certificate");
+        Element rootCertificateElement          = document.createElement("Root");
+        Element intermediateCertificateElement  = document.createElement("Intermediate");
+        Element userCertificateElement          = document.createElement("User");
+        byte[] encodedCertificate = certificateChain.get(0).getEncoded();
+        Text rootCertificateElementContent = document.createTextNode(DatatypeConverter.printHexBinary(encodedCertificate));
+        rootCertificateElement.appendChild(rootCertificateElementContent);
+        encodedCertificate = certificateChain.get(1).getEncoded();
+        Text intermediateCertificateElementContent = document.createTextNode(DatatypeConverter.printHexBinary(encodedCertificate));
+        intermediateCertificateElement.appendChild(intermediateCertificateElementContent);
+        encodedCertificate = certificateChain.get(2).getEncoded();
+        Text userCertificateElementContent = document.createTextNode(DatatypeConverter.printHexBinary(encodedCertificate));
+        userCertificateElement.appendChild(userCertificateElementContent);
+        certificateElement.appendChild(rootCertificateElement);
+        certificateElement.appendChild(intermediateCertificateElement);
+        certificateElement.appendChild(userCertificateElement);
         return certificateElement;
     }
 

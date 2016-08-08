@@ -14,6 +14,7 @@ import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateParsingException;
 import java.security.cert.X509Certificate;
 import java.security.spec.InvalidKeySpecException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -22,12 +23,11 @@ public class MockKeyService extends KeyService {
     private static MockKeyService instance = new MockKeyService();
     private PrivateKey privateKey;
     private PublicKey publicKey;
-    private X509Certificate certificate;
     private List<X509Certificate> certificateChain;
 
     private MockKeyService () {
         Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
-
+        this.certificateChain = new ArrayList<>();
         this.generateKeys ();
         try {
             this.generateCertificate ();
@@ -134,7 +134,7 @@ public class MockKeyService extends KeyService {
         return null;
     }
     @Override
-    public X509Certificate getCertificate () {
-        return this.certificate;
+    public List<X509Certificate> getCertificateChain () {
+        return this.certificateChain;
     }
 }
