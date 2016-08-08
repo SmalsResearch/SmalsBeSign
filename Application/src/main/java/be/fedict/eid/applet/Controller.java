@@ -651,8 +651,6 @@ public class Controller {
 			try {
 				signatureValue = this.pcscEidSpi.sign(signRequestMessage.digestValue, signRequestMessage.digestAlgo,PcscEid.NON_REP_KEY_ID,
 						requireSecureReader);
-				System.out.println("SIGNATURE: "+ Arrays.toString(signatureValue));
-				System.out.println("LENGTH: "+signatureValue.length);
 			} catch (UserCancelledException e) {
 				if (false == this.runtime.gotoCancelPage()) {
 					throw new SecurityException("sign operation aborted");
@@ -675,21 +673,28 @@ public class Controller {
 			//System.out.println("citizenCACERTfile: "+ Arrays.toString(citizenCaCertFile));
 			//System.out.println("rootCACERTfile: "+ Arrays.toString(rootCaCertFile));
 
+
 			this.view.setProgressIndeterminate();
 
 			if (signRequestMessage.logoff && !signRequestMessage.removeCard) {
 				this.pcscEidSpi.logoff();
 			}
+
+
 			if (signRequestMessage.removeCard) {
 				setStatusMessage(Status.NORMAL, MESSAGE_ID.REMOVE_CARD);
 				this.pcscEidSpi.removeCard();
 			}
+
+
 		} finally {
 			this.pcscEidSpi.close();
 		}
 
+
 		SignatureDataMessage signatureDataMessage = new SignatureDataMessage(signatureValue, signCertFile,
 				citizenCaCertFile, rootCaCertFile);
+		signatureDataMessage.postConstruct();
 		return signatureDataMessage;
 		/*
 		Object responseMessage = sendMessage(signatureDataMessage);
