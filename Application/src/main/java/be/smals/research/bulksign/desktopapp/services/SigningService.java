@@ -5,6 +5,7 @@ import be.smals.research.bulksign.desktopapp.utilities.Settings.Signer;
 import be.smals.research.bulksign.desktopapp.utilities.SigningOutput;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Text;
 import sun.security.pkcs11.wrapper.*;
 
 import javax.xml.bind.DatatypeConverter;
@@ -20,6 +21,8 @@ import javax.xml.transform.stream.StreamResult;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.security.cert.CertificateEncodingException;
+import java.security.cert.X509Certificate;
 
 public class SigningService {
 
@@ -62,7 +65,6 @@ public class SigningService {
                 }
 
                 return (signature);
-
             } catch (Exception e) {
                 e.printStackTrace();
                 System.out.println("[Catch] Exception: " + e.getMessage());
@@ -77,7 +79,7 @@ public class SigningService {
         }
     }
 
-    public void saveSigningOutput(SigningOutput signingOutput, String filePath) throws IOException, ParserConfigurationException, TransformerException {
+    public void saveSigningOutput(SigningOutput signingOutput, String filePath) throws IOException, ParserConfigurationException, TransformerException, CertificateEncodingException {
         // XML - Create
         DocumentBuilderFactory factory  = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder         =  factory.newDocumentBuilder();
@@ -95,7 +97,28 @@ public class SigningService {
         Element signatureElement = document.createElement("Signature");
         signatureElement.appendChild(document.createTextNode(DatatypeConverter.printHexBinary(signingOutput.signature)));
         rootElement.appendChild(signatureElement);
+        // Certificate
+        if (signingOutput.certificate != null) {
+            Element certificateElement = this.createCertificateXMLElement(signingOutput.certificate, document);
+            rootElement.appendChild(certificateElement);
+        }
         // XML - Write
+        this.writeXMLDocument(filePath, document);
+    }
+
+    private Element createCertificateXMLElement(X509Certificate certificate, Document document) throws CertificateEncodingException {
+        Element certificateElement = document.createElement("Certificate");
+//        Element certificateVersionElement = document.createElement("Version");
+//        certificateVersionElement.appendChild(document.createTextNode(certificate. getVersion() + ""));
+//        Element certificateSerialNumberElement = document.createElement("SerialNumber");
+//        certificateSerialNumberElement.appendChild(document.createTextNode(certificate.getSerialNumber() + ""));
+        byte[] encodedCertificate = certificate.getEncoded();
+        Text certificateElementContent = document.createTextNode(DatatypeConverter.printHexBinary(encodedCertificate));
+        certificateElement.appendChild(certificateElementContent);
+        return certificateElement;
+    }
+
+    private void writeXMLDocument(String filePath, Document document) throws TransformerException {
         TransformerFactory transformerFactory   = TransformerFactory.newInstance();
         Transformer transformer                 = transformerFactory.newTransformer();
         transformer.setOutputProperty(OutputKeys.INDENT, "yes");

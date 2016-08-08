@@ -10,10 +10,11 @@ import javax.xml.bind.DatatypeConverter;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.*;
 import java.security.*;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
 
 public class VerifySigningService {
 
@@ -47,7 +48,7 @@ public class VerifySigningService {
         return signer.verify(signature);
     }
 
-    public SigningOutput getSigningOutput (File signingOutputFile) throws ParserConfigurationException, IOException, SAXException {
+    public SigningOutput getSigningOutput (File signingOutputFile) throws ParserConfigurationException, IOException, SAXException, CertificateException, NoSuchProviderException {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = factory.newDocumentBuilder();
         Document document = builder.parse(signingOutputFile);
@@ -57,7 +58,13 @@ public class VerifySigningService {
         Element signingOutputElement    = (Element) document.getElementsByTagName("SigningOutput").item(0);
         String masterDigest             = signingOutputElement.getElementsByTagName("MasterDigest").item(0).getTextContent();
         byte[] signature                = DatatypeConverter.parseHexBinary(signingOutputElement.getElementsByTagName("Signature").item(0).getTextContent());
-        return new SigningOutput(masterDigest, signature);
+        byte[] encodedCertificate       = DatatypeConverter.parseHexBinary(signingOutputElement.getElementsByTagName("Certificate").item(0).getTextContent());
+
+        CertificateFactory certFactory  = CertificateFactory.getInstance("X.0509", "BC");
+        InputStream encodedStream       = new ByteArrayInputStream(encodedCertificate);
+        X509Certificate certificate     = (X509Certificate) certFactory.generateCertificate(encodedStream);
+
+        return new SigningOutput(masterDigest, signature, certificate);
     }
 
     /**

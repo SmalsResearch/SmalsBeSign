@@ -67,3 +67,10 @@
     -fx-background-color:  #d9534f;
     -fx-text-fill: WHITE;
 }
+
+/*
+========== POPUP =======================================================================================================
+*/
+.popup-container{
+	-fx-background-color: WHITE;
+}

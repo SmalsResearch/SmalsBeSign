@@ -1,7 +1,11 @@
 package be.smals.research.bulksign.desktopapp.controllers;
 
+import be.smals.research.bulksign.desktopapp.services.EIDKeyService;
+import be.smals.research.bulksign.desktopapp.services.MockKeyService;
 import be.smals.research.bulksign.desktopapp.services.SigningService;
 import be.smals.research.bulksign.desktopapp.utilities.FileListItem;
+import be.smals.research.bulksign.desktopapp.utilities.Settings;
+import be.smals.research.bulksign.desktopapp.utilities.Settings.Signer;
 import be.smals.research.bulksign.desktopapp.utilities.SigningOutput;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -25,6 +29,8 @@ import java.awt.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.security.cert.CertificateEncodingException;
+import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -81,7 +87,9 @@ public class SignController {
                 }
 
                 byte[] signature = this.signingService.sign(inputFiles);
-                this.saveSigningOutput(signature);
+                X509Certificate certificate = (Settings.getInstance().getSigner().equals(Signer.EID)) ?
+                        EIDKeyService.getInstance().getCertificate() : MockKeyService.getInstance().getCertificate();
+                this.saveSigningOutput(signature, certificate);
 
                 for (FileInputStream file : inputFiles)
                      file.close();
@@ -91,13 +99,12 @@ public class SignController {
             }
         }
     }
-    @FXML
     /**
      * Defines the selected file
      *
      * @param event click on the selectFile button
      */
-    private void handleSelectFilesToSignButtonAction(ActionEvent event) {
+    @FXML private void handleSelectFilesToSignButtonAction(ActionEvent event) {
         List<File> files = fileChooser.showOpenMultipleDialog(this.stage);
         if (files != null) {
             files.stream().filter(file -> !this.filesToSign.contains(file)).forEach(file -> this.filesToSign.add(file));
@@ -113,18 +120,22 @@ public class SignController {
      * @throws ParserConfigurationException
      * @throws TransformerException
      */
-    private void saveSigningOutput(byte[] signature) throws IOException, ParserConfigurationException, TransformerException {
+    private void saveSigningOutput(byte[] signature, X509Certificate certificate) throws IOException, ParserConfigurationException, TransformerException {
         fileChooser.setTitle("Save the signature output");
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Signature files (SIG)", "*.sig"));
         File fileToSave = fileChooser.showSaveDialog(this.stage);
         fileChooser.getExtensionFilters().clear();
         if (fileToSave != null) {
-            SigningOutput signingOutput = new SigningOutput(null, signature);
-            this.signingService.saveSigningOutput(signingOutput, fileToSave.getPath());
-            Alert saveAlert = new Alert(Alert.AlertType.CONFIRMATION, "Signature successfully saved !", ButtonType.CLOSE);
-            saveAlert.setTitle("Save Notification");
-            saveAlert.setHeaderText("Saved !");
-            saveAlert.showAndWait();
+            try {
+                SigningOutput signingOutput = new SigningOutput(null, signature, certificate);
+                this.signingService.saveSigningOutput(signingOutput, fileToSave.getPath());
+                Alert saveAlert = new Alert(Alert.AlertType.CONFIRMATION, "Signature successfully saved !", ButtonType.CLOSE);
+                saveAlert.setTitle("Save Notification");
+                saveAlert.setHeaderText("Saved !");
+                saveAlert.showAndWait();
+            } catch (CertificateEncodingException e) {
+                e.printStackTrace();
+            }
         } else {
             Alert saveCanceledAlert = new Alert(Alert.AlertType.INFORMATION, "Save aborted", ButtonType.CLOSE);
             saveCanceledAlert.setTitle("Save canceled");
