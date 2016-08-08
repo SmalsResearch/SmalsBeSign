@@ -31,7 +31,7 @@ public class MockKeyService extends KeyService {
         this.generateKeys ();
         try {
             this.generateCertificate ();
-            this.generateChainCertificate ();
+            //this.generateChainCertificate ();
 
         } catch (CertificateParsingException|CertificateEncodingException|NoSuchAlgorithmException|InvalidKeyException|SignatureException|NoSuchProviderException e) {
             e.printStackTrace();
@@ -85,6 +85,7 @@ public class MockKeyService extends KeyService {
         X509Certificate rootCertificate = certGen.generate(rootKeyPair.getPrivate(), "BC");
 
         // Intermediate
+        certGen = new X509V3CertificateGenerator();
         KeyPair intermediateKeyPair     = this.generateKeyPair();
         certGen.setSerialNumber(BigInteger.valueOf(System.currentTimeMillis()));
         certGen.setIssuerDN(rootCertificate.getSubjectX500Principal()); // Authority set to root
@@ -98,6 +99,7 @@ public class MockKeyService extends KeyService {
         X509Certificate intermediateCertificate = certGen.generate(rootKeyPair.getPrivate(), "BC");
 
         // User
+        certGen = new X509V3CertificateGenerator();
         certGen.setSerialNumber(BigInteger.valueOf(System.currentTimeMillis()));
         certGen.setIssuerDN(intermediateCertificate.getSubjectX500Principal()); // Authority set to intermediate
         certGen.setNotBefore(startDate);
