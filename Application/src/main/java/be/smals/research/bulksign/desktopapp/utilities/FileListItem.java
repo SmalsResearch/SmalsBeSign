@@ -21,15 +21,16 @@ public class FileListItem extends HBox {
 
     public FileListItem (File file) {
         super();
-
         this.file           = file;
         this.nameLabel = new Label(file.getName());
         this.selectCheckBox = new JFXCheckBox();
         this.selectCheckBox.getStyleClass().add("checkbox");
+        this.selectCheckBox.toFront();
 
         this.fileExtension = this.retrieveFileExtension(this.file.getName());
         this.viewButton = (this.fileExtension.equalsIgnoreCase("pdf")) ? new JFXButton("Preview") : new JFXButton("Open");
         this.viewButton.getStyleClass().add("button-s");
+        this.viewButton.toFront();
         this.nameLabel.setMaxWidth(Double.MAX_VALUE);
         HBox.setHgrow(this.nameLabel, Priority.ALWAYS);
 

@@ -1,8 +1,8 @@
 package be.smals.research.bulksign.desktopapp.controllers;
 
-import be.smals.research.bulksign.desktopapp.utilities.SigningOutput;
 import be.smals.research.bulksign.desktopapp.services.MockKeyService;
 import be.smals.research.bulksign.desktopapp.services.VerifySigningService;
+import be.smals.research.bulksign.desktopapp.utilities.SigningOutput;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
@@ -13,8 +13,14 @@ import javafx.stage.Stage;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
+import java.security.SignatureException;
+import java.security.cert.CertificateException;
 
 /**
  * Main screen controller
@@ -50,14 +56,14 @@ public class VerifyController {
         } else {
             SigningOutput signingOutput = null;
             try {
-                signingOutput = verifySigningService.getSigningOutput(this.signatureFile);
-                String MasterDigest = signingOutput.masterDigest;
+                signingOutput = this.verifySigningService.getSigningOutput(this.signatureFile);
+                String masterDigest = signingOutput.masterDigest;
 //                PublicKey key = EIDKeyService.getInstance().getPublicKey(modulus, publicExponent);
                 PublicKey key = MockKeyService.getInstance().getPublicKey();
                 byte signature[] = signingOutput.signature;
 
                 FileInputStream file = new FileInputStream(this.signedFile);
-                boolean isValid = verifySigningService.verifySigning( file, signature, MasterDigest, key);
+                boolean isValid = this.verifySigningService.verifySigning( file, signingOutput);
                 if (isValid) {
                     Alert confirmationDialog = new Alert(Alert.AlertType.CONFIRMATION, "The Signature is valid !", ButtonType.CLOSE);
                     confirmationDialog.showAndWait();
@@ -68,10 +74,17 @@ public class VerifyController {
 
                 file.close();
             } catch (IOException|SAXException|ParserConfigurationException e) {
-                Alert corruptedFileDialog = new Alert(Alert.AlertType.ERROR, "Le signature file is corrupted !", ButtonType.CLOSE);
+                Alert corruptedFileDialog = new Alert(Alert.AlertType.ERROR, "The signature file is corrupted !", ButtonType.CLOSE);
                 corruptedFileDialog.setTitle("Corrupted file");
                 corruptedFileDialog.showAndWait();
                 e.printStackTrace();
+            } catch (SignatureException e) {
+                Alert errorDialog = new Alert(Alert.AlertType.ERROR, "Invalid Signature", ButtonType.CLOSE);
+                errorDialog.showAndWait();
+            } catch (NoSuchAlgorithmException|CertificateException|InvalidKeyException e) {
+                Alert corruptedFileDialog = new Alert(Alert.AlertType.ERROR, "The signature is incorrect.", ButtonType.CLOSE);
+                corruptedFileDialog.setTitle("Invalid Signature");
+                corruptedFileDialog.showAndWait();
             } catch (Exception e) {
                 e.printStackTrace();
             }

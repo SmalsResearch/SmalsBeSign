@@ -1,7 +1,7 @@
 package be.smals.research.bulksign.desktopapp.services;
 
-import be.smals.research.bulksign.desktopapp.utilities.SigningOutput;
 import be.smals.research.bulksign.desktopapp.exception.BulkSignException;
+import be.smals.research.bulksign.desktopapp.utilities.SigningOutput;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
@@ -12,40 +12,58 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.*;
 import java.security.*;
-import java.security.cert.CertificateException;
-import java.security.cert.CertificateFactory;
-import java.security.cert.X509Certificate;
+import java.security.cert.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class VerifySigningService {
 
     public VerifySigningService () {}
 
+    public boolean verifySigning (FileInputStream file, SigningOutput signingOutput)
+            throws NoSuchAlgorithmException, IOException, NoSuchProviderException, InvalidKeyException, SignatureException, CertificateNotYetValidException, CertificateExpiredException {
+        String fileDigest = DigestService.getInstance().computeIndividualDigest(file);
+        if (!this.isIndividualDigestPartOfMasterDigest(signingOutput.masterDigest, fileDigest))
+            return false;
+        if (this.isCertificateValid(signingOutput.certificateChain))
+            return false;
+
+        Signature signer = Signature.getInstance("SHA1withRSA", "BC");
+        signer.initVerify(signingOutput.certificateChain.get(2).getPublicKey());
+        for (int j = 0; j < signingOutput.masterDigest.length(); j++) {
+            signer.update(signingOutput.masterDigest.getBytes()[j]);
+        }
+
+        return signer.verify(signingOutput.signature);
+    }
     public boolean verifySigning (FileInputStream file, byte[] signature, String masterDigest, PublicKey key)
             throws NoSuchProviderException, NoSuchAlgorithmException, IOException, BulkSignException,
                     InvalidKeyException, SignatureException {
-        /* Compute Individual Digest of document */
         String individualDigest = DigestService.getInstance().computeIndividualDigest(file);
 
-        /* Verify that Individual Digest is part of Master Digest.
-
-         To do this, read all the Digests that are concatenated in the Master Digest
-         and check if at least one of them is equal to the Individual Digest
-         */
+        // Verify that Individual Digest is part of Master Digest.
         boolean found = this.isIndividualDigestPartOfMasterDigest(masterDigest, individualDigest);
-
         if (!found)
             return false;
 
-        /* Verify that Signature of Master Digest is Valid*/
+        // Verify that Signature of Master Digest is Valid
         Signature signer = Signature.getInstance("SHA1withRSA", "BC");
-
         signer.initVerify(key);
-
         for (int j = 0; j < masterDigest.length(); j++) {
             signer.update(masterDigest.getBytes()[j]);
         }
 
         return signer.verify(signature);
+    }
+
+    public boolean isCertificateValid (List<X509Certificate> certificateChain) {
+//        try {
+//            certificate.checkValidity();
+//        } catch (CertificateExpiredException|CertificateNotYetValidException e) {
+//            e.printStackTrace();
+//        }
+
+        return true;
     }
 
     public SigningOutput getSigningOutput (File signingOutputFile) throws ParserConfigurationException, IOException, SAXException, CertificateException, NoSuchProviderException {
@@ -58,13 +76,24 @@ public class VerifySigningService {
         Element signingOutputElement    = (Element) document.getElementsByTagName("SigningOutput").item(0);
         String masterDigest             = signingOutputElement.getElementsByTagName("MasterDigest").item(0).getTextContent();
         byte[] signature                = DatatypeConverter.parseHexBinary(signingOutputElement.getElementsByTagName("Signature").item(0).getTextContent());
-        byte[] encodedCertificate       = DatatypeConverter.parseHexBinary(signingOutputElement.getElementsByTagName("Certificate").item(0).getTextContent());
+        Element certificateElement      = (Element) signingOutputElement.getElementsByTagName("Certificate").item(0);
+        byte[] rootEncodedCertificate   = DatatypeConverter.parseHexBinary(certificateElement.getElementsByTagName("Root").item(0).getTextContent());
+        byte[] intermEncodedCertificate = DatatypeConverter.parseHexBinary(certificateElement.getElementsByTagName("Intermediate").item(0).getTextContent());
+        byte[] userEncodedCertificate   = DatatypeConverter.parseHexBinary(certificateElement.getElementsByTagName("User").item(0).getTextContent());
 
         CertificateFactory certFactory  = CertificateFactory.getInstance("X.509", "BC");
-        InputStream encodedStream       = new ByteArrayInputStream(encodedCertificate);
-        X509Certificate certificate     = (X509Certificate) certFactory.generateCertificate(encodedStream);
+        InputStream encodedStream       = new ByteArrayInputStream(rootEncodedCertificate);
+        X509Certificate rootCertificate = (X509Certificate) certFactory.generateCertificate(encodedStream);
+        encodedStream                   = new ByteArrayInputStream(intermEncodedCertificate);
+        X509Certificate intermCertificate = (X509Certificate) certFactory.generateCertificate(encodedStream);
+        encodedStream                   = new ByteArrayInputStream(userEncodedCertificate);
+        X509Certificate userCertificate = (X509Certificate) certFactory.generateCertificate(encodedStream);
+        List<X509Certificate> certificateChain = new ArrayList<>();
+        certificateChain.add(rootCertificate);
+        certificateChain.add(intermCertificate);
+        certificateChain.add(userCertificate);
 
-        return new SigningOutput(masterDigest, signature, certificate);
+        return new SigningOutput(masterDigest, signature, certificateChain);
     }
 
     /**

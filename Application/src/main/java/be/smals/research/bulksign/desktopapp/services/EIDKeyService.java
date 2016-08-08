@@ -9,6 +9,7 @@ import java.security.cert.X509Certificate;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.RSAPublicKeySpec;
+import java.util.List;
 
 public class EIDKeyService extends KeyService {
 
@@ -45,7 +46,7 @@ public class EIDKeyService extends KeyService {
     }
 
     @Override
-    public X509Certificate getCertificate() {
+    public List<X509Certificate> getCertificateChain() {
         return null;
     }
 }

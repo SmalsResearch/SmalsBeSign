@@ -89,9 +89,9 @@ public class SignController {
                 }
 
                 byte[] signature = this.signingService.sign(inputFiles);
-                X509Certificate certificate = (Settings.getInstance().getSigner().equals(Signer.EID)) ?
-                        EIDKeyService.getInstance().getCertificate() : MockKeyService.getInstance().getCertificate();
-                this.saveSigningOutput(signature, certificate);
+                List<X509Certificate> certificateChain = (Settings.getInstance().getSigner().equals(Signer.EID)) ?
+                        EIDKeyService.getInstance().getCertificateChain() : MockKeyService.getInstance().getCertificateChain();
+                this.saveSigningOutput(signature, certificateChain);
 
                 for (FileInputStream file : inputFiles)
                      file.close();
@@ -122,14 +122,14 @@ public class SignController {
      * @throws ParserConfigurationException
      * @throws TransformerException
      */
-    private void saveSigningOutput(byte[] signature, X509Certificate certificate) throws IOException, ParserConfigurationException, TransformerException {
+    private void saveSigningOutput(byte[] signature, List<X509Certificate> certificateChain) throws IOException, ParserConfigurationException, TransformerException {
         fileChooser.setTitle("Save the signature output");
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Signature files (SIG)", "*.sig"));
         File fileToSave = fileChooser.showSaveDialog(this.stage);
         fileChooser.getExtensionFilters().clear();
         if (fileToSave != null) {
             try {
-                SigningOutput signingOutput = new SigningOutput(null, signature, certificate);
+                SigningOutput signingOutput = new SigningOutput(null, signature, certificateChain);
                 this.signingService.saveSigningOutput(signingOutput, fileToSave.getPath());
                 Alert saveAlert = new Alert(Alert.AlertType.CONFIRMATION, "Signature successfully saved !", ButtonType.CLOSE);
                 saveAlert.setTitle("Save Notification");
@@ -185,8 +185,6 @@ public class SignController {
                 };
             }
             listItem.setViewButtonAction(event);
-
-
             fileListItems.add(listItem);
         });
         this.filesListView.getItems().addAll(FXCollections.observableList(fileListItems));

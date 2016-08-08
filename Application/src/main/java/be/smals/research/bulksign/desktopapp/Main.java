@@ -273,11 +273,14 @@ public class Main extends Application {
         eidMenuItem.setToggleGroup(signerGroup);
         mockMenuItem.setToggleGroup(signerGroup);
         signerGroup.selectToggle(mockMenuItem);
-        fileMenu.getItems().addAll(exitMenuItem);
+        fileMenu.getItems().addAll(testMenuItem, exitMenuItem);
         taskMenu.getItems().addAll(signMenuItem, verifyMenuItem);
         signerMenu.getItems().addAll(mockMenuItem, eidMenuItem);
         root.setTop(menuBar);
 
+        testMenuItem.setOnAction(event -> {
+            controller.testMenuItemAction();
+        });
         exitMenuItem.setOnAction(event -> {
             controller.exitMenuItemAction();
         });

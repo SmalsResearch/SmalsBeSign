@@ -58,6 +58,19 @@ public class MainController {
         }
     }
 
+    public void testMenuItemAction() {
+        FXMLLoader testViewLoader = new FXMLLoader(getClass().getClassLoader().getResource("views/test.fxml"));
+        try {
+            Parent testPane = testViewLoader.load();
+            root.setCenter(testPane);
+
+            TestController testController = testViewLoader.getController();
+            testController.setStage(this.stage);
+        } catch (IOException e1) {
+            e1.printStackTrace();
+        }
+    }
+
     public void verifyMenuItemAction() {
         FXMLLoader verifyViewLoader = new FXMLLoader(getClass().getClassLoader().getResource("views/verify.fxml"));
         try {
