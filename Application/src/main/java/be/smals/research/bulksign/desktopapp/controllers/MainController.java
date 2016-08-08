@@ -64,8 +64,8 @@ public class MainController {
             Parent testPane = testViewLoader.load();
             root.setCenter(testPane);
 
-            TestController testController = testViewLoader.getController();
-            testController.setStage(this.stage);
+            //TestController testController = testViewLoader.getController();
+            //testController.setStage(this.stage);
         } catch (IOException e1) {
             e1.printStackTrace();
         }

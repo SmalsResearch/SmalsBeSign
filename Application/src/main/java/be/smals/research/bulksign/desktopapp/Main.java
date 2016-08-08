@@ -262,6 +262,7 @@ public class Main extends Application {
         Menu taskMenu = new Menu("Task");
         Menu signerMenu = new Menu("Signer");
         menuBar.getMenus().addAll(fileMenu, taskMenu, signerMenu);
+        MenuItem testMenuItem   = new MenuItem("Test");
         MenuItem exitMenuItem = new MenuItem("Exit...");
         MenuItem signMenuItem = new MenuItem("Sign");
         MenuItem verifyMenuItem = new MenuItem("Verify");
