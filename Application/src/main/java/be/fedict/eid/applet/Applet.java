@@ -303,7 +303,7 @@ public class Applet extends JApplet {
 		container.setBackground(backgroundColor);
 	}
 
-	private Messages messages;
+	private Messages messages = new Messages(null);
 
 	private String messageCallbackParam;
 

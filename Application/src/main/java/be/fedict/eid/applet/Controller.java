@@ -34,14 +34,7 @@ import java.net.URL;
 import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Observable;
-import java.util.Observer;
-import java.util.StringTokenizer;
+import java.util.*;
 
 import javax.security.auth.login.FailedLoginException;
 import javax.security.auth.login.LoginException;
@@ -167,7 +160,9 @@ public class Controller {
 			throw new RuntimeException("message should have a @ResponsesAllowed constraint");
 		}
 
+		System.out.println("TEST1");
 		this.protocolStateMachine.checkRequestMessage(message);
+		System.out.println("TEST2");
 
 		String userAgent = this.runtime.getParameter("UserAgent");
 		boolean noChunkedTransferEncoding = false;
@@ -413,7 +408,7 @@ public class Controller {
 		return null;
 	}
 
-	private Object performAuthnSignOperation(AuthSignRequestMessage authSignRequestMessage) throws Exception {
+	public Object performAuthnSignOperation(AuthSignRequestMessage authSignRequestMessage) throws Exception {
 		addDetailMessage("auth sign request...");
 		setStatusMessage(Status.NORMAL, MESSAGE_ID.DETECTING_CARD);
 		waitForEIdCardPcsc();
@@ -434,13 +429,15 @@ public class Controller {
 		}
 
 		try {
-			byte[] signatureValue = this.pcscEidSpi.sign(digestValue, digestAlgo, PcscEid.AUTHN_KEY_ID, false);
+			//byte[] signatureValue = this.pcscEidSpi.sign(digestValue, digestAlgo, PcscEid.AUTHN_KEY_ID, false);
+			byte[] signatureValue = this.pcscEidSpi.sign(digestValue, digestAlgo, PcscEid.NON_REP_KEY_ID, false);
 			if (logoff) {
 				this.pcscEidSpi.logoff();
 			}
 			AuthSignResponseMessage authSignResponseMessage = new AuthSignResponseMessage(signatureValue);
-			Object responseMessage = sendMessage(authSignResponseMessage);
-			return responseMessage;
+			return authSignResponseMessage;
+			//Object responseMessage = sendMessage(authSignResponseMessage);
+			//return responseMessage;
 		} finally {
 			this.pcscEidSpi.close();
 		}
@@ -626,7 +623,7 @@ public class Controller {
 
 	}
 
-	private FinishedMessage performEidSignOperation(SignRequestMessage signRequestMessage) throws Exception {
+	public Object performEidSignOperation(SignRequestMessage signRequestMessage) throws Exception {
 		boolean logoff = signRequestMessage.logoff;
 		boolean removeCard = signRequestMessage.removeCard;
 		boolean requireSecureReader = signRequestMessage.requireSecureReader;
@@ -652,8 +649,10 @@ public class Controller {
 				}
 			}
 			try {
-				signatureValue = this.pcscEidSpi.sign(signRequestMessage.digestValue, signRequestMessage.digestAlgo,
+				signatureValue = this.pcscEidSpi.sign(signRequestMessage.digestValue, signRequestMessage.digestAlgo,PcscEid.NON_REP_KEY_ID,
 						requireSecureReader);
+				System.out.println("SIGNATURE: "+ Arrays.toString(signatureValue));
+				System.out.println("LENGTH: "+signatureValue.length);
 			} catch (UserCancelledException e) {
 				if (false == this.runtime.gotoCancelPage()) {
 					throw new SecurityException("sign operation aborted");
@@ -672,6 +671,10 @@ public class Controller {
 			citizenCaCertFile = this.pcscEidSpi.readFile(PcscEid.CA_CERT_FILE_ID);
 			rootCaCertFile = this.pcscEidSpi.readFile(PcscEid.ROOT_CERT_FILE_ID);
 
+			//System.out.println("signCERTfile: "+ Arrays.toString(signCertFile));
+			//System.out.println("citizenCACERTfile: "+ Arrays.toString(citizenCaCertFile));
+			//System.out.println("rootCACERTfile: "+ Arrays.toString(rootCaCertFile));
+
 			this.view.setProgressIndeterminate();
 
 			if (signRequestMessage.logoff && !signRequestMessage.removeCard) {
@@ -687,12 +690,14 @@ public class Controller {
 
 		SignatureDataMessage signatureDataMessage = new SignatureDataMessage(signatureValue, signCertFile,
 				citizenCaCertFile, rootCaCertFile);
+		return signatureDataMessage;
+		/*
 		Object responseMessage = sendMessage(signatureDataMessage);
 		if (false == (responseMessage instanceof FinishedMessage)) {
 			throw new RuntimeException("finish expected");
 		}
 		FinishedMessage finishedMessage = (FinishedMessage) responseMessage;
-		return finishedMessage;
+		return finishedMessage;*/
 	}
 
 	private void administration(boolean unblockPin, boolean changePin, boolean logoff, boolean removeCard,

@@ -2,8 +2,8 @@ package be.smals.research.bulksign.desktopapp.services;
 
 import org.bouncycastle.util.encoders.Hex;
 
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
@@ -29,24 +29,24 @@ public class DigestService {
     /**
      * Computes the master digest from files
      *
-     * @param fileInputStreams array of files
+     * @param inputStreams array of files
      * @return the concatenation of the digest of all files ( the master digest)
      * @throws IOException when closing the streams
      * @throws NoSuchAlgorithmException when looking for the hash algorithm
      */
-    public String computeMasterDigest(FileInputStream[] fileInputStreams) throws IOException, NoSuchAlgorithmException, NoSuchProviderException {
+    public String computeMasterDigest(InputStream[] inputStreams) throws IOException, NoSuchAlgorithmException, NoSuchProviderException {
 
         /*Create an array that will store the individual digest of each file
          * meaning that
 		 *     IndividualDigest[i]=SHA256(File[i])
 		 */
-        String[] individualDigest = new String[fileInputStreams.length];
+        String[] individualDigest = new String[inputStreams.length];
 
-        for (int i = 0; i < fileInputStreams.length; i++) {
-            FileInputStream fileInputStream = fileInputStreams[i];
-            individualDigest[i] = computeIndividualDigest(fileInputStream);
+        for (int i = 0; i < inputStreams.length; i++) {
+            InputStream inputStream = inputStreams[i];
+            individualDigest[i] = computeIndividualDigest(inputStream);
             outputIndividualDigest(individualDigest[i], i);
-            fileInputStream.close();
+            inputStream.close();
         }
 
         String masterDigest = "";
@@ -81,7 +81,7 @@ public class DigestService {
      * @throws IOException when closing the streams
      * @throws NoSuchAlgorithmException when looking for the hash algorithm
      */
-    public String computeIndividualDigest(FileInputStream individualFile) throws NoSuchAlgorithmException, IOException, NoSuchProviderException {
+    public String computeIndividualDigest(InputStream individualFile) throws NoSuchAlgorithmException, IOException, NoSuchProviderException {
         /* Compute a hash of File[i]*/
         int read;
         byte[] buffer = new byte[8192];

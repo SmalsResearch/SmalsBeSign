@@ -19,9 +19,9 @@
 
 package be.fedict.eid.applet;
 
-import java.util.Locale;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
+import sun.util.ResourceBundleEnumeration;
+
+import java.util.*;
 
 import javax.swing.UIManager;
 
@@ -181,8 +181,14 @@ public class Messages {
 			 * In case the selected locale and default system locale are not
 			 * supported we default to english.
 			 */
-			bundle = ResourceBundle.getBundle(RESOURCE_BUNDLE_NAME, Locale.ENGLISH);
-		}
+			try {
+				bundle = ResourceBundle.getBundle(RESOURCE_BUNDLE_NAME, Locale.ENGLISH);
+			} catch (Exception x) {
+				bundle = getReserveBundle();
+			}
+		} catch (NullPointerException f) {
+		    bundle = getReserveBundle();
+        }
 		this.resourceBundle = bundle;
 
 		UIManager.put("OptionPane.cancelButtonText", getMessage(MESSAGE_ID.CANCEL_BUTTON));
@@ -190,6 +196,22 @@ public class Messages {
 		UIManager.put("OptionPane.okButtonText", getMessage(MESSAGE_ID.OK_BUTTON));
 		UIManager.put("OptionPane.yesButtonText", getMessage(MESSAGE_ID.YES_BUTTON));
 	}
+
+	private ResourceBundle getReserveBundle() {
+        Map<String,MESSAGE_ID> map = new HashMap<>();
+        for (MESSAGE_ID mid : MESSAGE_ID.values()) map.put(mid.getId(),mid);
+        ResourceBundle bundle = new ResourceBundle() {
+            @Override
+            protected Object handleGetObject(String key) {
+                return map.get(key).toString();
+            }
+            @Override
+            public Enumeration<String> getKeys() {
+                return new Vector(map.values()).elements();
+            }
+        };
+        return bundle;
+    }
 
 	public String getMessage(MESSAGE_ID messageId) {
 		String message = this.resourceBundle.getString(messageId.id);

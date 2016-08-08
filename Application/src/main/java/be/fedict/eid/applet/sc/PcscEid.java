@@ -865,9 +865,15 @@ public class PcscEid extends Observable {
 		}
 		digestInfo.write(digestValue);
 		CommandAPDU computeDigitalSignatureApdu = new CommandAPDU(0x00, 0x2A, 0x9E, 0x9A, digestInfo.toByteArray());
+		System.out.println("COMMAND: "+Arrays.toString(computeDigitalSignatureApdu.getBytes()));
 
 		this.view.addDetailMessage("computing digital signature...");
 		responseApdu = transmit(computeDigitalSignatureApdu);
+		System.out.println("DATA:");
+		System.out.println(Arrays.toString(responseApdu.getData()));
+		System.out.println("BYTES:");
+		System.out.println(Arrays.toString(responseApdu.getBytes()));
+		System.out.println("OTHER: "+" "+responseApdu.toString());
 		if (0x9000 == responseApdu.getSW()) {
 			/*
 			 * OK, we could use the card PIN caching feature.
