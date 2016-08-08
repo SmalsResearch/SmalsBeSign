@@ -49,19 +49,19 @@
     -fx-background-color:  #52BBFE;
     -fx-text-fill: WHITE;
 }
-.button-s-success {
+.button-success {
     -fx-font-size: 12px;
     -fx-button-type: FLAT;
     -fx-background-color:  #5cb85c;
     -fx-text-fill: WHITE;
 }
-.button-s-warning {
+.button-warning {
     -fx-font-size: 12px;
     -fx-button-type: FLAT;
     -fx-background-color:  #f0ad4e;
     -fx-text-fill: WHITE;
 }
-.button-s-danger {
+.button-danger {
     -fx-font-size: 12px;
     -fx-button-type: FLAT;
     -fx-background-color:  #d9534f;
@@ -71,6 +71,3 @@
 /*
 ========== POPUP =======================================================================================================
 */
-.popup-container{
-	-fx-background-color: WHITE;
-}

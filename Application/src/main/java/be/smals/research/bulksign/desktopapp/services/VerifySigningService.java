@@ -60,7 +60,7 @@ public class VerifySigningService {
         byte[] signature                = DatatypeConverter.parseHexBinary(signingOutputElement.getElementsByTagName("Signature").item(0).getTextContent());
         byte[] encodedCertificate       = DatatypeConverter.parseHexBinary(signingOutputElement.getElementsByTagName("Certificate").item(0).getTextContent());
 
-        CertificateFactory certFactory  = CertificateFactory.getInstance("X.0509", "BC");
+        CertificateFactory certFactory  = CertificateFactory.getInstance("X.509", "BC");
         InputStream encodedStream       = new ByteArrayInputStream(encodedCertificate);
         X509Certificate certificate     = (X509Certificate) certFactory.generateCertificate(encodedStream);
 

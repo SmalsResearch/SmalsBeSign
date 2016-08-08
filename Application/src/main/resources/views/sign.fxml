@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.RowConstraints?>
 
-<GridPane stylesheets="@css/common.css" xmlns="http://javafx.com/javafx/8.0.101" xmlns:fx="http://javafx.com/fxml/1" fx:controller="be.smals.research.bulksign.desktopapp.controllers.SignController">
+<GridPane fx:id="rootSign" stylesheets="@css/common.css" xmlns="http://javafx.com/javafx/8.0.101" xmlns:fx="http://javafx.com/fxml/1" fx:controller="be.smals.research.bulksign.desktopapp.controllers.SignController">
      <columnConstraints>
        <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" percentWidth="30.0" />
       <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" percentWidth="5.0" />

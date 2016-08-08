@@ -16,6 +16,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -50,6 +51,7 @@ public class SignController {
     @FXML private Label fileCountLabel;
     @FXML private ListView filesListView;
     @FXML private Pane readerPane;
+    @FXML private GridPane rootSign;
 
     /**
      * Constructor
