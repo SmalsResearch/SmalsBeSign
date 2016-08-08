@@ -36,10 +36,7 @@ public class DigestService {
      */
     public String computeMasterDigest(FileInputStream[] fileInputStreams) throws IOException, NoSuchAlgorithmException, NoSuchProviderException {
 
-        /*Create an array that will store the individual digest of each file
-         * meaning that
-		 *     IndividualDigest[i]=SHA256(File[i])
-		 */
+        // Create an array that will store the individual digest of each file
         String[] individualDigest = new String[fileInputStreams.length];
 
         for (int i = 0; i < fileInputStreams.length; i++) {

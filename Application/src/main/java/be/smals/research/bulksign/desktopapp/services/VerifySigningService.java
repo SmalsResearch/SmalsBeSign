@@ -18,6 +18,22 @@ public class VerifySigningService {
 
     public VerifySigningService () {}
 
+    public boolean verifySigning (FileInputStream file, SigningOutput signingOutput)
+            throws NoSuchAlgorithmException, IOException, NoSuchProviderException, InvalidKeyException, SignatureException, CertificateNotYetValidException, CertificateExpiredException {
+        String fileDigest = DigestService.getInstance().computeIndividualDigest(file);
+        if (!this.isIndividualDigestPartOfMasterDigest(signingOutput.masterDigest, fileDigest))
+            return false;
+        if (this.isCertificateValid(signingOutput.certificate))
+            return false;
+
+        Signature signer = Signature.getInstance("SHA1withRSA", "BC");
+        signer.initVerify(signingOutput.certificate.getPublicKey());
+        for (int j = 0; j < signingOutput.masterDigest.length(); j++) {
+            signer.update(signingOutput.masterDigest.getBytes()[j]);
+        }
+
+        return signer.verify(signingOutput.signature);
+    }
     public boolean verifySigning (FileInputStream file, byte[] signature, String masterDigest, PublicKey key)
             throws NoSuchProviderException, NoSuchAlgorithmException, IOException, BulkSignException,
                     InvalidKeyException, SignatureException {
@@ -38,8 +54,14 @@ public class VerifySigningService {
         return signer.verify(signature);
     }
 
-    public void verifyCertificate (X509Certificate certificate) throws CertificateNotYetValidException, CertificateExpiredException {
-        certificate.checkValidity();
+    public boolean isCertificateValid (X509Certificate certificate) {
+        try {
+            certificate.checkValidity();
+        } catch (CertificateExpiredException|CertificateNotYetValidException e) {
+            e.printStackTrace();
+        }
+
+        return true;
     }
 
     public SigningOutput getSigningOutput (File signingOutputFile) throws ParserConfigurationException, IOException, SAXException, CertificateException, NoSuchProviderException {

@@ -1,6 +1,5 @@
 package be.smals.research.bulksign.desktopapp.controllers;
 
-import be.smals.research.bulksign.desktopapp.exception.BulkSignException;
 import be.smals.research.bulksign.desktopapp.services.MockKeyService;
 import be.smals.research.bulksign.desktopapp.services.VerifySigningService;
 import be.smals.research.bulksign.desktopapp.utilities.SigningOutput;
@@ -64,8 +63,7 @@ public class VerifyController {
                 byte signature[] = signingOutput.signature;
 
                 FileInputStream file = new FileInputStream(this.signedFile);
-                this.verifySigningService.verifyCertificate (signingOutput.certificate);
-                boolean isValid = this.verifySigningService.verifySigning( file, signature, masterDigest, key);
+                boolean isValid = this.verifySigningService.verifySigning( file, signingOutput);
                 if (isValid) {
                     Alert confirmationDialog = new Alert(Alert.AlertType.CONFIRMATION, "The Signature is valid !", ButtonType.CLOSE);
                     confirmationDialog.showAndWait();
@@ -80,7 +78,7 @@ public class VerifyController {
                 corruptedFileDialog.setTitle("Corrupted file");
                 corruptedFileDialog.showAndWait();
                 e.printStackTrace();
-            } catch (SignatureException|BulkSignException e) {
+            } catch (SignatureException e) {
                 Alert errorDialog = new Alert(Alert.AlertType.ERROR, "Invalid Signature", ButtonType.CLOSE);
                 errorDialog.showAndWait();
             } catch (NoSuchAlgorithmException|CertificateException|InvalidKeyException e) {

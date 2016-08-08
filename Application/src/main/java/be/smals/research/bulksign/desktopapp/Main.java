@@ -33,6 +33,7 @@ public class Main extends Application {
         Menu taskMenu           = new Menu("Task");
         Menu signerMenu         = new Menu("Signer");
         menuBar.getMenus().addAll(fileMenu, taskMenu, signerMenu);
+        MenuItem testMenuItem   = new MenuItem("Test");
         MenuItem exitMenuItem   = new MenuItem("Exit...");
         MenuItem signMenuItem   = new MenuItem("Sign");
         MenuItem verifyMenuItem = new MenuItem("Verify");
@@ -44,11 +45,14 @@ public class Main extends Application {
         eidMenuItem.setToggleGroup(signerGroup);
         mockMenuItem.setToggleGroup(signerGroup);
         signerGroup.selectToggle(mockMenuItem);
-        fileMenu.getItems().addAll(exitMenuItem);
+        fileMenu.getItems().addAll(testMenuItem, exitMenuItem);
         taskMenu.getItems().addAll(signMenuItem, verifyMenuItem);
         signerMenu.getItems().addAll(mockMenuItem, eidMenuItem);
         root.setTop(menuBar);
 
+        testMenuItem.setOnAction(event -> {
+            controller.testMenuItemAction();
+        });
         exitMenuItem.setOnAction(event -> {
             controller.exitMenuItemAction ();
         });
