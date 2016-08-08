@@ -18,6 +18,7 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.security.cert.CertificateEncodingException;
 
 /**
  * Created by cea on 03/08/2016.
@@ -31,7 +32,7 @@ public class SigningServiceTest {
     @Test public void saveSigningOutputTest () throws URISyntaxException {
         byte[] signature    = "this is the signature".getBytes();
         String masterDigest = "this is the masterDigest";
-        SigningOutput signingOutput = new SigningOutput(masterDigest, signature);
+        SigningOutput signingOutput = new SigningOutput(masterDigest, signature, null);
         URL fileURL         = getClass().getClassLoader().getResource("testFiles/file.sig");
         String filePath     = fileURL.getPath();
         URI fileURI         = fileURL.toURI();
@@ -43,7 +44,7 @@ public class SigningServiceTest {
 
             Assert.assertTrue(Files.exists(path));
 
-        } catch (IOException|PKCS11Exception|ParserConfigurationException|TransformerException e) {
+        } catch (IOException|PKCS11Exception|ParserConfigurationException|TransformerException|CertificateEncodingException e) {
             e.printStackTrace();
         }
     }

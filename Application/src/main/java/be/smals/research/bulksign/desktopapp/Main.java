@@ -8,12 +8,9 @@ import be.fedict.eid.applet.shared.*;
 import be.smals.research.bulksign.desktopapp.controllers.MainController;
 import be.smals.research.bulksign.desktopapp.controllers.SignController;
 import be.smals.research.bulksign.desktopapp.controllers.VerifyController;
-import be.smals.research.bulksign.desktopapp.services.SigningService;
 import be.smals.research.bulksign.desktopapp.utilities.Settings;
 import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.Menu;
@@ -23,6 +20,22 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import org.bouncycastle.util.encoders.Hex;
 import sun.security.pkcs11.wrapper.PKCS11Exception;
+
+import java.io.IOException;
+import java.security.Security;
+import java.util.Optional;
+
+import be.smals.research.bulksign.desktopapp.controllers.MainController;
+import be.smals.research.bulksign.desktopapp.utilities.Settings;
+import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
+import javafx.scene.layout.BorderPane;
+import javafx.stage.Stage;
+
+import java.security.Security;
+
 
 import javax.smartcardio.CardException;
 import java.awt.*;
@@ -265,6 +278,9 @@ public class Main extends Application {
         BorderPane root       = loader.load();
         primaryStage.setTitle("BulkSign Desktop");
 
+        MainController controller = loader.getController();
+        controller.setStage(primaryStage);
+
         MenuBar menuBar         = new MenuBar();
         Menu fileMenu           = new Menu("File");
         Menu taskMenu           = new Menu("Task");
@@ -284,42 +300,16 @@ public class Main extends Application {
         fileMenu.getItems().addAll(exitMenuItem);
         taskMenu.getItems().addAll(signMenuItem, verifyMenuItem);
         signerMenu.getItems().addAll(mockMenuItem, eidMenuItem);
-
         root.setTop(menuBar);
 
         exitMenuItem.setOnAction(event -> {
-            Alert exitAlert = new Alert(Alert.AlertType.WARNING, "You are about to leave...", ButtonType.YES, ButtonType.CANCEL);
-            exitAlert.setTitle("Exit the application");
-            exitAlert.setHeaderText("Are you sure ?");
-            Optional<ButtonType> choice = exitAlert.showAndWait();
-            if (choice.isPresent() && choice.get() == ButtonType.YES)
-                Platform.exit();
-            else
-                exitAlert.close();
+            controller.exitMenuItemAction ();
         });
         signMenuItem.setOnAction( event -> {
-            FXMLLoader signViewLoader   = new FXMLLoader(getClass().getClassLoader().getResource("views/sign.fxml"));
-            try {
-                Parent signPane       = signViewLoader.load();
-                root.setCenter(signPane);
-
-                SignController controller = signViewLoader.getController();
-                controller.setStage(primaryStage);
-            } catch (IOException e1) {
-                e1.printStackTrace();
-            }
+            controller.signMenuItemAction ();
         });
         verifyMenuItem.setOnAction( event -> {
-            FXMLLoader verifyViewLoader   = new FXMLLoader(getClass().getClassLoader().getResource("views/verify.fxml"));
-            try {
-                Parent verifyPane       = verifyViewLoader.load();
-                root.setCenter(verifyPane);
-
-                VerifyController controller = verifyViewLoader.getController();
-                controller.setStage(primaryStage);
-            } catch (IOException e1) {
-                e1.printStackTrace();
-            }
+            controller.verifyMenuItemAction ();
         });
         signerGroup.selectedToggleProperty().addListener((ov, old_toggle, new_toggle) -> {
             if (signerGroup.getSelectedToggle() != null) {
@@ -327,9 +317,6 @@ public class Main extends Application {
                 Settings.getInstance().setSigner(signer);
             }
         });
-
-        MainController controller = loader.getController();
-        controller.setStage(primaryStage);
 
         primaryStage.setScene(new Scene(root, 800, 480));
         primaryStage.show();
