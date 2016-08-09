@@ -24,7 +24,7 @@ import javax.smartcardio.CardException;
 import javax.swing.JOptionPane;
 
 import be.fedict.eid.applet.Messages.MESSAGE_ID;
-import be.fedict.eid.applet.sc.PcscEid;
+import be.smals.research.bulksign.desktopapp.eid.external.sc.PcscEid;
 
 /**
  * View decorator that manages the exclusive card lock work-around for Windows

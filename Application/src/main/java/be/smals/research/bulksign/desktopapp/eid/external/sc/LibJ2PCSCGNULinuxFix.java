@@ -23,7 +23,7 @@
  * author Frank Marien
  */
 
-package be.fedict.eid.applet.sc;
+package be.smals.research.bulksign.desktopapp.eid.external.sc;
 
 import java.io.File;
 

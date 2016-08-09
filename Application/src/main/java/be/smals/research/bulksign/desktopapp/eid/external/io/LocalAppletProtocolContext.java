@@ -16,7 +16,7 @@
  * http://www.gnu.org/licenses/.
  */
 
-package be.fedict.eid.applet.io;
+package be.smals.research.bulksign.desktopapp.eid.external.io;
 
 import be.fedict.eid.applet.View;
 import be.smals.research.bulksign.desktopapp.eid.external.shared.protocol.ProtocolContext;
