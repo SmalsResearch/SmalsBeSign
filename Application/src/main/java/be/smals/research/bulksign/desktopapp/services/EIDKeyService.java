@@ -5,9 +5,11 @@ import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.security.cert.X509Certificate;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.RSAPublicKeySpec;
+import java.util.List;
 
 public class EIDKeyService extends KeyService {
 
@@ -41,5 +43,10 @@ public class EIDKeyService extends KeyService {
         RSAPublicKey key = (RSAPublicKey) keyFactory.generatePublic(pubKeySpec);
 
         return key;
+    }
+
+    @Override
+    public List<X509Certificate> getCertificateChain() {
+        return null;
     }
 }
