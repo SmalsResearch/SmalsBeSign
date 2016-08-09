@@ -16,7 +16,7 @@
  * http://www.gnu.org/licenses/.
  */
 
-package be.fedict.eid.applet.shared.annotation;
+package be.smals.research.bulksign.desktopapp.eid.external.shared.annotation;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -25,8 +25,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Marks that a field is required to be not <code>null</code>. Used for input
- * validation.
+ * Marks the field that will be used as message discriminator. Of course the
+ * field should be final static.
  * 
  * @author Frank Cornelis
  * 
@@ -34,6 +34,5 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
 @Documented
-public @interface NotNull {
-
+public @interface MessageDiscriminator {
 }

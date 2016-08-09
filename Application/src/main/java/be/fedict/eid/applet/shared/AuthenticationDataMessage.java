@@ -28,13 +28,13 @@ import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.List;
 
-import be.fedict.eid.applet.shared.annotation.HttpBody;
-import be.fedict.eid.applet.shared.annotation.HttpHeader;
-import be.fedict.eid.applet.shared.annotation.MessageDiscriminator;
-import be.fedict.eid.applet.shared.annotation.NotNull;
-import be.fedict.eid.applet.shared.annotation.PostConstruct;
-import be.fedict.eid.applet.shared.annotation.ProtocolStateAllowed;
-import be.fedict.eid.applet.shared.annotation.ResponsesAllowed;
+import be.smals.research.bulksign.desktopapp.eid.external.shared.annotation.HttpBody;
+import be.smals.research.bulksign.desktopapp.eid.external.shared.annotation.HttpHeader;
+import be.smals.research.bulksign.desktopapp.eid.external.shared.annotation.MessageDiscriminator;
+import be.smals.research.bulksign.desktopapp.eid.external.shared.annotation.NotNull;
+import be.smals.research.bulksign.desktopapp.eid.external.shared.annotation.PostConstruct;
+import be.smals.research.bulksign.desktopapp.eid.external.shared.annotation.ProtocolStateAllowed;
+import be.smals.research.bulksign.desktopapp.eid.external.shared.annotation.ResponsesAllowed;
 import be.fedict.eid.applet.shared.protocol.ProtocolState;
 
 /**

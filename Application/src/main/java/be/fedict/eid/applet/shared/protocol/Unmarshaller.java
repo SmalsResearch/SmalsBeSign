@@ -31,13 +31,13 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import be.fedict.eid.applet.shared.annotation.HttpBody;
-import be.fedict.eid.applet.shared.annotation.HttpHeader;
-import be.fedict.eid.applet.shared.annotation.MessageDiscriminator;
-import be.fedict.eid.applet.shared.annotation.NotNull;
-import be.fedict.eid.applet.shared.annotation.PostConstruct;
-import be.fedict.eid.applet.shared.annotation.ProtocolVersion;
-import be.fedict.eid.applet.shared.annotation.ValidateSemanticalIntegrity;
+import be.smals.research.bulksign.desktopapp.eid.external.shared.annotation.HttpBody;
+import be.smals.research.bulksign.desktopapp.eid.external.shared.annotation.HttpHeader;
+import be.smals.research.bulksign.desktopapp.eid.external.shared.annotation.MessageDiscriminator;
+import be.smals.research.bulksign.desktopapp.eid.external.shared.annotation.NotNull;
+import be.smals.research.bulksign.desktopapp.eid.external.shared.annotation.PostConstruct;
+import be.smals.research.bulksign.desktopapp.eid.external.shared.annotation.ProtocolVersion;
+import be.smals.research.bulksign.desktopapp.eid.external.shared.annotation.ValidateSemanticalIntegrity;
 
 /**
  * Unmarshaller component is responsible for governing the process of converting

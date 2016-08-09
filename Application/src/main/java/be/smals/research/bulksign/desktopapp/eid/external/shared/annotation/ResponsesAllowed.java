@@ -16,7 +16,7 @@
  * http://www.gnu.org/licenses/.
  */
 
-package be.fedict.eid.applet.shared.annotation;
+package be.smals.research.bulksign.desktopapp.eid.external.shared.annotation;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -24,10 +24,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import be.fedict.eid.applet.shared.protocol.SemanticValidator;
-
 /**
- * Marks that a class will be semantically validated.
+ * Marks which response messages are allowed for the annotated request message.
  * 
  * @author Frank Cornelis
  * 
@@ -35,11 +33,6 @@ import be.fedict.eid.applet.shared.protocol.SemanticValidator;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @Documented
-public @interface ValidateSemanticalIntegrity {
-	/**
-	 * The semantic validator class to use for integrity checking.
-	 * 
-	 * @return
-	 */
-	Class<? extends SemanticValidator<?>>value();
+public @interface ResponsesAllowed {
+	Class<?>[]value();
 }

@@ -19,10 +19,10 @@
 
 package be.fedict.eid.applet.shared;
 
-import be.fedict.eid.applet.shared.annotation.HttpHeader;
-import be.fedict.eid.applet.shared.annotation.MessageDiscriminator;
-import be.fedict.eid.applet.shared.annotation.ResponsesAllowed;
-import be.fedict.eid.applet.shared.annotation.StartRequestMessage;
+import be.smals.research.bulksign.desktopapp.eid.external.shared.annotation.HttpHeader;
+import be.smals.research.bulksign.desktopapp.eid.external.shared.annotation.MessageDiscriminator;
+import be.smals.research.bulksign.desktopapp.eid.external.shared.annotation.ResponsesAllowed;
+import be.smals.research.bulksign.desktopapp.eid.external.shared.annotation.StartRequestMessage;
 import be.fedict.eid.applet.shared.protocol.ProtocolState;
 
 /**

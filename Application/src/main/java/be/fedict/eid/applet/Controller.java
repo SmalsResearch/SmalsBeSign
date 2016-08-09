@@ -71,7 +71,7 @@ import be.fedict.eid.applet.shared.SignCertificatesDataMessage;
 import be.fedict.eid.applet.shared.SignCertificatesRequestMessage;
 import be.fedict.eid.applet.shared.SignRequestMessage;
 import be.fedict.eid.applet.shared.SignatureDataMessage;
-import be.fedict.eid.applet.shared.annotation.ResponsesAllowed;
+import be.smals.research.bulksign.desktopapp.eid.external.shared.annotation.ResponsesAllowed;
 import be.fedict.eid.applet.shared.protocol.ProtocolContext;
 import be.fedict.eid.applet.shared.protocol.ProtocolStateMachine;
 import be.fedict.eid.applet.shared.protocol.Transport;

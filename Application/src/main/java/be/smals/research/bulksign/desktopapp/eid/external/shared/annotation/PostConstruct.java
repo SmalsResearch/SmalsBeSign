@@ -16,7 +16,7 @@
  * http://www.gnu.org/licenses/.
  */
 
-package be.fedict.eid.applet.shared.annotation;
+package be.smals.research.bulksign.desktopapp.eid.external.shared.annotation;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -25,14 +25,15 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Marks the field that will be used as message protocol. Of course the field
- * should be final static and the same value over all the message classes.
+ * Post construct annotation. We cannot use the javax.annotation.PostConstruct
+ * annotation since this one is not present in a Java 5 runtime.
  * 
  * @author Frank Cornelis
  * 
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.FIELD)
+@Target(ElementType.METHOD)
 @Documented
-public @interface ProtocolVersion {
+public @interface PostConstruct {
+
 }

@@ -16,7 +16,7 @@
  * http://www.gnu.org/licenses/.
  */
 
-package be.fedict.eid.applet.shared.annotation;
+package be.smals.research.bulksign.desktopapp.eid.external.shared.annotation;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -25,14 +25,15 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Marks which response messages are allowed for the annotated request message.
+ * Marks that a field is required to be not <code>null</code>. Used for input
+ * validation.
  * 
  * @author Frank Cornelis
  * 
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
+@Target(ElementType.FIELD)
 @Documented
-public @interface ResponsesAllowed {
-	Class<?>[]value();
+public @interface NotNull {
+
 }

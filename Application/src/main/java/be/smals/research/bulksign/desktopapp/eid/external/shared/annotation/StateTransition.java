@@ -16,7 +16,7 @@
  * http://www.gnu.org/licenses/.
  */
 
-package be.fedict.eid.applet.shared.annotation;
+package be.smals.research.bulksign.desktopapp.eid.external.shared.annotation;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;

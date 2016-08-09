@@ -21,10 +21,10 @@ package be.fedict.eid.applet.shared.protocol;
 import java.util.LinkedList;
 import java.util.List;
 
-import be.fedict.eid.applet.shared.annotation.ProtocolStateAllowed;
-import be.fedict.eid.applet.shared.annotation.StartRequestMessage;
-import be.fedict.eid.applet.shared.annotation.StateTransition;
-import be.fedict.eid.applet.shared.annotation.StopResponseMessage;
+import be.smals.research.bulksign.desktopapp.eid.external.shared.annotation.ProtocolStateAllowed;
+import be.smals.research.bulksign.desktopapp.eid.external.shared.annotation.StartRequestMessage;
+import be.smals.research.bulksign.desktopapp.eid.external.shared.annotation.StateTransition;
+import be.smals.research.bulksign.desktopapp.eid.external.shared.annotation.StopResponseMessage;
 
 /**
  * Protocol State Machine.

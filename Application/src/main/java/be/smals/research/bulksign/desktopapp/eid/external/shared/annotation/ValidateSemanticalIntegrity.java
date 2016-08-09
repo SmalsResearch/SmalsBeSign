@@ -16,7 +16,7 @@
  * http://www.gnu.org/licenses/.
  */
 
-package be.fedict.eid.applet.shared.annotation;
+package be.smals.research.bulksign.desktopapp.eid.external.shared.annotation;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -24,14 +24,22 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import be.fedict.eid.applet.shared.protocol.SemanticValidator;
+
 /**
- * Marks that a field will be transmitted as the HTTP body.
+ * Marks that a class will be semantically validated.
  * 
  * @author Frank Cornelis
  * 
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.FIELD)
+@Target(ElementType.TYPE)
 @Documented
-public @interface HttpBody {
+public @interface ValidateSemanticalIntegrity {
+	/**
+	 * The semantic validator class to use for integrity checking.
+	 * 
+	 * @return
+	 */
+	Class<? extends SemanticValidator<?>>value();
 }

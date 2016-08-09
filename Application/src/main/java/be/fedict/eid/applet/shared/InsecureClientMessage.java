@@ -18,9 +18,9 @@
 
 package be.fedict.eid.applet.shared;
 
-import be.fedict.eid.applet.shared.annotation.HttpHeader;
-import be.fedict.eid.applet.shared.annotation.MessageDiscriminator;
-import be.fedict.eid.applet.shared.annotation.StateTransition;
+import be.smals.research.bulksign.desktopapp.eid.external.shared.annotation.HttpHeader;
+import be.smals.research.bulksign.desktopapp.eid.external.shared.annotation.MessageDiscriminator;
+import be.smals.research.bulksign.desktopapp.eid.external.shared.annotation.StateTransition;
 import be.fedict.eid.applet.shared.protocol.ProtocolState;
 
 /**

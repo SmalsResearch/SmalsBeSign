@@ -23,9 +23,9 @@ import java.io.PrintStream;
 import java.lang.reflect.Field;
 import java.util.List;
 
-import be.fedict.eid.applet.shared.annotation.HttpBody;
-import be.fedict.eid.applet.shared.annotation.HttpHeader;
-import be.fedict.eid.applet.shared.annotation.NotNull;
+import be.smals.research.bulksign.desktopapp.eid.external.shared.annotation.HttpBody;
+import be.smals.research.bulksign.desktopapp.eid.external.shared.annotation.HttpHeader;
+import be.smals.research.bulksign.desktopapp.eid.external.shared.annotation.NotNull;
 
 /**
  * Transport component is responsible for governing the process of converting

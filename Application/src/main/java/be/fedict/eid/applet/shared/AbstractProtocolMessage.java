@@ -18,8 +18,8 @@
 
 package be.fedict.eid.applet.shared;
 
-import be.fedict.eid.applet.shared.annotation.HttpHeader;
-import be.fedict.eid.applet.shared.annotation.ProtocolVersion;
+import be.smals.research.bulksign.desktopapp.eid.external.shared.annotation.HttpHeader;
+import be.smals.research.bulksign.desktopapp.eid.external.shared.annotation.ProtocolVersion;
 
 /**
  * Abstract protocol message class.

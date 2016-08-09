@@ -16,7 +16,7 @@
  * http://www.gnu.org/licenses/.
  */
 
-package be.fedict.eid.applet.shared.annotation;
+package be.smals.research.bulksign.desktopapp.eid.external.shared.annotation;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -24,10 +24,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import be.fedict.eid.applet.shared.protocol.ProtocolState;
-
 /**
- * Marks a message as being an entry point in the protocol state machine.
+ * Marks a message as being an exit point in the protocol state machine.
  * 
  * @author Frank Cornelis
  * 
@@ -35,6 +33,5 @@ import be.fedict.eid.applet.shared.protocol.ProtocolState;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @Documented
-public @interface StartRequestMessage {
-	ProtocolState value();
+public @interface StopResponseMessage {
 }

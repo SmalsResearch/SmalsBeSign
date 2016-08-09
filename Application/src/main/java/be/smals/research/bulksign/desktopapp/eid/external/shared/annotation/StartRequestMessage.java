@@ -16,7 +16,7 @@
  * http://www.gnu.org/licenses/.
  */
 
-package be.fedict.eid.applet.shared.annotation;
+package be.smals.research.bulksign.desktopapp.eid.external.shared.annotation;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -24,16 +24,17 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import be.fedict.eid.applet.shared.protocol.ProtocolState;
+
 /**
- * Post construct annotation. We cannot use the javax.annotation.PostConstruct
- * annotation since this one is not present in a Java 5 runtime.
+ * Marks a message as being an entry point in the protocol state machine.
  * 
  * @author Frank Cornelis
  * 
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.METHOD)
+@Target(ElementType.TYPE)
 @Documented
-public @interface PostConstruct {
-
+public @interface StartRequestMessage {
+	ProtocolState value();
 }

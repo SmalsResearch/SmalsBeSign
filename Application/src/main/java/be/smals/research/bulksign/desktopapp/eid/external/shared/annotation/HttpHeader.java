@@ -16,7 +16,7 @@
  * http://www.gnu.org/licenses/.
  */
 
-package be.fedict.eid.applet.shared.annotation;
+package be.smals.research.bulksign.desktopapp.eid.external.shared.annotation;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -24,17 +24,21 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import be.fedict.eid.applet.shared.protocol.ProtocolState;
-
 /**
- * Marks the required protocol state for the incoming message.
+ * Marks that a field will be transmitted using an HTTP header.
  * 
  * @author Frank Cornelis
  * 
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
+@Target(ElementType.FIELD)
 @Documented
-public @interface ProtocolStateAllowed {
-	ProtocolState value();
+public @interface HttpHeader {
+
+	/**
+	 * The HTTP header name.
+	 * 
+	 * @return
+	 */
+	String value() default "";
 }
