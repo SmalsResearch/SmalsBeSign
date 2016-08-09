@@ -31,7 +31,7 @@ public class MockKeyService extends KeyService {
         this.generateKeys ();
         try {
             this.generateCertificate ();
-            this.generateChainCertificate ();
+            //this.generateChainCertificate ();
 
         } catch (CertificateParsingException|CertificateEncodingException|NoSuchAlgorithmException|InvalidKeyException|SignatureException|NoSuchProviderException e) {
             e.printStackTrace();
@@ -68,7 +68,7 @@ public class MockKeyService extends KeyService {
     private void generateCertificate () throws CertificateParsingException, CertificateEncodingException, NoSuchAlgorithmException, InvalidKeyException, SignatureException, NoSuchProviderException {
         KeyPair rootKeyPair     = this.generateKeyPair();
         Date startDate          = new Date(System.currentTimeMillis() - 24 * 60 * 60 * 1000);
-        Date endDate            = new Date();
+        Date endDate            = new Date(System.currentTimeMillis() + 365 * 24 * 60 * 60 * 1000);
         BigInteger serialNumber = BigInteger.valueOf(System.currentTimeMillis());
         X509V3CertificateGenerator certGen = new X509V3CertificateGenerator();
         X500Principal  subjectName         = new X500Principal("CN=Mock ROOT");
@@ -85,6 +85,7 @@ public class MockKeyService extends KeyService {
         X509Certificate rootCertificate = certGen.generate(rootKeyPair.getPrivate(), "BC");
 
         // Intermediate
+        certGen = new X509V3CertificateGenerator();
         KeyPair intermediateKeyPair     = this.generateKeyPair();
         certGen.setSerialNumber(BigInteger.valueOf(System.currentTimeMillis()));
         certGen.setIssuerDN(rootCertificate.getSubjectX500Principal()); // Authority set to root
@@ -98,6 +99,7 @@ public class MockKeyService extends KeyService {
         X509Certificate intermediateCertificate = certGen.generate(rootKeyPair.getPrivate(), "BC");
 
         // User
+        certGen = new X509V3CertificateGenerator();
         certGen.setSerialNumber(BigInteger.valueOf(System.currentTimeMillis()));
         certGen.setIssuerDN(intermediateCertificate.getSubjectX500Principal()); // Authority set to intermediate
         certGen.setNotBefore(startDate);

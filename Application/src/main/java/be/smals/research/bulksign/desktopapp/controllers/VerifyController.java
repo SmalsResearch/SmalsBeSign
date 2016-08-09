@@ -1,6 +1,5 @@
 package be.smals.research.bulksign.desktopapp.controllers;
 
-import be.smals.research.bulksign.desktopapp.services.MockKeyService;
 import be.smals.research.bulksign.desktopapp.services.VerifySigningService;
 import be.smals.research.bulksign.desktopapp.utilities.SigningOutput;
 import javafx.event.ActionEvent;
@@ -18,7 +17,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-import java.security.PublicKey;
+import java.security.NoSuchProviderException;
 import java.security.SignatureException;
 import java.security.cert.CertificateException;
 
@@ -57,13 +56,9 @@ public class VerifyController {
             SigningOutput signingOutput = null;
             try {
                 signingOutput = this.verifySigningService.getSigningOutput(this.signatureFile);
-                String masterDigest = signingOutput.masterDigest;
-//                PublicKey key = EIDKeyService.getInstance().getPublicKey(modulus, publicExponent);
-                PublicKey key = MockKeyService.getInstance().getPublicKey();
-                byte signature[] = signingOutput.signature;
 
                 FileInputStream file = new FileInputStream(this.signedFile);
-                boolean isValid = this.verifySigningService.verifySigning( file, signingOutput);
+                boolean isValid = this.verifySigningService.verifySigning(file, signingOutput);
                 if (isValid) {
                     Alert confirmationDialog = new Alert(Alert.AlertType.CONFIRMATION, "The Signature is valid !", ButtonType.CLOSE);
                     confirmationDialog.showAndWait();
@@ -81,11 +76,15 @@ public class VerifyController {
             } catch (SignatureException e) {
                 Alert errorDialog = new Alert(Alert.AlertType.ERROR, "Invalid Signature", ButtonType.CLOSE);
                 errorDialog.showAndWait();
-            } catch (NoSuchAlgorithmException|CertificateException|InvalidKeyException e) {
+            } catch (NoSuchAlgorithmException|InvalidKeyException e) {
                 Alert corruptedFileDialog = new Alert(Alert.AlertType.ERROR, "The signature is incorrect.", ButtonType.CLOSE);
                 corruptedFileDialog.setTitle("Invalid Signature");
                 corruptedFileDialog.showAndWait();
-            } catch (Exception e) {
+            } catch (CertificateException e) {
+                Alert corruptedFileDialog = new Alert(Alert.AlertType.ERROR, "Invalid certificate", ButtonType.CLOSE);
+                corruptedFileDialog.setTitle("Invalid Certificate");
+                corruptedFileDialog.showAndWait();
+            } catch (NoSuchProviderException e) {
                 e.printStackTrace();
             }
 

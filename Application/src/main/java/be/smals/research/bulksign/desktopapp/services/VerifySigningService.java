@@ -21,15 +21,16 @@ public class VerifySigningService {
     public VerifySigningService () {}
 
     public boolean verifySigning (FileInputStream file, SigningOutput signingOutput)
-            throws NoSuchAlgorithmException, IOException, NoSuchProviderException, InvalidKeyException, SignatureException, CertificateNotYetValidException, CertificateExpiredException {
+            throws NoSuchAlgorithmException, IOException, NoSuchProviderException, InvalidKeyException,
+                    SignatureException, CertificateException {
         String fileDigest = DigestService.getInstance().computeIndividualDigest(file);
         if (!this.isIndividualDigestPartOfMasterDigest(signingOutput.masterDigest, fileDigest))
             return false;
-        if (this.isCertificateValid(signingOutput.certificateChain))
+        if (!this.isCertificateChainValid(signingOutput.certificateChain))
             return false;
 
         Signature signer = Signature.getInstance("SHA1withRSA", "BC");
-        signer.initVerify(signingOutput.certificateChain.get(2).getPublicKey());
+        signer.initVerify(MockKeyService.getInstance().getPublicKey());
         for (int j = 0; j < signingOutput.masterDigest.length(); j++) {
             signer.update(signingOutput.masterDigest.getBytes()[j]);
         }
@@ -56,13 +57,19 @@ public class VerifySigningService {
         return signer.verify(signature);
     }
 
-    public boolean isCertificateValid (List<X509Certificate> certificateChain) {
-//        try {
-//            certificate.checkValidity();
-//        } catch (CertificateExpiredException|CertificateNotYetValidException e) {
-//            e.printStackTrace();
-//        }
-
+    public boolean isCertificateChainValid(List<X509Certificate> certificateChain)
+            throws NoSuchAlgorithmException, CertificateException, NoSuchProviderException, InvalidKeyException, SignatureException {
+        X509Certificate rootCert    = certificateChain.get(0);
+        X509Certificate intermCert  = certificateChain.get(1);
+        X509Certificate userCert    = certificateChain.get(2);
+        return (this.isCertificateValid(userCert, intermCert.getPublicKey())
+                && this.isCertificateValid(intermCert, rootCert.getPublicKey())
+                && this.isCertificateValid(rootCert, rootCert.getPublicKey()));
+    }
+    private boolean isCertificateValid (X509Certificate certificate, PublicKey authorityPubKey)
+            throws CertificateException, NoSuchProviderException, NoSuchAlgorithmException, InvalidKeyException, SignatureException {
+        certificate.checkValidity();
+        certificate.verify(authorityPubKey);
         return true;
     }
 
