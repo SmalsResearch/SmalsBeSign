@@ -30,7 +30,7 @@ import be.smals.research.bulksign.desktopapp.eid.external.shared.annotation.Post
 import be.smals.research.bulksign.desktopapp.eid.external.shared.annotation.ProtocolStateAllowed;
 import be.smals.research.bulksign.desktopapp.eid.external.shared.annotation.ResponsesAllowed;
 import be.smals.research.bulksign.desktopapp.eid.external.shared.annotation.ValidateSemanticalIntegrity;
-import be.fedict.eid.applet.shared.protocol.ProtocolState;
+import be.smals.research.bulksign.desktopapp.eid.external.shared.protocol.ProtocolState;
 
 /**
  * Identity Data Transfer Object.

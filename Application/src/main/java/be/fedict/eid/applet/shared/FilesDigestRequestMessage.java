@@ -22,7 +22,7 @@ import be.smals.research.bulksign.desktopapp.eid.external.shared.annotation.Http
 import be.smals.research.bulksign.desktopapp.eid.external.shared.annotation.MessageDiscriminator;
 import be.smals.research.bulksign.desktopapp.eid.external.shared.annotation.NotNull;
 import be.smals.research.bulksign.desktopapp.eid.external.shared.annotation.StateTransition;
-import be.fedict.eid.applet.shared.protocol.ProtocolState;
+import be.smals.research.bulksign.desktopapp.eid.external.shared.protocol.ProtocolState;
 
 /**
  * Files digest request message transfer object.

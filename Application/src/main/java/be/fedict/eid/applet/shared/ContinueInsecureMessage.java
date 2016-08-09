@@ -23,7 +23,7 @@ import be.smals.research.bulksign.desktopapp.eid.external.shared.annotation.Http
 import be.smals.research.bulksign.desktopapp.eid.external.shared.annotation.MessageDiscriminator;
 import be.smals.research.bulksign.desktopapp.eid.external.shared.annotation.ProtocolStateAllowed;
 import be.smals.research.bulksign.desktopapp.eid.external.shared.annotation.ResponsesAllowed;
-import be.fedict.eid.applet.shared.protocol.ProtocolState;
+import be.smals.research.bulksign.desktopapp.eid.external.shared.protocol.ProtocolState;
 
 /**
  * Continue Insecure Message transfer object.

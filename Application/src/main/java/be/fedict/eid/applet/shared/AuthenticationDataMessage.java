@@ -35,7 +35,7 @@ import be.smals.research.bulksign.desktopapp.eid.external.shared.annotation.NotN
 import be.smals.research.bulksign.desktopapp.eid.external.shared.annotation.PostConstruct;
 import be.smals.research.bulksign.desktopapp.eid.external.shared.annotation.ProtocolStateAllowed;
 import be.smals.research.bulksign.desktopapp.eid.external.shared.annotation.ResponsesAllowed;
-import be.fedict.eid.applet.shared.protocol.ProtocolState;
+import be.smals.research.bulksign.desktopapp.eid.external.shared.protocol.ProtocolState;
 
 /**
  * Authentication Data transfer object.

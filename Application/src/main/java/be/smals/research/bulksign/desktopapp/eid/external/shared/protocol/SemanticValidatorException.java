@@ -16,30 +16,25 @@
  * http://www.gnu.org/licenses/.
  */
 
-package be.fedict.eid.applet.shared.protocol;
+package be.smals.research.bulksign.desktopapp.eid.external.shared.protocol;
 
 /**
- * Interface for protocol state listeners.
+ * Exception class thrown by a semantic validator.
+ * 
+ * @see SemanticValidator
  * 
  * @author Frank Cornelis
- * 
  */
-public interface ProtocolStateListener {
+public class SemanticValidatorException extends Exception {
+	private static final long serialVersionUID = 1L;
 
 	/**
-	 * Fired when there is a protocol state transition.
+	 * Main constructor.
 	 * 
-	 * @param newProtocolState
+	 * @param message
+	 *            the exception message.
 	 */
-	void protocolStateTransition(ProtocolState newProtocolState);
-
-	/**
-	 * Called when a protocol run starts.
-	 */
-	void startProtocolRun();
-
-	/**
-	 * Called when a protocol run ends.
-	 */
-	void stopProtocolRun();
+	public SemanticValidatorException(String message) {
+		super(message);
+	}
 }

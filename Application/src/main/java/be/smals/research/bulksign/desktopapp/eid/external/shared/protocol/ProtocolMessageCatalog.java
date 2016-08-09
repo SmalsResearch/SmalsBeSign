@@ -1,6 +1,6 @@
 /*
  * eID Applet Project.
- * Copyright (C) 2008-2012 FedICT.
+ * Copyright (C) 2008-2009 FedICT.
  *
  * This is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License version
@@ -16,14 +16,23 @@
  * http://www.gnu.org/licenses/.
  */
 
-package be.fedict.eid.applet.shared.protocol;
+package be.smals.research.bulksign.desktopapp.eid.external.shared.protocol;
+
+import java.util.List;
 
 /**
- * Holds all the protocol states.
+ * Interface for protocol message catalog. Defines all possible message of a
+ * certain protocol.
  * 
  * @author Frank Cornelis
  * 
  */
-public enum ProtocolState {
-	INIT, IDENTIFY, ENV_CHECK, AUTHENTICATE, SIGN, DIGEST, INSECURE, SIGN_CERTS, AUTH_SIGN
+public interface ProtocolMessageCatalog {
+
+	/**
+	 * Gives back a list of all protocol messages.
+	 * 
+	 * @return
+	 */
+	List<Class<?>> getCatalogClasses();
 }

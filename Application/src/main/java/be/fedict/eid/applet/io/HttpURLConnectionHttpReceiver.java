@@ -26,7 +26,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import be.fedict.eid.applet.shared.protocol.HttpReceiver;
+import be.smals.research.bulksign.desktopapp.eid.external.shared.protocol.HttpReceiver;
 
 /**
  * Implementation of an {@link HttpReceiver} based on the

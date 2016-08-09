@@ -24,7 +24,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import be.fedict.eid.applet.shared.protocol.SemanticValidator;
+import be.smals.research.bulksign.desktopapp.eid.external.shared.protocol.SemanticValidator;
 
 /**
  * Marks that a class will be semantically validated.

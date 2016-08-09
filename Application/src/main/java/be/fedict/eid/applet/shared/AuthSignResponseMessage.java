@@ -25,7 +25,7 @@ import be.smals.research.bulksign.desktopapp.eid.external.shared.annotation.Mess
 import be.smals.research.bulksign.desktopapp.eid.external.shared.annotation.NotNull;
 import be.smals.research.bulksign.desktopapp.eid.external.shared.annotation.ProtocolStateAllowed;
 import be.smals.research.bulksign.desktopapp.eid.external.shared.annotation.ResponsesAllowed;
-import be.fedict.eid.applet.shared.protocol.ProtocolState;
+import be.smals.research.bulksign.desktopapp.eid.external.shared.protocol.ProtocolState;
 
 /**
  * Response message for authentication signature creation. Can be used for the

@@ -23,7 +23,7 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.ProtocolException;
 
-import be.fedict.eid.applet.shared.protocol.HttpTransmitter;
+import be.smals.research.bulksign.desktopapp.eid.external.shared.protocol.HttpTransmitter;
 
 /**
  * Implementation of an {@link HttpTransmitter} using {@link HttpURLConnection}.

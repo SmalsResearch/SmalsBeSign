@@ -16,32 +16,30 @@
  * http://www.gnu.org/licenses/.
  */
 
-package be.fedict.eid.applet.shared.protocol;
+package be.smals.research.bulksign.desktopapp.eid.external.shared.protocol;
 
 /**
- * Interface for protocol context component.
+ * Interface for protocol state listeners.
  * 
  * @author Frank Cornelis
  * 
  */
-public interface ProtocolContext {
+public interface ProtocolStateListener {
 
 	/**
-	 * Gives back the current protocol state.
+	 * Fired when there is a protocol state transition.
 	 * 
-	 * @return
+	 * @param newProtocolState
 	 */
-	ProtocolState getProtocolState();
+	void protocolStateTransition(ProtocolState newProtocolState);
 
 	/**
-	 * Persists the protocol state in the protocol context.
-	 * 
-	 * @param protocolState
+	 * Called when a protocol run starts.
 	 */
-	void setProtocolState(ProtocolState protocolState);
+	void startProtocolRun();
 
 	/**
-	 * Removes the protocol state from the protocol context.
+	 * Called when a protocol run ends.
 	 */
-	void removeProtocolState();
+	void stopProtocolRun();
 }

@@ -21,7 +21,7 @@ package be.fedict.eid.applet.shared;
 import be.smals.research.bulksign.desktopapp.eid.external.shared.annotation.HttpHeader;
 import be.smals.research.bulksign.desktopapp.eid.external.shared.annotation.MessageDiscriminator;
 import be.smals.research.bulksign.desktopapp.eid.external.shared.annotation.StateTransition;
-import be.fedict.eid.applet.shared.protocol.ProtocolState;
+import be.smals.research.bulksign.desktopapp.eid.external.shared.protocol.ProtocolState;
 
 /**
  * Sign certificates request message transfer object.

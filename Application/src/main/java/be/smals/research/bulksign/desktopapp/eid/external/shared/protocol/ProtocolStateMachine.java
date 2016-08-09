@@ -16,7 +16,7 @@
  * http://www.gnu.org/licenses/.
  */
 
-package be.fedict.eid.applet.shared.protocol;
+package be.smals.research.bulksign.desktopapp.eid.external.shared.protocol;
 
 import java.util.LinkedList;
 import java.util.List;

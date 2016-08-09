@@ -72,10 +72,10 @@ import be.fedict.eid.applet.shared.SignCertificatesRequestMessage;
 import be.fedict.eid.applet.shared.SignRequestMessage;
 import be.fedict.eid.applet.shared.SignatureDataMessage;
 import be.smals.research.bulksign.desktopapp.eid.external.shared.annotation.ResponsesAllowed;
-import be.fedict.eid.applet.shared.protocol.ProtocolContext;
-import be.fedict.eid.applet.shared.protocol.ProtocolStateMachine;
-import be.fedict.eid.applet.shared.protocol.Transport;
-import be.fedict.eid.applet.shared.protocol.Unmarshaller;
+import be.smals.research.bulksign.desktopapp.eid.external.shared.protocol.ProtocolContext;
+import be.smals.research.bulksign.desktopapp.eid.external.shared.protocol.ProtocolStateMachine;
+import be.smals.research.bulksign.desktopapp.eid.external.shared.protocol.Transport;
+import be.smals.research.bulksign.desktopapp.eid.external.shared.protocol.Unmarshaller;
 
 /**
  * Controller component. Contains the eID logic. Interacts with {@link View} and

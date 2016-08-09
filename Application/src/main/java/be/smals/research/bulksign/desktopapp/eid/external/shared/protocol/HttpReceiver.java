@@ -16,23 +16,45 @@
  * http://www.gnu.org/licenses/.
  */
 
-package be.fedict.eid.applet.shared.protocol;
+package be.smals.research.bulksign.desktopapp.eid.external.shared.protocol;
 
 import java.util.List;
 
 /**
- * Interface for protocol message catalog. Defines all possible message of a
- * certain protocol.
+ * Interface for HTTP receiver component.
  * 
  * @author Frank Cornelis
  * 
  */
-public interface ProtocolMessageCatalog {
+public interface HttpReceiver {
 
 	/**
-	 * Gives back a list of all protocol messages.
+	 * Checks whether the HTTP receiver is using a secured SSL channel.
 	 * 
 	 * @return
 	 */
-	List<Class<?>> getCatalogClasses();
+	boolean isSecure();
+
+	/**
+	 * Gives back all HTTP header names.
+	 * 
+	 * @return
+	 */
+	List<String> getHeaderNames();
+
+	/**
+	 * Gives back a specific HTTP header value.
+	 * 
+	 * @param headerName
+	 * @return
+	 */
+	String getHeaderValue(String headerName);
+
+	/**
+	 * Gives back the HTTP body. Can be <code>null</code> in case no body was
+	 * present.
+	 * 
+	 * @return
+	 */
+	byte[] getBody();
 }

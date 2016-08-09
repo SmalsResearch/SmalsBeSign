@@ -19,8 +19,8 @@
 
 package be.fedict.eid.applet.shared;
 
-import be.fedict.eid.applet.shared.protocol.SemanticValidator;
-import be.fedict.eid.applet.shared.protocol.SemanticValidatorException;
+import be.smals.research.bulksign.desktopapp.eid.external.shared.protocol.SemanticValidator;
+import be.smals.research.bulksign.desktopapp.eid.external.shared.protocol.SemanticValidatorException;
 
 /**
  * Semantic validator implementation of the IdentityDataMessage.

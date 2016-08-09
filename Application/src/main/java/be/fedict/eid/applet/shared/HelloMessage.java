@@ -23,7 +23,7 @@ import be.smals.research.bulksign.desktopapp.eid.external.shared.annotation.Http
 import be.smals.research.bulksign.desktopapp.eid.external.shared.annotation.MessageDiscriminator;
 import be.smals.research.bulksign.desktopapp.eid.external.shared.annotation.ResponsesAllowed;
 import be.smals.research.bulksign.desktopapp.eid.external.shared.annotation.StartRequestMessage;
-import be.fedict.eid.applet.shared.protocol.ProtocolState;
+import be.smals.research.bulksign.desktopapp.eid.external.shared.protocol.ProtocolState;
 
 /**
  * Hello Message transfer object.

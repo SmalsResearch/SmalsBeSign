@@ -16,45 +16,32 @@
  * http://www.gnu.org/licenses/.
  */
 
-package be.fedict.eid.applet.shared.protocol;
-
-import java.util.List;
+package be.smals.research.bulksign.desktopapp.eid.external.shared.protocol;
 
 /**
- * Interface for HTTP receiver component.
+ * Interface for protocol context component.
  * 
  * @author Frank Cornelis
  * 
  */
-public interface HttpReceiver {
+public interface ProtocolContext {
 
 	/**
-	 * Checks whether the HTTP receiver is using a secured SSL channel.
+	 * Gives back the current protocol state.
 	 * 
 	 * @return
 	 */
-	boolean isSecure();
+	ProtocolState getProtocolState();
 
 	/**
-	 * Gives back all HTTP header names.
+	 * Persists the protocol state in the protocol context.
 	 * 
-	 * @return
+	 * @param protocolState
 	 */
-	List<String> getHeaderNames();
+	void setProtocolState(ProtocolState protocolState);
 
 	/**
-	 * Gives back a specific HTTP header value.
-	 * 
-	 * @param headerName
-	 * @return
+	 * Removes the protocol state from the protocol context.
 	 */
-	String getHeaderValue(String headerName);
-
-	/**
-	 * Gives back the HTTP body. Can be <code>null</code> in case no body was
-	 * present.
-	 * 
-	 * @return
-	 */
-	byte[] getBody();
+	void removeProtocolState();
 }

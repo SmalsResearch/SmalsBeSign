@@ -19,8 +19,8 @@
 package be.fedict.eid.applet.io;
 
 import be.fedict.eid.applet.View;
-import be.fedict.eid.applet.shared.protocol.ProtocolContext;
-import be.fedict.eid.applet.shared.protocol.ProtocolState;
+import be.smals.research.bulksign.desktopapp.eid.external.shared.protocol.ProtocolContext;
+import be.smals.research.bulksign.desktopapp.eid.external.shared.protocol.ProtocolState;
 
 /**
  * Local memory protocol context implementation.

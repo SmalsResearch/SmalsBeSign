@@ -22,7 +22,7 @@ package be.fedict.eid.applet.shared;
 import java.util.LinkedList;
 import java.util.List;
 
-import be.fedict.eid.applet.shared.protocol.ProtocolMessageCatalog;
+import be.smals.research.bulksign.desktopapp.eid.external.shared.protocol.ProtocolMessageCatalog;
 
 /**
  * eID Applet Protocol Message Catalog.
