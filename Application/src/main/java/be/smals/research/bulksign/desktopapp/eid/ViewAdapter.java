@@ -16,6 +16,7 @@ public class ViewAdapter implements View {
         System.out.println("*detail message: " + detailMessage);
     }
 
+
     @Override
     public void setStatusMessage(Status status, Messages.MESSAGE_ID messageId) {
         System.out.print("*status message: " + status);
