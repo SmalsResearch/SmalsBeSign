@@ -68,7 +68,7 @@ public class MockKeyService extends KeyService {
     private void generateCertificate () throws CertificateParsingException, CertificateEncodingException, NoSuchAlgorithmException, InvalidKeyException, SignatureException, NoSuchProviderException {
         KeyPair rootKeyPair     = this.generateKeyPair();
         Date startDate          = new Date(System.currentTimeMillis() - 24 * 60 * 60 * 1000);
-        Date endDate            = new Date();
+        Date endDate            = new Date(System.currentTimeMillis() + 365 * 24 * 60 * 60 * 1000);
         BigInteger serialNumber = BigInteger.valueOf(System.currentTimeMillis());
         X509V3CertificateGenerator certGen = new X509V3CertificateGenerator();
         X500Principal  subjectName         = new X500Principal("CN=Mock ROOT");

@@ -42,7 +42,7 @@ public class DigestService {
         for (int i = 0; i < fileInputStreams.length; i++) {
             FileInputStream fileInputStream = fileInputStreams[i];
             individualDigest[i] = computeIndividualDigest(fileInputStream);
-            outputIndividualDigest(individualDigest[i], i);
+//            outputIndividualDigest(individualDigest[i], i);
             fileInputStream.close();
         }
 
