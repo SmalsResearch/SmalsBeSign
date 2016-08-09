@@ -19,11 +19,13 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
+
+import java.io.InputStream;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 import java.util.List;
+
 
 public class SigningService {
 
@@ -45,22 +47,24 @@ public class SigningService {
     /**
      * Used to sign given files
      *
-     * @param fileInputStreams files to sign
+     * @param inputStreams files to sign
      * @return the signature
      */
-    public byte[] sign (FileInputStream[] fileInputStreams) {
+    public byte[] sign (InputStream[] inputStreams) {
         byte[] signErrorOutput = new byte[0];
 
         try {
             //Open the P11 session
             long p11_session = pkcs11.C_OpenSession(0, PKCS11Constants.CKF_SERIAL_SESSION, null, null);
             try {
-                this.masterDigest = DigestService.getInstance().computeMasterDigest(fileInputStreams);
+                this.masterDigest = DigestService.getInstance().computeMasterDigest(inputStreams);
                 byte[] signature;
                 if (Settings.getInstance().getSigner() == Signer.EID) {
+                    System.out.println("EID SIGNER");
                     EIDSigningService.getInstance().initSign(pkcs11, p11_session);
                     signature = EIDSigningService.getInstance().sign(pkcs11, p11_session, this.masterDigest);
                 } else {
+                    System.out.println("MOCK SIGNER");
                     MockSigningService.getInstance().initSign(this.masterDigest);
                     signature = MockSigningService.getInstance().sign();
                 }
