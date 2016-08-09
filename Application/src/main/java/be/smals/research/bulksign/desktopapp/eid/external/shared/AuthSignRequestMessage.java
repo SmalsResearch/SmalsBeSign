@@ -1,6 +1,6 @@
 /*
  * eID Applet Project.
- * Copyright (C) 2008-2009 FedICT.
+ * Copyright (C) 2008-2012 FedICT.
  * Copyright (C) 2014 e-Contract.be BVBA.
  *
  * This is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * http://www.gnu.org/licenses/.
  */
 
-package be.fedict.eid.applet.shared;
+package be.smals.research.bulksign.desktopapp.eid.external.shared;
 
 import be.smals.research.bulksign.desktopapp.eid.external.shared.annotation.HttpBody;
 import be.smals.research.bulksign.desktopapp.eid.external.shared.annotation.HttpHeader;
@@ -27,52 +27,42 @@ import be.smals.research.bulksign.desktopapp.eid.external.shared.annotation.Stat
 import be.smals.research.bulksign.desktopapp.eid.external.shared.protocol.ProtocolState;
 
 /**
- * Sign request message transfer object.
+ * Request message for authentication signature creation. Can be used for the
+ * creation of for example WS-Security signatures.
  * 
  * @author Frank Cornelis
  * 
  */
-@StateTransition(ProtocolState.SIGN)
-public class SignRequestMessage extends AbstractProtocolMessage {
+@StateTransition(ProtocolState.AUTH_SIGN)
+public class AuthSignRequestMessage extends AbstractProtocolMessage {
+
 	@HttpHeader(TYPE_HTTP_HEADER)
 	@MessageDiscriminator
-	public static final String TYPE = SignRequestMessage.class.getSimpleName();
+	public static final String TYPE = AuthSignRequestMessage.class.getSimpleName();
 
 	@HttpHeader(HTTP_HEADER_PREFIX + "DigestAlgo")
 	@NotNull
 	public String digestAlgo;
 
-	@HttpHeader(HTTP_HEADER_PREFIX + "Description")
-	public String description;
-
-	@HttpHeader(HTTP_HEADER_PREFIX + "RemoveCard")
-	public boolean removeCard;
+	@HttpHeader(HTTP_HEADER_PREFIX + "Message")
+	@NotNull
+	public String message;
 
 	@HttpHeader(HTTP_HEADER_PREFIX + "Logoff")
 	public boolean logoff;
 
-	@HttpHeader(HTTP_HEADER_PREFIX + "RequireSecureReader")
-	public boolean requireSecureReader;
-
-	@HttpHeader(HTTP_HEADER_PREFIX + "NoPKCS11")
-	public boolean noPkcs11;
-
 	@HttpBody
 	@NotNull
-	public byte[] digestValue;
+	public byte[] computedDigestValue;
 
-	public SignRequestMessage() {
+	public AuthSignRequestMessage() {
 		super();
 	}
 
-	public SignRequestMessage(byte[] digestValue, String digestAlgo, String description, boolean logoff,
-			boolean removeCard, boolean requireSecureReader) {
-		this.digestValue = digestValue;
+	public AuthSignRequestMessage(byte[] computedDigestValue, String digestAlgo, String message, boolean logoff) {
+		this.computedDigestValue = computedDigestValue;
 		this.digestAlgo = digestAlgo;
-		this.description = description;
+		this.message = message;
 		this.logoff = logoff;
-		this.removeCard = removeCard;
-		this.requireSecureReader = requireSecureReader;
-		this.noPkcs11 = true;
 	}
 }

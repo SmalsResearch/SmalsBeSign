@@ -16,7 +16,7 @@
  * http://www.gnu.org/licenses/.
  */
 
-package be.fedict.eid.applet.shared;
+package be.smals.research.bulksign.desktopapp.eid.external.shared;
 
 import be.smals.research.bulksign.desktopapp.eid.external.shared.annotation.HttpHeader;
 import be.smals.research.bulksign.desktopapp.eid.external.shared.annotation.MessageDiscriminator;
@@ -24,15 +24,38 @@ import be.smals.research.bulksign.desktopapp.eid.external.shared.annotation.Stat
 import be.smals.research.bulksign.desktopapp.eid.external.shared.protocol.ProtocolState;
 
 /**
- * Check client message transfer object.
+ * Sign certificates request message transfer object.
  * 
  * @author Frank Cornelis
  * 
  */
-@StateTransition(ProtocolState.ENV_CHECK)
-public class CheckClientMessage extends AbstractProtocolMessage {
+@StateTransition(ProtocolState.SIGN_CERTS)
+public class SignCertificatesRequestMessage extends AbstractProtocolMessage {
 	@HttpHeader(TYPE_HTTP_HEADER)
 	@MessageDiscriminator
-	public static final String TYPE = CheckClientMessage.class.getSimpleName();
+	public static final String TYPE = SignCertificatesRequestMessage.class.getSimpleName();
 
+	@HttpHeader(HTTP_HEADER_PREFIX + "IncludeIdentity")
+	public boolean includeIdentity;
+
+	@HttpHeader(HTTP_HEADER_PREFIX + "IncludeAddress")
+	public boolean includeAddress;
+
+	@HttpHeader(HTTP_HEADER_PREFIX + "IncludePhoto")
+	public boolean includePhoto;
+
+	@HttpHeader(HTTP_HEADER_PREFIX + "IncludeIntegrityData")
+	public boolean includeIntegrityData;
+
+	public SignCertificatesRequestMessage() {
+		super();
+	}
+
+	public SignCertificatesRequestMessage(boolean includeIdentity, boolean includeAddress, boolean includePhoto,
+			boolean includeIntegrityData) {
+		this.includeIdentity = includeIdentity;
+		this.includeAddress = includeAddress;
+		this.includePhoto = includePhoto;
+		this.includeIntegrityData = includeIntegrityData;
+	}
 }

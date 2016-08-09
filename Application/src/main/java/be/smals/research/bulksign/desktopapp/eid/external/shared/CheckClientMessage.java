@@ -1,7 +1,6 @@
 /*
  * eID Applet Project.
  * Copyright (C) 2008-2009 FedICT.
- * Copyright (C) 2014 e-Contract.be BVBA.
  *
  * This is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License version
@@ -17,32 +16,23 @@
  * http://www.gnu.org/licenses/.
  */
 
-package be.fedict.eid.applet.shared;
+package be.smals.research.bulksign.desktopapp.eid.external.shared;
 
-import java.util.List;
-
-import be.smals.research.bulksign.desktopapp.eid.external.shared.annotation.HttpBody;
 import be.smals.research.bulksign.desktopapp.eid.external.shared.annotation.HttpHeader;
 import be.smals.research.bulksign.desktopapp.eid.external.shared.annotation.MessageDiscriminator;
-import be.smals.research.bulksign.desktopapp.eid.external.shared.annotation.NotNull;
-import be.smals.research.bulksign.desktopapp.eid.external.shared.annotation.ProtocolStateAllowed;
-import be.smals.research.bulksign.desktopapp.eid.external.shared.annotation.ResponsesAllowed;
+import be.smals.research.bulksign.desktopapp.eid.external.shared.annotation.StateTransition;
 import be.smals.research.bulksign.desktopapp.eid.external.shared.protocol.ProtocolState;
 
 /**
- * Files digests data message transfer object.
+ * Check client message transfer object.
  * 
  * @author Frank Cornelis
  * 
  */
-@ProtocolStateAllowed(ProtocolState.DIGEST)
-@ResponsesAllowed({ SignRequestMessage.class, FinishedMessage.class })
-public class FileDigestsDataMessage extends AbstractProtocolMessage {
+@StateTransition(ProtocolState.ENV_CHECK)
+public class CheckClientMessage extends AbstractProtocolMessage {
 	@HttpHeader(TYPE_HTTP_HEADER)
 	@MessageDiscriminator
-	public static final String TYPE = FileDigestsDataMessage.class.getSimpleName();
+	public static final String TYPE = CheckClientMessage.class.getSimpleName();
 
-	@HttpBody
-	@NotNull
-	public List<String> fileDigestInfos;
 }

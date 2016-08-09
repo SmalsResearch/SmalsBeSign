@@ -1,6 +1,7 @@
 /*
  * eID Applet Project.
- * Copyright (C) 2008-2009 FedICT.
+ * Copyright (C) 2010 FedICT.
+ * Copyright (C) 2014 e-Contract.be BVBA.
  *
  * This is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License version
@@ -16,26 +17,43 @@
  * http://www.gnu.org/licenses/.
  */
 
-package be.fedict.eid.applet.shared;
-
-import be.smals.research.bulksign.desktopapp.eid.external.shared.annotation.HttpHeader;
-import be.smals.research.bulksign.desktopapp.eid.external.shared.annotation.ProtocolVersion;
+package be.smals.research.bulksign.desktopapp.eid.external.shared;
 
 /**
- * Abstract protocol message class.
+ * Error enumeration.
  * 
  * @author Frank Cornelis
  * 
  */
-public abstract class AbstractProtocolMessage {
+public enum ErrorCode {
 
-	public static final String HTTP_HEADER_PREFIX = "X-AppletProtocol-";
+	/**
+	 * Error code for expired certificates.
+	 */
+	CERTIFICATE_EXPIRED,
 
-	public static final int PROTOCOL_VERSION = 1;
+	/**
+	 * Error code for revoked certificates.
+	 */
+	CERTIFICATE_REVOKED,
 
-	@HttpHeader(HTTP_HEADER_PREFIX + "Version")
-	@ProtocolVersion
-	public static final int protocolVersion = PROTOCOL_VERSION;
+	/**
+	 * Generic error code for invalid certificates.
+	 */
+	CERTIFICATE,
 
-	public static final String TYPE_HTTP_HEADER = HTTP_HEADER_PREFIX + "Type";
+	/**
+	 * Error code for untrusted certificates.
+	 */
+	CERTIFICATE_NOT_TRUSTED,
+
+	/**
+	 * User cancelled the eID operation.
+	 */
+	USER_CANCELED,
+
+	/**
+	 * User was not authorized to perform the requested operation.
+	 */
+	AUTHORIZATION;
 }

@@ -1,7 +1,6 @@
 /*
  * eID Applet Project.
  * Copyright (C) 2008-2009 FedICT.
- * Copyright (C) 2014 e-Contract.be BVBA.
  *
  * This is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License version
@@ -17,25 +16,36 @@
  * http://www.gnu.org/licenses/.
  */
 
-package be.fedict.eid.applet.shared;
+package be.smals.research.bulksign.desktopapp.eid.external.shared;
 
 import be.smals.research.bulksign.desktopapp.eid.external.shared.annotation.HttpHeader;
 import be.smals.research.bulksign.desktopapp.eid.external.shared.annotation.MessageDiscriminator;
-import be.smals.research.bulksign.desktopapp.eid.external.shared.annotation.ProtocolStateAllowed;
-import be.smals.research.bulksign.desktopapp.eid.external.shared.annotation.ResponsesAllowed;
-import be.smals.research.bulksign.desktopapp.eid.external.shared.protocol.ProtocolState;
+import be.smals.research.bulksign.desktopapp.eid.external.shared.annotation.StopResponseMessage;
 
 /**
- * Continue Insecure Message transfer object.
+ * Finished Message transfer object.
  * 
  * @author Frank Cornelis
  * 
  */
-@ProtocolStateAllowed(ProtocolState.INSECURE)
-@ResponsesAllowed({ IdentificationRequestMessage.class, AuthenticationRequestMessage.class, AdministrationMessage.class,
-		SignRequestMessage.class, FilesDigestRequestMessage.class, FinishedMessage.class })
-public class ContinueInsecureMessage extends AbstractProtocolMessage {
+@StopResponseMessage
+public class FinishedMessage extends AbstractProtocolMessage {
 	@HttpHeader(TYPE_HTTP_HEADER)
 	@MessageDiscriminator
-	public static final String TYPE = ContinueInsecureMessage.class.getSimpleName();
+	public static final String TYPE = FinishedMessage.class.getSimpleName();
+
+	/**
+	 * The optional error code to communicate towards the eID Applet in case
+	 * something went wrong on the server side.
+	 */
+	@HttpHeader(HTTP_HEADER_PREFIX + "ErrorCode")
+	public ErrorCode errorCode;
+
+	public FinishedMessage() {
+		super();
+	}
+
+	public FinishedMessage(ErrorCode errorCode) {
+		this.errorCode = errorCode;
+	}
 }

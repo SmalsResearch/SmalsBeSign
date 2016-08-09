@@ -1,6 +1,6 @@
 package be.smals.research.bulksign.desktopapp;
 
-import be.fedict.eid.applet.shared.SignatureDataMessage;
+import be.smals.research.bulksign.desktopapp.eid.external.shared.SignatureDataMessage;
 import be.smals.research.bulksign.desktopapp.controllers.MainController;
 import be.smals.research.bulksign.desktopapp.utilities.Settings;
 import javafx.application.Application;
@@ -14,7 +14,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import java.security.Security;
 import java.util.Arrays;
-import java.util.Collections;
 
 import be.smals.research.bulksign.desktopapp.eid.EidService;
 

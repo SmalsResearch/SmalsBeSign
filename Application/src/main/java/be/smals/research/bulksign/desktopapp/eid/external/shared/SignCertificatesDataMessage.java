@@ -17,7 +17,7 @@
  * http://www.gnu.org/licenses/.
  */
 
-package be.fedict.eid.applet.shared;
+package be.smals.research.bulksign.desktopapp.eid.external.shared;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;

@@ -16,7 +16,7 @@
  * http://www.gnu.org/licenses/.
  */
 
-package be.fedict.eid.applet.shared;
+package be.smals.research.bulksign.desktopapp.eid.external.shared;
 
 import be.smals.research.bulksign.desktopapp.eid.external.shared.annotation.HttpHeader;
 import be.smals.research.bulksign.desktopapp.eid.external.shared.annotation.MessageDiscriminator;

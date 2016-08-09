@@ -1,6 +1,6 @@
 /*
  * eID Applet Project.
- * Copyright (C) 2008-2012 FedICT.
+ * Copyright (C) 2008-2009 FedICT.
  * Copyright (C) 2014 e-Contract.be BVBA.
  *
  * This is free software; you can redistribute it and/or modify it
@@ -17,52 +17,32 @@
  * http://www.gnu.org/licenses/.
  */
 
-package be.fedict.eid.applet.shared;
+package be.smals.research.bulksign.desktopapp.eid.external.shared;
+
+import java.util.List;
 
 import be.smals.research.bulksign.desktopapp.eid.external.shared.annotation.HttpBody;
 import be.smals.research.bulksign.desktopapp.eid.external.shared.annotation.HttpHeader;
 import be.smals.research.bulksign.desktopapp.eid.external.shared.annotation.MessageDiscriminator;
 import be.smals.research.bulksign.desktopapp.eid.external.shared.annotation.NotNull;
-import be.smals.research.bulksign.desktopapp.eid.external.shared.annotation.StateTransition;
+import be.smals.research.bulksign.desktopapp.eid.external.shared.annotation.ProtocolStateAllowed;
+import be.smals.research.bulksign.desktopapp.eid.external.shared.annotation.ResponsesAllowed;
 import be.smals.research.bulksign.desktopapp.eid.external.shared.protocol.ProtocolState;
 
 /**
- * Request message for authentication signature creation. Can be used for the
- * creation of for example WS-Security signatures.
+ * Files digests data message transfer object.
  * 
  * @author Frank Cornelis
  * 
  */
-@StateTransition(ProtocolState.AUTH_SIGN)
-public class AuthSignRequestMessage extends AbstractProtocolMessage {
-
+@ProtocolStateAllowed(ProtocolState.DIGEST)
+@ResponsesAllowed({ SignRequestMessage.class, FinishedMessage.class })
+public class FileDigestsDataMessage extends AbstractProtocolMessage {
 	@HttpHeader(TYPE_HTTP_HEADER)
 	@MessageDiscriminator
-	public static final String TYPE = AuthSignRequestMessage.class.getSimpleName();
-
-	@HttpHeader(HTTP_HEADER_PREFIX + "DigestAlgo")
-	@NotNull
-	public String digestAlgo;
-
-	@HttpHeader(HTTP_HEADER_PREFIX + "Message")
-	@NotNull
-	public String message;
-
-	@HttpHeader(HTTP_HEADER_PREFIX + "Logoff")
-	public boolean logoff;
+	public static final String TYPE = FileDigestsDataMessage.class.getSimpleName();
 
 	@HttpBody
 	@NotNull
-	public byte[] computedDigestValue;
-
-	public AuthSignRequestMessage() {
-		super();
-	}
-
-	public AuthSignRequestMessage(byte[] computedDigestValue, String digestAlgo, String message, boolean logoff) {
-		this.computedDigestValue = computedDigestValue;
-		this.digestAlgo = digestAlgo;
-		this.message = message;
-		this.logoff = logoff;
-	}
+	public List<String> fileDigestInfos;
 }

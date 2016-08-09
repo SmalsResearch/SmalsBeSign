@@ -1,6 +1,6 @@
 /*
  * eID Applet Project.
- * Copyright (C) 2008-2009 FedICT.
+ * Copyright (C) 2008-2012 FedICT.
  * Copyright (C) 2014 e-Contract.be BVBA.
  *
  * This is free software; you can redistribute it and/or modify it
@@ -17,9 +17,7 @@
  * http://www.gnu.org/licenses/.
  */
 
-package be.fedict.eid.applet.shared;
-
-import java.util.List;
+package be.smals.research.bulksign.desktopapp.eid.external.shared;
 
 import be.smals.research.bulksign.desktopapp.eid.external.shared.annotation.HttpBody;
 import be.smals.research.bulksign.desktopapp.eid.external.shared.annotation.HttpHeader;
@@ -30,50 +28,29 @@ import be.smals.research.bulksign.desktopapp.eid.external.shared.annotation.Resp
 import be.smals.research.bulksign.desktopapp.eid.external.shared.protocol.ProtocolState;
 
 /**
- * Client environment message transfer object.
+ * Response message for authentication signature creation. Can be used for the
+ * creation of for example WS-Security signatures.
  * 
  * @author Frank Cornelis
  * 
  */
-@ProtocolStateAllowed(ProtocolState.ENV_CHECK)
-@ResponsesAllowed({ IdentificationRequestMessage.class, InsecureClientMessage.class, AuthenticationRequestMessage.class,
-		AdministrationMessage.class, SignRequestMessage.class, FilesDigestRequestMessage.class,
-		SignCertificatesRequestMessage.class, FinishedMessage.class })
-public class ClientEnvironmentMessage extends AbstractProtocolMessage {
+@ProtocolStateAllowed(ProtocolState.AUTH_SIGN)
+@ResponsesAllowed({ FinishedMessage.class })
+public class AuthSignResponseMessage extends AbstractProtocolMessage {
+
 	@HttpHeader(TYPE_HTTP_HEADER)
 	@MessageDiscriminator
-	public static final String TYPE = ClientEnvironmentMessage.class.getSimpleName();
-
-	@HttpHeader(HTTP_HEADER_PREFIX + "JavaVersion")
-	@NotNull
-	public String javaVersion;
-
-	@HttpHeader(HTTP_HEADER_PREFIX + "JavaVendor")
-	@NotNull
-	public String javaVendor;
-
-	@HttpHeader(HTTP_HEADER_PREFIX + "OSName")
-	@NotNull
-	public String osName;
-
-	@HttpHeader(HTTP_HEADER_PREFIX + "OSArch")
-	@NotNull
-	public String osArch;
-
-	@HttpHeader(HTTP_HEADER_PREFIX + "OSVersion")
-	@NotNull
-	public String osVersion;
-
-	@HttpHeader(HTTP_HEADER_PREFIX + "NavigatorUserAgent")
-	public String navigatorUserAgent;
-
-	@HttpHeader(HTTP_HEADER_PREFIX + "NavigatorAppName")
-	public String navigatorAppName;
-
-	@HttpHeader(HTTP_HEADER_PREFIX + "NavigatorAppVersion")
-	public String navigatorAppVersion;
+	public static final String TYPE = AuthSignResponseMessage.class.getSimpleName();
 
 	@HttpBody
 	@NotNull
-	public List<String> readerList;
+	public byte[] signatureValue;
+
+	public AuthSignResponseMessage() {
+		super();
+	}
+
+	public AuthSignResponseMessage(byte[] signatureValue) {
+		this.signatureValue = signatureValue;
+	}
 }
