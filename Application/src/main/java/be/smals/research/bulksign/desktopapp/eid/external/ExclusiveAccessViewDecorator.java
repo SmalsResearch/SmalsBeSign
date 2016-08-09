@@ -16,14 +16,13 @@
  * http://www.gnu.org/licenses/.
  */
 
-package be.fedict.eid.applet;
+package be.smals.research.bulksign.desktopapp.eid.external;
 
 import java.awt.Component;
 
 import javax.smartcardio.CardException;
 import javax.swing.JOptionPane;
 
-import be.fedict.eid.applet.Messages.MESSAGE_ID;
 import be.fedict.eid.applet.sc.PcscEid;
 
 /**
@@ -50,7 +49,7 @@ public class ExclusiveAccessViewDecorator implements View {
 	}
 
 	@Override
-	public void setStatusMessage(Status status, MESSAGE_ID messageId) {
+	public void setStatusMessage(Status status, Messages.MESSAGE_ID messageId) {
 		this.delegate.setStatusMessage(status, messageId);
 	}
 

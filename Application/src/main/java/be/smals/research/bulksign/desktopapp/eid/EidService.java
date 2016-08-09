@@ -1,16 +1,9 @@
 package be.smals.research.bulksign.desktopapp.eid;
 
-import be.fedict.eid.applet.*;
-import be.fedict.eid.applet.shared.AuthSignRequestMessage;
 import be.fedict.eid.applet.shared.SignRequestMessage;
 import be.fedict.eid.applet.shared.SignatureDataMessage;
-import be.smals.research.bulksign.desktopapp.services.SigningService;
-import sun.security.pkcs11.wrapper.PKCS11Exception;
+import be.smals.research.bulksign.desktopapp.eid.external.Messages;
 
-import java.awt.*;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
@@ -20,8 +13,11 @@ import java.util.stream.IntStream;
 /**
  * Created by kova on 08/08/2016.
  */
-public class EidController {
+public class EidService {
 
+    //todo add code to make observable and add EidServiceObserver
+
+    //todo move to test code
     public static byte[] getMockInput(int length) {
         byte[] input = new byte[length];
         IntStream.range(0, length).forEach(i -> input[i] = (byte) i);
@@ -29,6 +25,8 @@ public class EidController {
     }
 
 
+
+    //todo make nicer wrapper class for the result
     public static SignatureDataMessage doSignature(byte[] digest) {
         Controller controller = new Controller(new ViewAdapter(), new MockRuntime(), new Messages(Locale.US));
 
@@ -45,6 +43,7 @@ public class EidController {
         return null;
     }
 
+    //todo move to util class
     public static byte[] getSha1(byte[] input) {
         System.out.println("INPUT: " + Arrays.toString(input));
         MessageDigest digest = null;
@@ -58,4 +57,10 @@ public class EidController {
         }
         return null;
     }
+
+    //todo call to be refactored code in PcscEid
+    public boolean isCardReaderConnected() {
+        return true;
+    }
+
 }

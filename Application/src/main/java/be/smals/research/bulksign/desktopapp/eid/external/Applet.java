@@ -17,7 +17,7 @@
  * http://www.gnu.org/licenses/.
  */
 
-package be.fedict.eid.applet;
+package be.smals.research.bulksign.desktopapp.eid.external;
 
 import java.applet.AppletContext;
 import java.awt.CardLayout;
@@ -56,7 +56,7 @@ import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
-import be.fedict.eid.applet.Messages.MESSAGE_ID;
+import be.smals.research.bulksign.desktopapp.eid.external.Messages.MESSAGE_ID;
 
 /**
  * The main class of the eID Applet. The {@link #init()} method is where it all

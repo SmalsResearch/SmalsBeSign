@@ -65,13 +65,13 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.ListCellRenderer;
 
-import be.fedict.eid.applet.Dialogs;
-import be.fedict.eid.applet.Dialogs.Pins;
-import be.fedict.eid.applet.Messages;
-import be.fedict.eid.applet.Messages.MESSAGE_ID;
-import be.fedict.eid.applet.Status;
-import be.fedict.eid.applet.UserCancelledException;
-import be.fedict.eid.applet.View;
+import be.smals.research.bulksign.desktopapp.eid.external.Dialogs;
+import be.smals.research.bulksign.desktopapp.eid.external.Dialogs.Pins;
+import be.smals.research.bulksign.desktopapp.eid.external.Messages;
+import be.smals.research.bulksign.desktopapp.eid.external.Messages.MESSAGE_ID;
+import be.smals.research.bulksign.desktopapp.eid.external.Status;
+import be.smals.research.bulksign.desktopapp.eid.external.UserCancelledException;
+import be.smals.research.bulksign.desktopapp.eid.external.View;
 
 /**
  * Holds all functions related to eID card access over PC/SC.

@@ -18,7 +18,7 @@
 
 package be.fedict.eid.applet.io;
 
-import be.fedict.eid.applet.View;
+import be.smals.research.bulksign.desktopapp.eid.external.View;
 import be.fedict.eid.applet.shared.protocol.ProtocolContext;
 import be.fedict.eid.applet.shared.protocol.ProtocolState;
 

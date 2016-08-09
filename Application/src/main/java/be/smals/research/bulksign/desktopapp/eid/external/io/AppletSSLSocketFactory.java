@@ -35,7 +35,7 @@ import javax.net.ssl.SSLSession;
 import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
 
-import be.fedict.eid.applet.View;
+import be.smals.research.bulksign.desktopapp.eid.external.View;
 
 /**
  * eID Applet specific implementation of an SSL Socket Factory. This is actually

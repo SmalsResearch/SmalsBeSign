@@ -2,6 +2,7 @@ package be.smals.research.bulksign.desktopapp;
 
 import be.fedict.eid.applet.shared.SignatureDataMessage;
 import be.smals.research.bulksign.desktopapp.controllers.MainController;
+import be.smals.research.bulksign.desktopapp.eid.EidService;
 import be.smals.research.bulksign.desktopapp.utilities.Settings;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -14,18 +15,15 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import java.security.Security;
 import java.util.Arrays;
-import java.util.Collections;
-
-import be.smals.research.bulksign.desktopapp.eid.EidController;
 
 public class Main extends Application {
 
     public static void main(String[] args) {
         //launch(args);
 
-        byte[] input = EidController.getMockInput(160);
-        byte[] digest = EidController.getSha1(input);
-        SignatureDataMessage signature = EidController.doSignature(digest);
+        byte[] input = EidService.getMockInput(160);
+        byte[] digest = EidService.getSha1(input);
+        SignatureDataMessage signature = EidService.doSignature(digest);
         System.out.println("OUTPUT: " + Arrays.toString(signature.signatureValue));
         System.out.println("LENGTH: " + signature.signatureValue.length);
         //System.out.println("CERTIFICATE CHAIN (3 certs): "+ signature.certificateChain);

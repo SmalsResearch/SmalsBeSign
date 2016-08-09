@@ -1,8 +1,8 @@
 package be.smals.research.bulksign.desktopapp.eid;
 
-import be.fedict.eid.applet.Messages;
-import be.fedict.eid.applet.Status;
-import be.fedict.eid.applet.View;
+import be.smals.research.bulksign.desktopapp.eid.external.Messages;
+import be.smals.research.bulksign.desktopapp.eid.external.Status;
+import be.smals.research.bulksign.desktopapp.eid.external.View;
 
 import java.awt.*;
 

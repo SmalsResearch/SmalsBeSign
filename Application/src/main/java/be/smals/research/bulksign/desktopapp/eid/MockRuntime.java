@@ -1,7 +1,7 @@
 package be.smals.research.bulksign.desktopapp.eid;
 
 import be.fedict.eid.applet.Applet;
-import be.fedict.eid.applet.Runtime;
+import be.smals.research.bulksign.desktopapp.eid.external.Runtime;
 
 import java.net.URL;
 

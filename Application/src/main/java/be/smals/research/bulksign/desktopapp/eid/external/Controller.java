@@ -41,7 +41,8 @@ import javax.security.auth.login.LoginException;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
-import be.fedict.eid.applet.Messages.MESSAGE_ID;
+import be.smals.research.bulksign.desktopapp.eid.external.*;
+import be.smals.research.bulksign.desktopapp.eid.external.Messages.MESSAGE_ID;
 import be.fedict.eid.applet.io.AppletSSLSocketFactory;
 import be.fedict.eid.applet.io.HttpURLConnectionHttpReceiver;
 import be.fedict.eid.applet.io.HttpURLConnectionHttpTransmitter;
@@ -76,6 +77,7 @@ import be.fedict.eid.applet.shared.protocol.ProtocolContext;
 import be.fedict.eid.applet.shared.protocol.ProtocolStateMachine;
 import be.fedict.eid.applet.shared.protocol.Transport;
 import be.fedict.eid.applet.shared.protocol.Unmarshaller;
+import be.smals.research.bulksign.desktopapp.eid.external.Runtime;
 
 /**
  * Controller component. Contains the eID logic. Interacts with {@link View} and

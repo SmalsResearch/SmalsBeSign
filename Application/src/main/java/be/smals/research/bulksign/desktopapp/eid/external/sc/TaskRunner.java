@@ -19,7 +19,7 @@
 
 package be.fedict.eid.applet.sc;
 
-import be.fedict.eid.applet.View;
+import be.smals.research.bulksign.desktopapp.eid.external.View;
 
 /**
  * Task runner for smart card specific operations. Will run a given task using
