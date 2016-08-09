@@ -1,5 +1,6 @@
 package be.smals.research.bulksign.desktopapp.controllers;
 
+import be.smals.research.bulksign.desktopapp.abstracts.Controller;
 import be.smals.research.bulksign.desktopapp.services.EIDKeyService;
 import be.smals.research.bulksign.desktopapp.services.MockKeyService;
 import be.smals.research.bulksign.desktopapp.services.SigningService;
@@ -43,7 +44,7 @@ import java.util.List;
  *
  * Handles events from main screen
  */
-public class SignController {
+public class SignController extends Controller{
 
     private Stage stage;
     private SigningService signingService;
@@ -74,6 +75,26 @@ public class SignController {
         this.fileChooser = new FileChooser();
         this.fileChooser.setTitle("Select a file");
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setStage (Stage stage) {
+        this.stage = stage;
+
+        this.viewerFx = new OpenViewerFX(readerPane, getClass().getClassLoader().getResource("lib/OpenViewerFx/preferences/custom.xml").getPath());
+        this.viewerFx.getRoot().prefWidthProperty().bind(readerPane.widthProperty());
+        this.viewerFx.getRoot().prefHeightProperty().bind(readerPane.heightProperty());
+        this.viewerFx.setupViewer();
+
+        // Update viewer look
+        BorderPane viewerPane = (BorderPane) this.readerPane.getChildren().get(0);
+        viewerPane.setTop(null);
+        HBox bottomPane = (HBox) viewerPane.getBottom();
+        bottomPane.getChildren().remove(0, 2);
+    }
+
     /**
      * Sign the selected file
      *
@@ -150,20 +171,7 @@ public class SignController {
             saveCanceledAlert.showAndWait();
         }
     }
-    public void setStage (Stage stage) {
-        this.stage = stage;
 
-        this.viewerFx = new OpenViewerFX(readerPane, getClass().getClassLoader().getResource("lib/OpenViewerFx/preferences/custom.xml").getPath());
-        this.viewerFx.getRoot().prefWidthProperty().bind(readerPane.widthProperty());
-        this.viewerFx.getRoot().prefHeightProperty().bind(readerPane.heightProperty());
-        this.viewerFx.setupViewer();
-
-        // Update viewer look
-        BorderPane viewerPane = (BorderPane) this.readerPane.getChildren().get(0);
-        viewerPane.setTop(null);
-        HBox bottomPane = (HBox) viewerPane.getBottom();
-        bottomPane.getChildren().remove(0, 2);
-    }
     /**
      * Populates the ListView with the files selected by the user
      */

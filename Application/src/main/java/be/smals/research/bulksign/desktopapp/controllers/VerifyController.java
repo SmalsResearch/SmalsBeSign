@@ -1,5 +1,6 @@
 package be.smals.research.bulksign.desktopapp.controllers;
 
+import be.smals.research.bulksign.desktopapp.abstracts.Controller;
 import be.smals.research.bulksign.desktopapp.services.VerifySigningService;
 import be.smals.research.bulksign.desktopapp.utilities.SigningOutput;
 import javafx.event.ActionEvent;
@@ -27,7 +28,7 @@ import java.security.cert.CertificateException;
  *
  * Handles events from main screen
  */
-public class VerifyController {
+public class VerifyController extends Controller {
 
     private VerifySigningService verifySigningService;
     private FileChooser fileChooser;
@@ -48,6 +49,14 @@ public class VerifyController {
         this.verifySigningService   = new VerifySigningService();
 
         this.fileChooser = new FileChooser();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setStage (Stage stage) {
+        this.stage = stage;
     }
     @FXML
     private void handleVerifyFileButtonAction (ActionEvent event) {
@@ -123,7 +132,4 @@ public class VerifyController {
         }
     }
 
-    public void setStage (Stage stage) {
-        this.stage = stage;
-    }
 }

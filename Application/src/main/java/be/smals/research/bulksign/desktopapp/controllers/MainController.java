@@ -1,5 +1,6 @@
 package be.smals.research.bulksign.desktopapp.controllers;
 
+import be.smals.research.bulksign.desktopapp.abstracts.Controller;
 import com.jfoenix.controls.JFXDialog;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -17,7 +18,7 @@ import java.io.IOException;
  *
  * Handles events from main screen
  */
-public class MainController {
+public class MainController extends Controller {
 
     private Stage stage;
     @FXML private BorderPane root;
@@ -29,20 +30,12 @@ public class MainController {
      */
     public MainController() {
     }
-
+    @Override
     public void setStage(Stage stage) {
         this.stage = stage;
     }
 
     public void exitMenuItemAction() {
-//        Alert exitAlert = new Alert(Alert.AlertType.WARNING, "You are about to leave...", ButtonType.YES, ButtonType.CANCEL);
-//        exitAlert.setTitle("Exit the application");
-//        exitAlert.setHeaderText("Are you sure ?");
-//        Optional<ButtonType> choice = exitAlert.showAndWait();
-//        if (choice.isPresent() && choice.get() == ButtonType.YES)
-//            Platform.exit();
-//        else
-//            exitAlert.close();
         exitDialog.setTransitionType(JFXDialog.DialogTransition.TOP);
         exitDialog.show(masterPane);
     }
@@ -55,19 +48,6 @@ public class MainController {
 
             SignController signController = signViewLoader.getController();
             signController.setStage(this.stage);
-        } catch (IOException e1) {
-            e1.printStackTrace();
-        }
-    }
-
-    public void testMenuItemAction() {
-        FXMLLoader testViewLoader = new FXMLLoader(getClass().getClassLoader().getResource("views/test.fxml"));
-        try {
-            Parent testPane = testViewLoader.load();
-            root.setCenter(testPane);
-
-            TestController testController = testViewLoader.getController();
-            testController.setStage(this.stage);
         } catch (IOException e1) {
             e1.printStackTrace();
         }

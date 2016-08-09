@@ -213,7 +213,6 @@ public class Main extends Application {
 //
 //
 //         */
-
     }
 
 //    private static byte[] getSha1(byte[] input) {
@@ -228,7 +227,6 @@ public class Main extends Application {
 //        System.out.println("HASH: "+Arrays.toString(result));
 //        return result;
 //    }
-
     @Override
     public void start(Stage primaryStage) throws Exception {
         Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
@@ -244,11 +242,12 @@ public class Main extends Application {
         Menu fileMenu           = new Menu("File");
         Menu taskMenu           = new Menu("Task");
         Menu signerMenu         = new Menu("Signer");
-        menuBar.getMenus().addAll(fileMenu, taskMenu, signerMenu);
-        MenuItem testMenuItem   = new MenuItem("Test");
+        Menu helpMenu           = new Menu("Help");
+        menuBar.getMenus().addAll(fileMenu, taskMenu, signerMenu, helpMenu);
         MenuItem exitMenuItem   = new MenuItem("Exit...");
         MenuItem signMenuItem   = new MenuItem("Sign");
         MenuItem verifyMenuItem = new MenuItem("Verify");
+        MenuItem aboutMenuItem  = new MenuItem("About");
         final ToggleGroup signerGroup   = new ToggleGroup();
         RadioMenuItem eidMenuItem       = new RadioMenuItem("eID");
         RadioMenuItem mockMenuItem      = new RadioMenuItem("Mock");
@@ -257,14 +256,12 @@ public class Main extends Application {
         eidMenuItem.setToggleGroup(signerGroup);
         mockMenuItem.setToggleGroup(signerGroup);
         signerGroup.selectToggle(mockMenuItem);
-        fileMenu.getItems().addAll(testMenuItem, exitMenuItem);
+        fileMenu.getItems().addAll(exitMenuItem);
         taskMenu.getItems().addAll(signMenuItem, verifyMenuItem);
         signerMenu.getItems().addAll(mockMenuItem, eidMenuItem);
+        helpMenu.getItems().addAll(aboutMenuItem);
         root.setTop(menuBar);
 
-        testMenuItem.setOnAction(event -> {
-            controller.testMenuItemAction();
-        });
         exitMenuItem.setOnAction(event -> {
             controller.exitMenuItemAction ();
         });
