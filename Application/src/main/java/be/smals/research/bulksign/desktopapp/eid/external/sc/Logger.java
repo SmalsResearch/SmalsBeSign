@@ -18,7 +18,7 @@
 
 package be.smals.research.bulksign.desktopapp.eid.external.sc;
 
-import be.fedict.eid.applet.View;
+import be.smals.research.bulksign.desktopapp.eid.external.View;
 
 /**
  * Simple wrapper around view to limit the changes to LibJ2PCSCGNULinuxFix.

@@ -17,7 +17,7 @@
  * http://www.gnu.org/licenses/.
  */
 
-package be.fedict.eid.applet;
+package be.smals.research.bulksign.desktopapp.eid.external;
 
 import java.applet.AppletContext;
 import java.awt.CardLayout;
@@ -55,8 +55,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
-
-import be.fedict.eid.applet.Messages.MESSAGE_ID;
 
 /**
  * The main class of the eID Applet. The {@link #init()} method is where it all
@@ -372,7 +370,7 @@ public class Applet extends JApplet {
 
 	private void initDetailButton(final Container container, final CardLayout cardLayout) {
 		JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		String msg = this.messages.getMessage(MESSAGE_ID.DETAILS_BUTTON);
+		String msg = this.messages.getMessage(Messages.MESSAGE_ID.DETAILS_BUTTON);
 		JButton detailButton = new JButton(msg + " >>");
 		detailButton.getAccessibleContext().setAccessibleName(msg);
 
@@ -393,7 +391,7 @@ public class Applet extends JApplet {
 		this.detailMessages.getAccessibleContext().setAccessibleDescription("Detailed log messages");
 
 		JPopupMenu popupMenu = new JPopupMenu();
-		JMenuItem copyMenuItem = new JMenuItem(this.messages.getMessage(MESSAGE_ID.COPY_ALL));
+		JMenuItem copyMenuItem = new JMenuItem(this.messages.getMessage(Messages.MESSAGE_ID.COPY_ALL));
 		copyMenuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				Toolkit toolkit = Toolkit.getDefaultToolkit();
@@ -420,7 +418,7 @@ public class Applet extends JApplet {
 		JPanel statusPanel = new JPanel();
 		statusPanel.setLayout(new BoxLayout(statusPanel, BoxLayout.LINE_AXIS));
 
-		String msg = this.messages.getMessage(MESSAGE_ID.LOADING);
+		String msg = this.messages.getMessage(Messages.MESSAGE_ID.LOADING);
 		this.statusLabel = new JStatusLabel(msg);
 		this.statusLabel.getAccessibleContext().setAccessibleName(msg);
 
@@ -470,7 +468,7 @@ public class Applet extends JApplet {
 			Method getDesktopMethod = desktopClass.getMethod("getDesktop");
 			final Object desktop = getDesktopMethod.invoke(null);
 			final Method mailMethod = desktopClass.getMethod("mail", URI.class);
-			JMenuItem emailMenuItem = new JMenuItem(this.messages.getMessage(MESSAGE_ID.MAIL));
+			JMenuItem emailMenuItem = new JMenuItem(this.messages.getMessage(Messages.MESSAGE_ID.MAIL));
 			emailMenuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					String message = Applet.this.detailMessages.getText();
@@ -504,7 +502,7 @@ public class Applet extends JApplet {
 			addDetailMessage("checking applet privileges...");
 			SecurityManager securityManager = System.getSecurityManager();
 			if (null == securityManager) {
-				setStatusMessage(Status.ERROR, MESSAGE_ID.SECURITY_ERROR);
+				setStatusMessage(Status.ERROR, Messages.MESSAGE_ID.SECURITY_ERROR);
 				addDetailMessage("no security manager found. not running as an applet?");
 				return;
 			}
@@ -535,14 +533,14 @@ public class Applet extends JApplet {
 							String.class);
 					permission = (Permission) cardPermissionConstructor.newInstance("*", "*");
 				} catch (Exception e) {
-					setStatusMessage(Status.ERROR, MESSAGE_ID.GENERIC_ERROR);
+					setStatusMessage(Status.ERROR, Messages.MESSAGE_ID.GENERIC_ERROR);
 					addDetailMessage("javax.smartcardio not available: " + e.getMessage());
 					return;
 				}
 				try {
 					securityManager.checkPermission(permission, securityContext);
 				} catch (SecurityException e) {
-					setStatusMessage(Status.ERROR, MESSAGE_ID.SECURITY_ERROR);
+					setStatusMessage(Status.ERROR, Messages.MESSAGE_ID.SECURITY_ERROR);
 					addDetailMessage("applet not authorized to access smart card. applet not signed?");
 					return;
 				}
@@ -559,7 +557,7 @@ public class Applet extends JApplet {
 			URL documentBase = getDocumentBase();
 			if (false == "https".equals(documentBase.getProtocol())) {
 				if (false == "localhost".equals(documentBase.getHost())) {
-					setStatusMessage(Status.ERROR, MESSAGE_ID.SECURITY_ERROR);
+					setStatusMessage(Status.ERROR, Messages.MESSAGE_ID.SECURITY_ERROR);
 					addDetailMessage("web application not trusted.");
 					addDetailMessage("use the web application via \"https\" instead of \"http\"");
 					return;
@@ -674,26 +672,26 @@ public class Applet extends JApplet {
 	}
 
 	private boolean privacyQuestion(boolean includeAddress, boolean includePhoto, String identityDataUsage) {
-		String msg = this.messages.getMessage(MESSAGE_ID.PRIVACY_QUESTION) + "\n"
-				+ this.messages.getMessage(MESSAGE_ID.IDENTITY_INFO) + ": "
-				+ this.messages.getMessage(MESSAGE_ID.IDENTITY_IDENTITY);
+		String msg = this.messages.getMessage(Messages.MESSAGE_ID.PRIVACY_QUESTION) + "\n"
+				+ this.messages.getMessage(Messages.MESSAGE_ID.IDENTITY_INFO) + ": "
+				+ this.messages.getMessage(Messages.MESSAGE_ID.IDENTITY_IDENTITY);
 		if (includeAddress) {
-			msg += ", " + this.messages.getMessage(MESSAGE_ID.IDENTITY_ADDRESS);
+			msg += ", " + this.messages.getMessage(Messages.MESSAGE_ID.IDENTITY_ADDRESS);
 		}
 		if (includePhoto) {
-			msg += ", " + this.messages.getMessage(MESSAGE_ID.IDENTITY_PHOTO);
+			msg += ", " + this.messages.getMessage(Messages.MESSAGE_ID.IDENTITY_PHOTO);
 		}
 		if (null != identityDataUsage) {
-			msg += "\n" + this.messages.getMessage(MESSAGE_ID.USAGE) + ": " + identityDataUsage;
+			msg += "\n" + this.messages.getMessage(Messages.MESSAGE_ID.USAGE) + ": " + identityDataUsage;
 		}
 		int response = JOptionPane.showConfirmDialog(this, msg, "Privacy", JOptionPane.YES_NO_OPTION);
 		return response == JOptionPane.YES_OPTION;
 	}
 
 	private int confirmSigning(String description, String digestAlgo) {
-		String signatureCreationLabel = this.messages.getMessage(MESSAGE_ID.SIGNATURE_CREATION);
-		String signQuestionLabel = this.messages.getMessage(MESSAGE_ID.SIGN_QUESTION);
-		String signatureAlgoLabel = this.messages.getMessage(MESSAGE_ID.SIGNATURE_ALGO);
+		String signatureCreationLabel = this.messages.getMessage(Messages.MESSAGE_ID.SIGNATURE_CREATION);
+		String signQuestionLabel = this.messages.getMessage(Messages.MESSAGE_ID.SIGN_QUESTION);
+		String signatureAlgoLabel = this.messages.getMessage(Messages.MESSAGE_ID.SIGNATURE_ALGO);
 		int response = JOptionPane
 				.showConfirmDialog(
 						this.getParentComponent(), signQuestionLabel + " \"" + description + "\"?\n"

@@ -17,7 +17,7 @@
  * http://www.gnu.org/licenses/.
  */
 
-package be.fedict.eid.applet;
+package be.smals.research.bulksign.desktopapp.eid.external;
 
 import java.awt.Component;
 import java.io.BufferedReader;
@@ -41,7 +41,6 @@ import javax.security.auth.login.LoginException;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
-import be.fedict.eid.applet.Messages.MESSAGE_ID;
 import be.smals.research.bulksign.desktopapp.eid.external.io.AppletSSLSocketFactory;
 import be.smals.research.bulksign.desktopapp.eid.external.io.HttpURLConnectionHttpReceiver;
 import be.smals.research.bulksign.desktopapp.eid.external.io.HttpURLConnectionHttpTransmitter;
@@ -133,9 +132,9 @@ public class Controller {
 		if (osName.equals("Mac OS X")) {
 			boolean sandboxed = System.getenv("DIRHELPER_USER_DIR_SUFFIX") != null;
 			if (sandboxed) {
-				String safariMessage = this.messages.getMessage(MESSAGE_ID.SAFARI_SANDBOX_1);
+				String safariMessage = this.messages.getMessage(Messages.MESSAGE_ID.SAFARI_SANDBOX_1);
 				safariMessage += this.runtime.getDocumentBase().getHost();
-				safariMessage += this.messages.getMessage(MESSAGE_ID.SAFARI_SANDBOX_2);
+				safariMessage += this.messages.getMessage(Messages.MESSAGE_ID.SAFARI_SANDBOX_2);
 				JOptionPane.showMessageDialog(view.getParentComponent(), safariMessage, "Safari Java Sandbox",
 						JOptionPane.WARNING_MESSAGE);
 			}
@@ -258,7 +257,7 @@ public class Controller {
 								"Insecure Client Environment", JOptionPane.OK_CANCEL_OPTION,
 								JOptionPane.WARNING_MESSAGE);
 						if (JOptionPane.OK_OPTION != result) {
-							setStatusMessage(Status.ERROR, MESSAGE_ID.SECURITY_ERROR);
+							setStatusMessage(Status.ERROR, Messages.MESSAGE_ID.SECURITY_ERROR);
 							addDetailMessage("insecure client environment");
 							return null;
 						}
@@ -267,7 +266,7 @@ public class Controller {
 						JOptionPane.showMessageDialog(this.view.getParentComponent(),
 								"Your system has been marked as insecure client environment.",
 								"Insecure Client Environment", JOptionPane.ERROR_MESSAGE);
-						setStatusMessage(Status.ERROR, MESSAGE_ID.SECURITY_ERROR);
+						setStatusMessage(Status.ERROR, Messages.MESSAGE_ID.SECURITY_ERROR);
 						addDetailMessage("received an insecure client environment message");
 						return null;
 					}
@@ -329,30 +328,30 @@ public class Controller {
 					switch (finishedMessage.errorCode) {
 					case CERTIFICATE:
 						addDetailMessage("something wrong with your certificate");
-						setStatusMessage(Status.ERROR, MESSAGE_ID.SECURITY_ERROR);
+						setStatusMessage(Status.ERROR, Messages.MESSAGE_ID.SECURITY_ERROR);
 						return null;
 					case CERTIFICATE_EXPIRED:
-						setStatusMessage(Status.ERROR, MESSAGE_ID.CERTIFICATE_EXPIRED_ERROR);
+						setStatusMessage(Status.ERROR, Messages.MESSAGE_ID.CERTIFICATE_EXPIRED_ERROR);
 						return null;
 					case CERTIFICATE_REVOKED:
-						setStatusMessage(Status.ERROR, MESSAGE_ID.CERTIFICATE_REVOKED_ERROR);
+						setStatusMessage(Status.ERROR, Messages.MESSAGE_ID.CERTIFICATE_REVOKED_ERROR);
 						return null;
 					case CERTIFICATE_NOT_TRUSTED:
-						setStatusMessage(Status.ERROR, MESSAGE_ID.CERTIFICATE_NOT_TRUSTED);
+						setStatusMessage(Status.ERROR, Messages.MESSAGE_ID.CERTIFICATE_NOT_TRUSTED);
 						return null;
 					case AUTHORIZATION:
-						setStatusMessage(Status.ERROR, MESSAGE_ID.AUTHORIZATION_ERROR);
+						setStatusMessage(Status.ERROR, Messages.MESSAGE_ID.AUTHORIZATION_ERROR);
 						this.runtime.gotoAuthorizationErrorPage();
 						return null;
 					default:
 					}
-					setStatusMessage(Status.ERROR, MESSAGE_ID.GENERIC_ERROR);
+					setStatusMessage(Status.ERROR, Messages.MESSAGE_ID.GENERIC_ERROR);
 					addDetailMessage("error code @ finish: " + finishedMessage.errorCode);
 					return null;
 				}
 			}
 		} catch (SecurityException e) {
-			setStatusMessage(Status.ERROR, MESSAGE_ID.SECURITY_ERROR);
+			setStatusMessage(Status.ERROR, Messages.MESSAGE_ID.SECURITY_ERROR);
 			addDetailMessage("error: " + e.getMessage());
 			return null;
 		} catch (Throwable e) {
@@ -375,7 +374,7 @@ public class Controller {
 				 * Next is specific for the OpenSC PKCS#11 library.
 				 */
 				if (FailedLoginException.class == cause.getClass()) {
-					setStatusMessage(Status.ERROR, MESSAGE_ID.PIN_INCORRECT);
+					setStatusMessage(Status.ERROR, Messages.MESSAGE_ID.PIN_INCORRECT);
 					return null;
 				}
 				if (LoginException.class == cause.getClass()) {
@@ -383,10 +382,10 @@ public class Controller {
 						/*
 						 * This seems to be the case for OpenSC.
 						 */
-						setStatusMessage(Status.ERROR, MESSAGE_ID.PIN_BLOCKED);
+						setStatusMessage(Status.ERROR, Messages.MESSAGE_ID.PIN_BLOCKED);
 						return null;
 					}
-					setStatusMessage(Status.ERROR, MESSAGE_ID.SECURITY_ERROR);
+					setStatusMessage(Status.ERROR, Messages.MESSAGE_ID.SECURITY_ERROR);
 					return null;
 				}
 			}
@@ -395,30 +394,30 @@ public class Controller {
 			 * need to work an a Java 5 runtime.
 			 */
 			if ("javax.smartcardio.CardException".equals(e.getClass().getName())) {
-				setStatusMessage(Status.ERROR, MESSAGE_ID.CARD_ERROR);
+				setStatusMessage(Status.ERROR, Messages.MESSAGE_ID.CARD_ERROR);
 				addDetailMessage("card error: " + e.getMessage());
 				return null;
 			}
-			setStatusMessage(Status.ERROR, MESSAGE_ID.GENERIC_ERROR);
+			setStatusMessage(Status.ERROR, Messages.MESSAGE_ID.GENERIC_ERROR);
 			return null;
 		}
 
-		setStatusMessage(Status.NORMAL, MESSAGE_ID.DONE);
+		setStatusMessage(Status.NORMAL, Messages.MESSAGE_ID.DONE);
 		this.runtime.gotoTargetPage();
 		return null;
 	}
 
 	public Object performAuthnSignOperation(AuthSignRequestMessage authSignRequestMessage) throws Exception {
 		addDetailMessage("auth sign request...");
-		setStatusMessage(Status.NORMAL, MESSAGE_ID.DETECTING_CARD);
+		setStatusMessage(Status.NORMAL, Messages.MESSAGE_ID.DETECTING_CARD);
 		waitForEIdCardPcsc();
 
-		setStatusMessage(Status.NORMAL, MESSAGE_ID.AUTHENTICATING);
+		setStatusMessage(Status.NORMAL, Messages.MESSAGE_ID.AUTHENTICATING);
 
 		byte[] digestValue = authSignRequestMessage.computedDigestValue;
 		String digestAlgo = authSignRequestMessage.digestAlgo;
 		boolean logoff = authSignRequestMessage.logoff;
-		String stdMsg = this.messages.getMessage(MESSAGE_ID.PROTOCOL_SIGNATURE);
+		String stdMsg = this.messages.getMessage(Messages.MESSAGE_ID.PROTOCOL_SIGNATURE);
 		String message = stdMsg + "\n" + authSignRequestMessage.message;
 
 		try {
@@ -462,11 +461,11 @@ public class Controller {
 		byte[] addressSignFile = null;
 		byte[] nrnCertFile = null;
 
-		setStatusMessage(Status.NORMAL, MESSAGE_ID.DETECTING_CARD);
+		setStatusMessage(Status.NORMAL, Messages.MESSAGE_ID.DETECTING_CARD);
 		waitForEIdCardPcsc();
 
 		try {
-			setStatusMessage(Status.NORMAL, MESSAGE_ID.READING_IDENTITY);
+			setStatusMessage(Status.NORMAL, Messages.MESSAGE_ID.READING_IDENTITY);
 
 			if (includeIdentity || includeAddress || includePhoto) {
 				boolean response = this.view.privacyQuestion(includeAddress, includePhoto, null);
@@ -482,8 +481,8 @@ public class Controller {
 				}
 				// FIXME: repeat for screen reader, perhaps we need pre- and
 				// post-approval msg
-				setStatusMessage(Status.NORMAL, MESSAGE_ID.OK);
-				setStatusMessage(Status.NORMAL, MESSAGE_ID.READING_IDENTITY);
+				setStatusMessage(Status.NORMAL, Messages.MESSAGE_ID.OK);
+				setStatusMessage(Status.NORMAL, Messages.MESSAGE_ID.READING_IDENTITY);
 			}
 
 			signCertFile = this.pcscEidSpi.readFile(PcscEid.SIGN_CERT_FILE_ID);
@@ -549,16 +548,16 @@ public class Controller {
 
 		MessageDigest messageDigest = MessageDigest.getInstance(filesDigestAlgo);
 
-		setStatusMessage(Status.NORMAL, MESSAGE_ID.SELECT_FILES);
+		setStatusMessage(Status.NORMAL, Messages.MESSAGE_ID.SELECT_FILES);
 		JFileChooser fileChooser = new JFileChooser();
 		fileChooser.setMultiSelectionEnabled(true);
 		int returnCode = fileChooser.showDialog(getParentComponent(),
-				this.messages.getMessage(MESSAGE_ID.SELECT_FILES));
+				this.messages.getMessage(Messages.MESSAGE_ID.SELECT_FILES));
 		if (JFileChooser.APPROVE_OPTION != returnCode) {
 			throw new RuntimeException("file selection aborted");
 		}
 
-		setStatusMessage(Status.NORMAL, MESSAGE_ID.DIGESTING_FILES);
+		setStatusMessage(Status.NORMAL, Messages.MESSAGE_ID.DIGESTING_FILES);
 
 		FileDigestsDataMessage fileDigestsDataMessage = new FileDigestsDataMessage();
 		fileDigestsDataMessage.fileDigestInfos = new LinkedList<String>();
@@ -630,11 +629,11 @@ public class Controller {
 		addDetailMessage("logoff: " + logoff);
 		addDetailMessage("remove card: " + removeCard);
 		addDetailMessage("require secure smart card reader: " + requireSecureReader);
-		setStatusMessage(Status.NORMAL, MESSAGE_ID.DETECTING_CARD);
+		setStatusMessage(Status.NORMAL, Messages.MESSAGE_ID.DETECTING_CARD);
 
 		waitForEIdCardPcsc();
 
-		setStatusMessage(Status.NORMAL, MESSAGE_ID.SIGNING);
+		setStatusMessage(Status.NORMAL, Messages.MESSAGE_ID.SIGNING);
 		byte[] signatureValue;
 		byte[] signCertFile;
 		byte[] citizenCaCertFile;
@@ -682,7 +681,7 @@ public class Controller {
 
 
 			if (signRequestMessage.removeCard) {
-				setStatusMessage(Status.NORMAL, MESSAGE_ID.REMOVE_CARD);
+				setStatusMessage(Status.NORMAL, Messages.MESSAGE_ID.REMOVE_CARD);
 				this.pcscEidSpi.removeCard();
 			}
 
@@ -721,7 +720,7 @@ public class Controller {
 				this.pcscEidSpi.logoff();
 			}
 			if (removeCard) {
-				setStatusMessage(Status.NORMAL, MESSAGE_ID.REMOVE_CARD);
+				setStatusMessage(Status.NORMAL, Messages.MESSAGE_ID.REMOVE_CARD);
 				this.pcscEidSpi.removeCard();
 			}
 		} finally {
@@ -804,10 +803,10 @@ public class Controller {
 			encodedServerCertificate = null;
 		}
 
-		setStatusMessage(Status.NORMAL, MESSAGE_ID.DETECTING_CARD);
+		setStatusMessage(Status.NORMAL, Messages.MESSAGE_ID.DETECTING_CARD);
 		waitForEIdCardPcsc();
 
-		setStatusMessage(Status.NORMAL, MESSAGE_ID.AUTHENTICATING);
+		setStatusMessage(Status.NORMAL, Messages.MESSAGE_ID.AUTHENTICATING);
 
 		byte[] salt = this.pcscEidSpi.getChallenge(20);
 
@@ -918,7 +917,7 @@ public class Controller {
 			}
 
 			if (includeIdentity || includeAddress || includePhoto) {
-				setStatusMessage(Status.NORMAL, MESSAGE_ID.READING_IDENTITY);
+				setStatusMessage(Status.NORMAL, Messages.MESSAGE_ID.READING_IDENTITY);
 			}
 
 			if (includeIdentity) {
@@ -970,7 +969,7 @@ public class Controller {
 				this.pcscEidSpi.logoff();
 			}
 			if (removeCard) {
-				setStatusMessage(Status.NORMAL, MESSAGE_ID.REMOVE_CARD);
+				setStatusMessage(Status.NORMAL, Messages.MESSAGE_ID.REMOVE_CARD);
 				this.pcscEidSpi.removeCard();
 			}
 		} finally {
@@ -1036,7 +1035,7 @@ public class Controller {
 					throws Exception {
 		waitForEIdCardPcsc();
 
-		setStatusMessage(Status.NORMAL, MESSAGE_ID.READING_IDENTITY);
+		setStatusMessage(Status.NORMAL, Messages.MESSAGE_ID.READING_IDENTITY);
 
 		boolean response = this.view.privacyQuestion(includeAddress, includePhoto, identityDataUsage);
 		if (false == response) {
@@ -1190,13 +1189,13 @@ public class Controller {
 		this.view.setProgressIndeterminate();
 
 		if (removeCard) {
-			setStatusMessage(Status.NORMAL, MESSAGE_ID.REMOVE_CARD);
+			setStatusMessage(Status.NORMAL, Messages.MESSAGE_ID.REMOVE_CARD);
 			this.pcscEidSpi.removeCard();
 		}
 
 		this.pcscEidSpi.close();
 
-		setStatusMessage(Status.NORMAL, MESSAGE_ID.TRANSMITTING_IDENTITY);
+		setStatusMessage(Status.NORMAL, Messages.MESSAGE_ID.TRANSMITTING_IDENTITY);
 
 		IdentityDataMessage identityData = new IdentityDataMessage(idFile, addressFile, photoFile,
 				identitySignatureFile, addressSignatureFile, rrnCertFile, rootCertFile, authnCertFile, signCertFile,
@@ -1206,13 +1205,13 @@ public class Controller {
 	}
 
 	private void waitForEIdCardPcsc() throws Exception {
-		setStatusMessage(Status.NORMAL, MESSAGE_ID.DETECTING_CARD);
+		setStatusMessage(Status.NORMAL, Messages.MESSAGE_ID.DETECTING_CARD);
 		if (false == this.pcscEidSpi.hasCardReader()) {
-			setStatusMessage(Status.NORMAL, MESSAGE_ID.CONNECT_READER);
+			setStatusMessage(Status.NORMAL, Messages.MESSAGE_ID.CONNECT_READER);
 			this.pcscEidSpi.waitForCardReader();
 		}
 		if (false == this.pcscEidSpi.isEidPresent()) {
-			setStatusMessage(Status.NORMAL, MESSAGE_ID.INSERT_CARD_QUESTION);
+			setStatusMessage(Status.NORMAL, Messages.MESSAGE_ID.INSERT_CARD_QUESTION);
 			this.pcscEidSpi.waitForEidPresent();
 		}
 	}

@@ -16,7 +16,7 @@
  * http://www.gnu.org/licenses/.
  */
 
-package be.fedict.eid.applet;
+package be.smals.research.bulksign.desktopapp.eid.external;
 
 import java.awt.Component;
 import java.awt.EventQueue;

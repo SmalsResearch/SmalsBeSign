@@ -1,6 +1,6 @@
 /*
  * eID Applet Project.
- * Copyright (C) 2008-2009 FedICT.
+ * Copyright (C) 2014 e-Contract.be BVBA.
  *
  * This is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License version
@@ -16,22 +16,10 @@
  * http://www.gnu.org/licenses/.
  */
 
-package be.fedict.eid.applet;
+package be.smals.research.bulksign.desktopapp.eid.external;
 
-/**
- * Status of info message.
- * 
- * @author Frank Cornelis
- * 
- */
-public enum Status {
-	/**
-	 * Message will be shown in normal color.
-	 */
-	NORMAL,
+public class UserCancelledException extends Exception {
 
-	/**
-	 * Message will be shown in red. Progress bar also stops running around.
-	 */
-	ERROR
+	private static final long serialVersionUID = 1L;
+
 }

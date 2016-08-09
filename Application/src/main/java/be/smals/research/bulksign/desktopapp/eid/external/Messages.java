@@ -17,7 +17,7 @@
  * http://www.gnu.org/licenses/.
  */
 
-package be.fedict.eid.applet;
+package be.smals.research.bulksign.desktopapp.eid.external;
 
 import sun.util.ResourceBundleEnumeration;
 
@@ -33,7 +33,7 @@ import javax.swing.UIManager;
  */
 public class Messages {
 
-	public static final String RESOURCE_BUNDLE_NAME = "be.fedict.eid.applet.Messages";
+	public static final String RESOURCE_BUNDLE_NAME = "be.smals.research.bulksign.desktopapp.eid.external.Messages";
 
 	private final ResourceBundle resourceBundle;
 

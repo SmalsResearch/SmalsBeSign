@@ -1,7 +1,7 @@
 package be.smals.research.bulksign.desktopapp.eid;
 
-import be.fedict.eid.applet.Controller;
-import be.fedict.eid.applet.Messages;
+import be.smals.research.bulksign.desktopapp.eid.external.Controller;
+import be.smals.research.bulksign.desktopapp.eid.external.Messages;
 import be.smals.research.bulksign.desktopapp.eid.external.shared.SignRequestMessage;
 import be.smals.research.bulksign.desktopapp.eid.external.shared.SignatureDataMessage;
 
