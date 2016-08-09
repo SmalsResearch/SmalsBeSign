@@ -7,6 +7,7 @@ import be.smals.research.bulksign.desktopapp.utilities.FileListItem;
 import be.smals.research.bulksign.desktopapp.utilities.Settings;
 import be.smals.research.bulksign.desktopapp.utilities.Settings.Signer;
 import be.smals.research.bulksign.desktopapp.utilities.SigningOutput;
+import com.jfoenix.controls.JFXDialog;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -19,6 +20,7 @@ import javafx.scene.control.ListView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.jpedal.examples.viewer.Commands;
@@ -52,6 +54,8 @@ public class SignController {
     @FXML private Label fileCountLabel;
     @FXML private ListView filesListView;
     @FXML private Pane readerPane;
+    @FXML private StackPane masterSign;
+    @FXML private JFXDialog noFileDialog;
 
     /**
      * Constructor
@@ -76,10 +80,12 @@ public class SignController {
     private void handleSignFilesButtonAction(ActionEvent event) {
         List<File> selectedFiles = this.getSelectedFiles ();
         if (selectedFiles.isEmpty()){
-            Alert noFileSelectedDialog = new Alert(Alert.AlertType.INFORMATION, "Please, select at least one file.", ButtonType.CLOSE);
-            noFileSelectedDialog.setTitle("No file to sign");
-            noFileSelectedDialog.setHeaderText(null);
-            noFileSelectedDialog.showAndWait();
+//            Alert noFileSelectedDialog = new Alert(Alert.AlertType.INFORMATION, "Please, select at least one file.", ButtonType.CLOSE);
+//            noFileSelectedDialog.setTitle("No file to sign");
+//            noFileSelectedDialog.setHeaderText(null);
+//            noFileSelectedDialog.showAndWait();
+            noFileDialog.setTransitionType(JFXDialog.DialogTransition.TOP);
+            noFileDialog.show(masterSign);
         } else {
             FileInputStream[] inputFiles = new FileInputStream[selectedFiles.size()];
 
@@ -211,4 +217,7 @@ public class SignController {
         return selectedFiles;
     }
 
+    @FXML private void handleCancelDialogButtonAction (ActionEvent event) {
+        noFileDialog.close();
+    }
 }

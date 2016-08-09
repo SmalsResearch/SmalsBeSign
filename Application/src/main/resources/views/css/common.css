@@ -49,19 +49,19 @@
     -fx-background-color:  #52BBFE;
     -fx-text-fill: WHITE;
 }
-.button-success {
+.button-s-success {
     -fx-font-size: 12px;
     -fx-button-type: FLAT;
     -fx-background-color:  #5cb85c;
     -fx-text-fill: WHITE;
 }
-.button-warning {
+.button-s-warning {
     -fx-font-size: 12px;
     -fx-button-type: FLAT;
     -fx-background-color:  #f0ad4e;
     -fx-text-fill: WHITE;
 }
-.button-danger {
+.button-s-danger {
     -fx-font-size: 12px;
     -fx-button-type: FLAT;
     -fx-background-color:  #d9534f;
@@ -69,7 +69,7 @@
 }
 
 /*
-========== POPUP =======================================================================================================
+========== DIALOG ======================================================================================================
 */
 
 .jfx-dialog-overlay-pane {
@@ -103,8 +103,13 @@
 	-fx-padding: 10.0px 0.0 0.0 0.0 ;
 	-fx-alignment: center-right ;
 }
-.dialog-accept{
-	-fx-text-fill: #03A9F4;
-	-fx-font-weight: BOLD;
-	-fx-padding: 0.7em 0.8em;
+
+/*
+========== COLOR
+*/
+.color {
+    -fx-text-fill: #52BBFE;
+}
+.color-danger {
+    -fx-text-fill: #d9534f;
 }

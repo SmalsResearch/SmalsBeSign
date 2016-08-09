@@ -8,6 +8,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
 import java.security.Security;
@@ -22,11 +23,12 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception {
         Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
         FXMLLoader loader   = new FXMLLoader(getClass().getClassLoader().getResource("views/main.fxml"));
-        BorderPane root       = loader.load();
+        StackPane masterPane       = loader.load();
         primaryStage.setTitle("BulkSign Desktop");
 
         MainController controller = loader.getController();
         controller.setStage(primaryStage);
+        BorderPane root         = controller.getRoot();
 
         MenuBar menuBar         = new MenuBar();
         Menu fileMenu           = new Menu("File");
@@ -69,7 +71,7 @@ public class Main extends Application {
             }
         });
 
-        primaryStage.setScene(new Scene(root, 800, 480));
+        primaryStage.setScene(new Scene(masterPane, 800, 480));
         primaryStage.show();
     }
 }

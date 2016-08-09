@@ -6,7 +6,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.StackPane?>
 
-<StackPane stylesheets="@css/common.css" xmlns="http://javafx.com/javafx/8.0.101" xmlns:fx="http://javafx.com/fxml/1" fx:controller="be.smals.research.bulksign.desktopapp.controllers.TestController">
+<StackPane fx:id="dialogParent" stylesheets="@css/common.css" xmlns="http://javafx.com/javafx/8.0.101" xmlns:fx="http://javafx.com/fxml/1" fx:controller="be.smals.research.bulksign.desktopapp.controllers.TestController">
     <JFXButton fx:id="showDialogButton" onAction="#handleShowDialogButtonAction" styleClass="button-s" text="Hello" />
     <JFXDialog fx:id="exitDialog">
         <JFXDialogLayout>

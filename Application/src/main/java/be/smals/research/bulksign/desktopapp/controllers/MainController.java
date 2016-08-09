@@ -1,16 +1,16 @@
 package be.smals.research.bulksign.desktopapp.controllers;
 
+import com.jfoenix.controls.JFXDialog;
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.util.Optional;
 
 /**
  * Main screen controller
@@ -22,6 +22,10 @@ public class MainController {
     private Stage stage;
     @FXML
     private BorderPane root;
+    @FXML
+    private JFXDialog exitDialog;
+    @FXML
+    private StackPane masterPane;
 
     /**
      * Constructor
@@ -34,15 +38,16 @@ public class MainController {
     }
 
     public void exitMenuItemAction() {
-        Alert exitAlert = new Alert(Alert.AlertType.WARNING, "You are about to leave...", ButtonType.YES, ButtonType.CANCEL);
-        exitAlert.setTitle("Exit the application");
-        exitAlert.setHeaderText("Are you sure ?");
-        Optional<ButtonType> choice = exitAlert.showAndWait();
-        if (choice.isPresent() && choice.get() == ButtonType.YES)
-            Platform.exit();
-        else
-            exitAlert.close();
-
+//        Alert exitAlert = new Alert(Alert.AlertType.WARNING, "You are about to leave...", ButtonType.YES, ButtonType.CANCEL);
+//        exitAlert.setTitle("Exit the application");
+//        exitAlert.setHeaderText("Are you sure ?");
+//        Optional<ButtonType> choice = exitAlert.showAndWait();
+//        if (choice.isPresent() && choice.get() == ButtonType.YES)
+//            Platform.exit();
+//        else
+//            exitAlert.close();
+        exitDialog.setTransitionType(JFXDialog.DialogTransition.TOP);
+        exitDialog.show(masterPane);
     }
 
     public void signMenuItemAction() {
@@ -82,5 +87,15 @@ public class MainController {
         } catch (IOException e1) {
             e1.printStackTrace();
         }
+    }
+    public BorderPane getRoot () {
+        return this.root;
+    }
+    // ===== Dialog actions ============================================================================================
+    @FXML private void handleCancelDialogButtonAction(ActionEvent event) {
+        this.exitDialog.close();
+    }
+    @FXML private void handleExitAppButtonAction (ActionEvent event) {
+        Platform.exit();
     }
 }

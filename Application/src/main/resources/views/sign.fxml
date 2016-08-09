@@ -1,38 +1,67 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXDialog?>
+<?import com.jfoenix.controls.JFXDialogLayout?>
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<GridPane fx:id="rootSign" stylesheets="@css/common.css" xmlns="http://javafx.com/javafx/8.0.101" xmlns:fx="http://javafx.com/fxml/1" fx:controller="be.smals.research.bulksign.desktopapp.controllers.SignController">
-     <columnConstraints>
-       <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" percentWidth="30.0" />
-      <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" percentWidth="5.0" />
-       <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" percentWidth="65.0" />
-     </columnConstraints>
-     <rowConstraints>
-       <RowConstraints percentHeight="10.0" valignment="CENTER" vgrow="SOMETIMES" />
-       <RowConstraints percentHeight="75.0" valignment="CENTER" vgrow="SOMETIMES" />
-      <RowConstraints percentHeight="15.0" valignment="CENTER" vgrow="SOMETIMES" />
-     </rowConstraints>
-      <children>
-         <JFXButton fx:id="signFilesButton" alignment="CENTER" buttonType="RAISED" contentDisplay="CENTER" mnemonicParsing="false" onAction="#handleSignFilesButtonAction" styleClass="button-raised" text="SIGN FILES" textAlignment="CENTER" textFill="WHITE" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER">
-         <opaqueInsets>
-            <Insets />
-         </opaqueInsets></JFXButton>
-         <JFXButton fx:id="selectSignFileButton" layoutX="10.0" layoutY="43.0" mnemonicParsing="false" onAction="#handleSelectFilesToSignButtonAction" styleClass="button-s" text="Add files..." textAlignment="CENTER" textFill="WHITE" GridPane.halignment="RIGHT" GridPane.valignment="CENTER" />
-         <Label fx:id="fileCountLabel" text="No file selected" GridPane.halignment="LEFT">
-            <GridPane.margin>
-               <Insets />
-            </GridPane.margin>
-         </Label>
-          <ListView fx:id="filesListView" GridPane.halignment="LEFT" GridPane.rowIndex="1" GridPane.valignment="CENTER" />
-        <Separator orientation="VERTICAL" GridPane.columnIndex="1" />
-        <Separator orientation="VERTICAL" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-        <Separator orientation="VERTICAL" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-        <Pane fx:id="readerPane" GridPane.columnIndex="2" GridPane.rowSpan="2147483647" />
-      </children>
-   <padding>
-      <Insets bottom="24.0" left="24.0" right="24.0" top="24.0" />
-   </padding>
-   </GridPane>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.StackPane?>
+
+
+<StackPane fx:id="masterSign" xmlns="http://javafx.com/javafx/8.0.101" xmlns:fx="http://javafx.com/fxml/1" fx:controller="be.smals.research.bulksign.desktopapp.controllers.SignController">
+   <children>
+      <GridPane fx:id="rootSign" stylesheets="@css/common.css">
+          <columnConstraints>
+              <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" percentWidth="30.0" />
+              <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" percentWidth="5.0" />
+              <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" percentWidth="65.0" />
+          </columnConstraints>
+          <rowConstraints>
+              <RowConstraints percentHeight="10.0" valignment="CENTER" vgrow="SOMETIMES" />
+              <RowConstraints percentHeight="75.0" valignment="CENTER" vgrow="SOMETIMES" />
+              <RowConstraints percentHeight="15.0" valignment="CENTER" vgrow="SOMETIMES" />
+          </rowConstraints>
+          <children>
+               <JFXButton fx:id="signFilesButton" alignment="CENTER" buttonType="RAISED" contentDisplay="CENTER" mnemonicParsing="false" onAction="#handleSignFilesButtonAction" styleClass="button-raised" text="SIGN FILES" textAlignment="CENTER" textFill="WHITE" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER">
+               <opaqueInsets>
+                  <Insets />
+               </opaqueInsets>
+            </JFXButton>
+               <JFXButton fx:id="selectSignFileButton" layoutX="10.0" layoutY="43.0" mnemonicParsing="false" onAction="#handleSelectFilesToSignButtonAction" styleClass="button-s" text="Add files..." textAlignment="CENTER" textFill="WHITE" GridPane.halignment="RIGHT" GridPane.valignment="CENTER" />
+               <Label fx:id="fileCountLabel" text="No file selected" GridPane.halignment="LEFT">
+                  <GridPane.margin>
+                     <Insets />
+                  </GridPane.margin>
+               </Label>
+                <ListView fx:id="filesListView" GridPane.halignment="LEFT" GridPane.rowIndex="1" GridPane.valignment="CENTER" />
+              <Separator orientation="VERTICAL" GridPane.columnIndex="1" />
+              <Separator orientation="VERTICAL" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+              <Separator orientation="VERTICAL" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+              <Pane fx:id="readerPane" GridPane.columnIndex="2" GridPane.rowSpan="2147483647" />
+              <!-- Dialogs -->
+              <JFXDialog fx:id="noFileDialog">
+                  <JFXDialogLayout>
+                      <heading>
+                          <Label styleClass="color-danger">No file to sign</Label>
+                      </heading>
+                      <body>
+                          <Label>Please, select at least one file before you proceed.</Label>
+                      </body>
+                      <actions>
+                          <JFXButton fx:id="cancelDialogButton" minWidth="96" onAction="#handleCancelDialogButtonAction" styleClass="button-s-danger">CLOSE</JFXButton>
+                      </actions>
+                  </JFXDialogLayout>
+              </JFXDialog>
+          </children>
+          <padding>
+              <Insets bottom="24.0" left="24.0" right="24.0" top="24.0" />
+          </padding>
+      </GridPane>
+   </children>
+</StackPane>
