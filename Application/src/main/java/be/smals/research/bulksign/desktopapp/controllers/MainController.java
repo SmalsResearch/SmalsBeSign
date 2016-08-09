@@ -20,12 +20,9 @@ import java.io.IOException;
 public class MainController {
 
     private Stage stage;
-    @FXML
-    private BorderPane root;
-    @FXML
-    private JFXDialog exitDialog;
-    @FXML
-    private StackPane masterPane;
+    @FXML private BorderPane root;
+    @FXML private JFXDialog exitDialog;
+    @FXML private StackPane masterPane;
 
     /**
      * Constructor

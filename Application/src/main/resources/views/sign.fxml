@@ -45,6 +45,19 @@
               <Separator orientation="VERTICAL" GridPane.columnIndex="1" GridPane.rowIndex="2" />
               <Pane fx:id="readerPane" GridPane.columnIndex="2" GridPane.rowSpan="2147483647" />
               <!-- Dialogs -->
+              <JFXDialog fx:id="saveOutputDialog">
+                  <JFXDialogLayout>
+                      <heading>
+                          <Label styleClass="color-danger">No file to sign</Label>
+                      </heading>
+                      <body>
+                          <Label>Please, select at least one file before you proceed.</Label>
+                      </body>
+                      <actions>
+                          <JFXButton minWidth="96" onAction="#handleCancelNoFileDialogAction" styleClass="button-s-danger">CLOSE</JFXButton>
+                      </actions>
+                  </JFXDialogLayout>
+              </JFXDialog>
               <JFXDialog fx:id="noFileDialog">
                   <JFXDialogLayout>
                       <heading>
@@ -54,7 +67,20 @@
                           <Label>Please, select at least one file before you proceed.</Label>
                       </body>
                       <actions>
-                          <JFXButton fx:id="cancelDialogButton" minWidth="96" onAction="#handleCancelDialogButtonAction" styleClass="button-s-danger">CLOSE</JFXButton>
+                          <JFXButton minWidth="96" onAction="#handleCancelNoFileDialogAction" styleClass="button-s-danger">CLOSE</JFXButton>
+                      </actions>
+                  </JFXDialogLayout>
+              </JFXDialog>
+              <JFXDialog fx:id="noDefaultAppDialog">
+                  <JFXDialogLayout>
+                      <heading>
+                          <Label styleClass="color-danger">Unable to open the file</Label>
+                      </heading>
+                      <body>
+                          <Label>No application associated with the specified file.</Label>
+                      </body>
+                      <actions>
+                          <JFXButton minWidth="96" onAction="#handleCancelNoDefaultAppDialogAction" styleClass="button-s-danger">CLOSE</JFXButton>
                       </actions>
                   </JFXDialogLayout>
               </JFXDialog>

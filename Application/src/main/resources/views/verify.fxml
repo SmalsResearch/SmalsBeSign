@@ -7,39 +7,45 @@
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.StackPane?>
 
-<GridPane xmlns="http://javafx.com/javafx/8.0.101" xmlns:fx="http://javafx.com/fxml/1" fx:controller="be.smals.research.bulksign.desktopapp.controllers.VerifyController">
- <columnConstraints>
-   <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" percentWidth="75.0" />
-      <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" percentWidth="5.0" />
-   <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" percentWidth="20.0" />
- </columnConstraints>
- <rowConstraints>
-   <RowConstraints percentHeight="10.0" vgrow="SOMETIMES" />
-   <RowConstraints percentHeight="10.0" vgrow="SOMETIMES" />
- </rowConstraints>
-  <children>
-     <JFXButton fx:id="selectSignFileButton" layoutX="10.0" layoutY="43.0" mnemonicParsing="false" onAction="#handleSelectSignFileButtonAction" styleClass="button-s" text="Select a signed file">
-        <GridPane.margin>
-           <Insets right="12.0" />
-        </GridPane.margin>
-     </JFXButton>
-     <Label fx:id="signedFileLabel" text="No file selected">
-        <GridPane.margin>
-           <Insets left="172.0" />
-        </GridPane.margin>
-     </Label>
-     <JFXButton fx:id="verifyFileButton" layoutX="422.0" layoutY="13.0" mnemonicParsing="false" onAction="#handleVerifyFileButtonAction" styleClass="button-raised" text="Verify signed file" GridPane.columnIndex="2" />
-     <JFXButton fx:id="selectVerifyFileButton" layoutX="22.0" layoutY="13.0" mnemonicParsing="false" onAction="#handleSelectVerifyFileButtonAction" styleClass="button-s" text="Select a signature file" GridPane.rowIndex="1" />
-  <Label fx:id="signatureFileLabel" layoutX="158.0" layoutY="17.0" text="No file selected" GridPane.rowIndex="1">
-     <GridPane.margin>
-        <Insets left="172.0" />
-     </GridPane.margin>
-  </Label>
-      <Separator orientation="VERTICAL" prefHeight="200.0" GridPane.columnIndex="1" />
-      <Separator orientation="VERTICAL" prefHeight="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-  </children>
-   <padding>
-      <Insets bottom="24.0" left="24.0" right="24.0" top="24.0" />
-   </padding>
-</GridPane>
+
+<StackPane fx:id="masterVerify" xmlns="http://javafx.com/javafx/8.0.101" xmlns:fx="http://javafx.com/fxml/1" fx:controller="be.smals.research.bulksign.desktopapp.controllers.VerifyController">
+   <children>
+      <GridPane>
+       <columnConstraints>
+         <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" percentWidth="75.0" />
+            <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" percentWidth="5.0" />
+         <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" percentWidth="20.0" />
+       </columnConstraints>
+       <rowConstraints>
+         <RowConstraints percentHeight="10.0" vgrow="SOMETIMES" />
+         <RowConstraints percentHeight="10.0" vgrow="SOMETIMES" />
+       </rowConstraints>
+        <children>
+           <JFXButton fx:id="selectSignFileButton" layoutX="10.0" layoutY="43.0" mnemonicParsing="false" onAction="#handleSelectSignFileButtonAction" styleClass="button-s" text="Select a signed file">
+              <GridPane.margin>
+                 <Insets right="12.0" />
+              </GridPane.margin>
+           </JFXButton>
+           <Label fx:id="signedFileLabel" text="No file selected">
+              <GridPane.margin>
+                 <Insets left="172.0" />
+              </GridPane.margin>
+           </Label>
+           <JFXButton fx:id="verifyFileButton" layoutX="422.0" layoutY="13.0" mnemonicParsing="false" onAction="#handleVerifyFileButtonAction" styleClass="button-raised" text="Verify signed file" GridPane.columnIndex="2" />
+           <JFXButton fx:id="selectVerifyFileButton" layoutX="22.0" layoutY="13.0" mnemonicParsing="false" onAction="#handleSelectVerifyFileButtonAction" styleClass="button-s" text="Select a signature file" GridPane.rowIndex="1" />
+        <Label fx:id="signatureFileLabel" layoutX="158.0" layoutY="17.0" text="No file selected" GridPane.rowIndex="1">
+           <GridPane.margin>
+              <Insets left="172.0" />
+           </GridPane.margin>
+        </Label>
+            <Separator orientation="VERTICAL" prefHeight="200.0" GridPane.columnIndex="1" />
+            <Separator orientation="VERTICAL" prefHeight="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+        </children>
+         <padding>
+            <Insets bottom="24.0" left="24.0" right="24.0" top="24.0" />
+         </padding>
+      </GridPane>
+   </children>
+</StackPane>

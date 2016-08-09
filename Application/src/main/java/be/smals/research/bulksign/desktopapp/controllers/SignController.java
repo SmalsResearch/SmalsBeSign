@@ -56,6 +56,9 @@ public class SignController {
     @FXML private Pane readerPane;
     @FXML private StackPane masterSign;
     @FXML private JFXDialog noFileDialog;
+    @FXML private JFXDialog noDefaultAppDialog;
+    @FXML private JFXDialog saveOutputDialog;
+
 
     /**
      * Constructor
@@ -80,10 +83,6 @@ public class SignController {
     private void handleSignFilesButtonAction(ActionEvent event) {
         List<File> selectedFiles = this.getSelectedFiles ();
         if (selectedFiles.isEmpty()){
-//            Alert noFileSelectedDialog = new Alert(Alert.AlertType.INFORMATION, "Please, select at least one file.", ButtonType.CLOSE);
-//            noFileSelectedDialog.setTitle("No file to sign");
-//            noFileSelectedDialog.setHeaderText(null);
-//            noFileSelectedDialog.showAndWait();
             noFileDialog.setTransitionType(JFXDialog.DialogTransition.TOP);
             noFileDialog.show(masterSign);
         } else {
@@ -185,8 +184,7 @@ public class SignController {
                     try {
                         Desktop.getDesktop().open(file);
                     } catch (IOException e) {
-                        Alert noAppAssociated = new Alert(Alert.AlertType.ERROR, e.getMessage());
-                        noAppAssociated.showAndWait();
+                        this.noDefaultAppDialog.show(masterSign);
                     }
                 };
             }
@@ -217,7 +215,11 @@ public class SignController {
         return selectedFiles;
     }
 
-    @FXML private void handleCancelDialogButtonAction (ActionEvent event) {
+    // ---------- Dialog action ----------------------------------------------------------------------------------------
+    @FXML private void handleCancelNoFileDialogAction (ActionEvent event) {
         noFileDialog.close();
+    }
+    @FXML private void handleCancelNoDefaultAppDialogAction (ActionEvent event) {
+        noDefaultAppDialog.close();
     }
 }

@@ -7,6 +7,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
+import javafx.scene.layout.StackPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.xml.sax.SAXException;
@@ -33,6 +34,7 @@ public class VerifyController {
 
     @FXML private Label signedFileLabel;
     @FXML private Label signatureFileLabel;
+    @FXML private StackPane masterVerify;
 
     private Stage stage;
 
