@@ -115,7 +115,7 @@ public class SignController extends Controller{
 
             try {
                 // Is card present ?
-                if (!EIDService.getInstance().isEIDPresent()) {
+                if (!EIDService.getInstance().isEIDReaderPresent() || !EIDService.getInstance().isEIDStillPresent()) {
                     noEIDDialog.setTransitionType(JFXDialog.DialogTransition.TOP);
                     noEIDDialog.show(masterSign);
                 } else {
@@ -124,7 +124,9 @@ public class SignController extends Controller{
                         inputFiles[i] = new FileInputStream(selectedFiles.get(i));
                     }
                     // Sign
-                    byte[] signature = this.signingService.sign(inputFiles);
+                    this.signingService.prepareSigning();
+
+                    byte[] signature = this.signingService.signAlt(inputFiles);
                     // Real signer
                     // --- end
                     List<X509Certificate> certificateChain = (Settings.getInstance().getSigner().equals(Signer.EID)) ?
@@ -133,6 +135,8 @@ public class SignController extends Controller{
 
                     for (FileInputStream file : inputFiles)
                         file.close();
+
+                    EIDService.getInstance().close();
                 }
 
             } catch (IOException | ParserConfigurationException | TransformerException e) {

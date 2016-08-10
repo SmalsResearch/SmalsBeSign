@@ -16,9 +16,11 @@ import java.security.Security;
 public class DigestService {
 
     private static DigestService instance = new DigestService();
+    private String algorithm;
 
     private DigestService() {
         Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
+        this.algorithm = "SHA-256";
     }
     public static DigestService getInstance() {
         if (instance == null)
@@ -86,12 +88,15 @@ public class DigestService {
         int read;
         byte[] buffer = new byte[8192];
 
-        MessageDigest digest = MessageDigest.getInstance("SHA-256", "BC");
+        MessageDigest digest = MessageDigest.getInstance(this.algorithm, "BC");
         while ((read = individualFile.read(buffer)) > 0) {
             digest.update(buffer, 0, read);
         }
         byte[] hash = digest.digest();
         // Replacement of the 2 previous lines in order to accept the 0 at the beginning of an hex number
         return new String(Hex.encode(hash));
+    }
+    public String getAlgorithm () {
+        return this.algorithm;
     }
 }

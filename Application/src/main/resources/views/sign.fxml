@@ -88,13 +88,13 @@
               <JFXDialog fx:id="noEIDDialog">
                   <JFXDialogLayout>
                       <heading>
-                          <Label styleClass="color-danger">Waiting for an eID</Label>
+                          <Label styleClass="color-info">Missing eID card</Label>
                       </heading>
                       <body>
-                          <JFXSpinner fx:id="noEIDSpinner" radius="80" />
+                          <Label>You must insert your eID card inside the reader before you proceed</Label>
                       </body>
                       <actions>
-                          <JFXButton minWidth="96" onAction="#handleCancelNoEIDDialogAction" styleClass="button-s-danger">CANCEL</JFXButton>
+                          <JFXButton minWidth="96" onAction="#handleCancelNoEIDDialogAction" styleClass="button-s">OK</JFXButton>
                       </actions>
                   </JFXDialogLayout>
               </JFXDialog>

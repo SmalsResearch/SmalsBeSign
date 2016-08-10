@@ -8,6 +8,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Text;
 import sun.security.pkcs11.wrapper.*;
 
+import javax.smartcardio.CardException;
 import javax.xml.bind.DatatypeConverter;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -19,8 +20,8 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
-
 import java.io.InputStream;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
@@ -44,6 +45,9 @@ public class SigningService {
             pkcs11 = PKCS11.getInstance("libbeidpkcs11.so", "C_GetFunctionList", null, false);
     }
 
+    public void prepareSigning () throws CardException {
+        EIDService.getInstance().prepareSigning (DigestService.getInstance().getAlgorithm());
+    }
     /**
      * Used to sign given files
      *
@@ -61,8 +65,9 @@ public class SigningService {
                 byte[] signature;
                 if (Settings.getInstance().getSigner() == Signer.EID) {
                     System.out.println("EID SIGNER");
-                    EIDSigningService.getInstance().initSign(pkcs11, p11_session);
-                    signature = EIDSigningService.getInstance().sign(pkcs11, p11_session, this.masterDigest);
+//                    EIDSigningService.getInstance().initSign(pkcs11, p11_session);
+//                    signature = EIDSigningService.getInstance().sign(pkcs11, p11_session, this.masterDigest);
+                    signature = EIDService.getInstance().sign(masterDigest);
                 } else {
                     System.out.println("MOCK SIGNER");
                     MockSigningService.getInstance().initSign(this.masterDigest);
@@ -79,6 +84,31 @@ public class SigningService {
                 pkcs11.C_CloseSession(p11_session);
             }
         } catch (Exception e) {
+            System.out.println("[Catch] Exception: " + e.getMessage());
+            return (signErrorOutput);
+        }
+    }
+
+    public byte[] signAlt(FileInputStream[] inputFiles) {
+        byte[] signErrorOutput = new byte[0];
+
+        try {
+            this.masterDigest = DigestService.getInstance().computeMasterDigest(inputFiles);
+            byte[] signature;
+            if (Settings.getInstance().getSigner() == Signer.EID) {
+                System.out.println("EID SIGNER");
+//                    EIDSigningService.getInstance().initSign(pkcs11, p11_session);
+//                    signature = EIDSigningService.getInstance().sign(pkcs11, p11_session, this.masterDigest);
+                signature = EIDService.getInstance().signAt(this.masterDigest.getBytes(), DigestService.getInstance().getAlgorithm());
+            } else {
+                System.out.println("MOCK SIGNER");
+                MockSigningService.getInstance().initSign(this.masterDigest);
+                signature = MockSigningService.getInstance().sign();
+            }
+
+            return (signature);
+        } catch (Exception e) {
+            e.printStackTrace();
             System.out.println("[Catch] Exception: " + e.getMessage());
             return (signErrorOutput);
         }

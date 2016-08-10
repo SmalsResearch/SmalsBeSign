@@ -1,5 +1,6 @@
 package be.smals.research.bulksign.desktopapp.abstracts;
 
+import be.fedict.eid.applet.UserCancelledException;
 import be.smals.research.bulksign.desktopapp.EID;
 
 import javax.smartcardio.CardException;
@@ -39,7 +40,22 @@ public abstract class Service {
     public List<X509Certificate> getCertificateChain () throws CertificateException, IOException, CardException {
         return this.eID.getSignCertificateChain();
     }
-
     // ----- Sign ------------------------------------------------------------------------------------------------------
-    public void sign () {}
+    public void prepareSigning (String digestAlgo) throws CardException {
+        this.eID.prepareSigning(digestAlgo,  EID.NON_REP_KEY_ID);
+    }
+    public byte[] signAt(byte[] masterDigest, String algorithm) throws IOException, CardException {
+        return this.eID.signAlt(masterDigest, algorithm);
+    }
+//    public byte[] sign (String masterDigest) throws CardException, UserCancelledException, InterruptedException, IOException {
+//        return this.eID.sign(masterDigest.getBytes(), DigestService.getInstance().getAlgorithm(), EID.NON_REP_KEY_ID, false);
+//    }
+    // ----- PIN -------------------------------------------------------------------------------------------------------
+    public void verifyPin () throws CardException, UserCancelledException, InterruptedException, IOException {
+        this.eID.verifyPin();
+    }
+    // ----- Base
+    public void close () throws CardException {
+        this.eID.close();
+    }
 }
