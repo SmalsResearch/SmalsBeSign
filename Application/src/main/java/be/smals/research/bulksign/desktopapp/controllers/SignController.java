@@ -2,7 +2,7 @@ package be.smals.research.bulksign.desktopapp.controllers;
 
 import be.smals.research.bulksign.desktopapp.abstracts.Controller;
 import be.smals.research.bulksign.desktopapp.services.EIDKeyService;
-import be.smals.research.bulksign.desktopapp.services.MockKeyService;
+import be.smals.research.bulksign.desktopapp.services.EIDService;
 import be.smals.research.bulksign.desktopapp.services.SigningService;
 import be.smals.research.bulksign.desktopapp.ui.FileListItem;
 import be.smals.research.bulksign.desktopapp.utilities.Settings;
@@ -28,6 +28,7 @@ import org.jpedal.examples.viewer.Commands;
 import org.jpedal.examples.viewer.OpenViewerFX;
 import sun.security.pkcs11.wrapper.PKCS11Exception;
 
+import javax.smartcardio.CardException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import java.awt.*;
@@ -35,6 +36,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.security.cert.CertificateEncodingException;
+import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.List;
@@ -59,6 +61,7 @@ public class SignController extends Controller{
     @FXML private JFXDialog noFileDialog;
     @FXML private JFXDialog noDefaultAppDialog;
     @FXML private JFXDialog saveOutputDialog;
+    @FXML private JFXDialog noEIDDialog;
 
 
     /**
@@ -107,26 +110,53 @@ public class SignController extends Controller{
             noFileDialog.setTransitionType(JFXDialog.DialogTransition.TOP);
             noFileDialog.show(masterSign);
         } else {
+            // Sign Process
             FileInputStream[] inputFiles = new FileInputStream[selectedFiles.size()];
 
             try {
-                for ( int i=0; i < selectedFiles.size(); i++ ) {
-                    inputFiles[i] = new FileInputStream(selectedFiles.get(i));
+                // Is card present ?
+                if (!EIDService.getInstance().isEIDPresent()) {
+                    noEIDDialog.setTransitionType(JFXDialog.DialogTransition.TOP);
+                    noEIDDialog.show(masterSign);
+                } else {
+                    // Prepare files
+                    for (int i = 0; i < selectedFiles.size(); i++) {
+                        inputFiles[i] = new FileInputStream(selectedFiles.get(i));
+                    }
+                    // Sign
+                    byte[] signature = this.signingService.sign(inputFiles);
+                    // Real signer
+                    // --- end
+                    List<X509Certificate> certificateChain = (Settings.getInstance().getSigner().equals(Signer.EID)) ?
+                            EIDKeyService.getInstance().getCertificateChain() : EIDService.getInstance().getCertificateChain();
+                    this.saveSigningOutput(signature, certificateChain);
+
+                    for (FileInputStream file : inputFiles)
+                        file.close();
                 }
 
-                byte[] signature = this.signingService.sign(inputFiles);
-                List<X509Certificate> certificateChain = (Settings.getInstance().getSigner().equals(Signer.EID)) ?
-                        EIDKeyService.getInstance().getCertificateChain() : MockKeyService.getInstance().getCertificateChain();
-                this.saveSigningOutput(signature, certificateChain);
-
-                for (FileInputStream file : inputFiles)
-                     file.close();
-
             } catch (IOException | ParserConfigurationException | TransformerException e) {
+                e.printStackTrace();
+            } catch (CardException|CertificateException e) {
                 e.printStackTrace();
             }
         }
     }
+
+    private void waitForReaderAndCard() throws CardException, InterruptedException {
+        noEIDDialog.setTransitionType(JFXDialog.DialogTransition.TOP);
+        noEIDDialog.show(masterSign);
+        if (!EIDService.getInstance().isEIDReaderPresent()) {
+            // MSG CONNECT READER
+            EIDService.getInstance().waitForReader();
+        }
+        if (!EIDService.getInstance().isEIDPresent()) {
+            // MSG INSERT CARD
+            EIDService.getInstance().waitForCard();
+        }
+        noEIDDialog.close();
+    }
+
     /**
      * Defines the selected file
      *
@@ -229,5 +259,8 @@ public class SignController extends Controller{
     }
     @FXML private void handleCancelNoDefaultAppDialogAction (ActionEvent event) {
         noDefaultAppDialog.close();
+    }
+    @FXML private void handleCancelNoEIDDialogAction (ActionEvent event) {
+        noEIDDialog.close();
     }
 }

@@ -13,7 +13,10 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.security.Security;
+import java.util.Arrays;
 
 public class Main extends Application {
 
@@ -33,7 +36,7 @@ public class Main extends Application {
 //                }
 //
 //                @Override
-//                public void setStatusMessage(Status status, Message.MESSAGE_ID messageId) {
+//                public void setStatusMessage(Status status, Messages.MESSAGE_ID messageId) {
 //                    System.out.print("*status message: "+status);
 //                    System.out.println(" / " + messageId);
 //                }
@@ -109,7 +112,7 @@ public class Main extends Application {
 //                    System.out.println(">called getApplet");
 //                    return null;
 //                }
-//            }, new Message(Locale.US));
+//            }, new Messages(Locale.US));
 //        } catch (IOException e) {
 //            e.printStackTrace();
 //        } catch (PKCS11Exception e) {
@@ -170,11 +173,11 @@ public class Main extends Application {
 //        byte[] input = new byte[inputlength];
 //        IntStream.range(0,inputlength).forEach(i-> input[i] = (byte)i);
 //        byte[] digest = getSha1(input);
-//        System.out.println("INPUT: "+Arrays.toString(digest));
+//        System.out.println("INPUT: "+ Arrays.toString(digest));
 //        try {
-//            System.out.println("TRYING TO SIGN! ");
-//            InputStream[] inputs = new InputStream[1];
-//            AuthSignRequestMessage request = new AuthSignRequestMessage(digest,"SHA-1","<-please sign->",false);
+////            System.out.println("TRYING TO SIGN! ");
+////            InputStream[] inputs = new InputStream[1];
+////            AuthSignRequestMessage request = new AuthSignRequestMessage(digest,"SHA-1","<-please sign->",false);
 //            SignRequestMessage request1 = new SignRequestMessage(digest,"SHA-1","<--now sign for real-->",false,false,false);
 //            //AuthSignResponseMessage authSignResponseMessage = (AuthSignResponseMessage) controller.performAuthnSignOperation(request);
 //            //inputs[0] = new ByteArrayInputStream(bts);
@@ -217,18 +220,18 @@ public class Main extends Application {
 //         */
     }
 
-//    private static byte[] getSha1(byte[] input) {
-//        System.out.println("HASH: "+Arrays.toString(input));
-//        MessageDigest digest = null;
-//        try {
-//            digest = MessageDigest.getInstance("SHA-1");
-//        } catch (NoSuchAlgorithmException e) {
-//            e.printStackTrace();
-//        }
-//        byte[] result = digest.digest(input);
-//        System.out.println("HASH: "+Arrays.toString(result));
-//        return result;
-//    }
+    private static byte[] getSha1(byte[] input) {
+        System.out.println("HASH: "+Arrays.toString(input));
+        MessageDigest digest = null;
+        try {
+            digest = MessageDigest.getInstance("SHA-1");
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        byte[] result = digest.digest(input);
+        System.out.println("HASH: "+Arrays.toString(result));
+        return result;
+    }
     @Override
     public void start(Stage primaryStage) throws Exception {
         Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());

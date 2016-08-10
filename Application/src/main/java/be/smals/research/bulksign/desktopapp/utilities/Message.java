@@ -10,7 +10,7 @@ import java.util.Map;
 public class Message {
 
     public enum MessageType {
-        ERROR, SUCCESS, INFO
+        ERROR, SUCCESS, INFO, DEFAULT
     }
 
     private static Message instance = new Message();

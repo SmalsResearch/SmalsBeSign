@@ -14,6 +14,7 @@
 <?import javafx.scene.layout.StackPane?>
 
 
+<?import com.jfoenix.controls.JFXSpinner?>
 <StackPane fx:id="masterSign" xmlns="http://javafx.com/javafx/8.0.101" xmlns:fx="http://javafx.com/fxml/1" fx:controller="be.smals.research.bulksign.desktopapp.controllers.SignController">
    <children>
       <GridPane fx:id="rootSign" stylesheets="@css/common.css">
@@ -81,6 +82,19 @@
                       </body>
                       <actions>
                           <JFXButton minWidth="96" onAction="#handleCancelNoDefaultAppDialogAction" styleClass="button-s-danger">CLOSE</JFXButton>
+                      </actions>
+                  </JFXDialogLayout>
+              </JFXDialog>
+              <JFXDialog fx:id="noEIDDialog">
+                  <JFXDialogLayout>
+                      <heading>
+                          <Label styleClass="color-danger">Waiting for an eID</Label>
+                      </heading>
+                      <body>
+                          <JFXSpinner fx:id="noEIDSpinner" radius="80" />
+                      </body>
+                      <actions>
+                          <JFXButton minWidth="96" onAction="#handleCancelNoEIDDialogAction" styleClass="button-s-danger">CANCEL</JFXButton>
                       </actions>
                   </JFXDialogLayout>
               </JFXDialog>

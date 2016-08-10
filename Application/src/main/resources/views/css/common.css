@@ -9,7 +9,6 @@
 */
 .statusBar {
     -fx-background-color: #52BBFE;
-    -fx-text-fill: WHITE;
     -fx-padding: 8px 24px;
 }
 /*
@@ -82,13 +81,11 @@
 .jfx-dialog-overlay-pane {
 	-fx-background-color: rgba(0.0,0.0,0.0,0.1);
 }
-
 .dialog-trigger{
 	-fx-background-color: WHITE;
 	-fx-button-type:RAISED;
 	-fx-font-size: 14.0px;
 }
-
 .jfx-dialog-layout {
 	-fx-padding: 24.0px 24.0px 16.0px 24.0px;
 	-fx-text-fill: rgba(0.0, 0.0, 0.0, 0.87);
@@ -99,13 +96,11 @@
 	-fx-alignment: center-left;
 	-fx-padding: 5.0 0.0 5.0 0.0;
 }
-
 .jfx-layout-body .label {
 	-fx-font-size: 14.0px;
 	-fx-pref-width: 400.0px;
 	-fx-wrap-text: true;
 }
-
 .jfx-layout-actions {
 	-fx-padding: 10.0px 0.0 0.0 0.0 ;
 	-fx-alignment: center-right ;
@@ -116,6 +111,9 @@
 */
 .color {
     -fx-text-fill: #52BBFE;
+}
+.color-white {
+    -fx-text-fill: WHITE;
 }
 .color-success {
     -fx-text-fill: #5cb85c;

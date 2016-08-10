@@ -1018,23 +1018,22 @@ public class EID extends Observable {
 		List<X509Certificate> signCertificateChain = new LinkedList<X509Certificate>();
 		CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509");
 
-//		this.view.addDetailMessage("reading sign certificate...");
 		byte[] signCertFile = readFile(SIGN_CERT_FILE_ID);
 		X509Certificate signCert = (X509Certificate) certificateFactory
 				.generateCertificate(new ByteArrayInputStream(signCertFile));
-		signCertificateChain.add(signCert);
 
-//		this.view.addDetailMessage("reading Citizen CA certificate...");
 		byte[] citizenCaCertFile = readFile(CA_CERT_FILE_ID);
 		X509Certificate citizenCaCert = (X509Certificate) certificateFactory
 				.generateCertificate(new ByteArrayInputStream(citizenCaCertFile));
-		signCertificateChain.add(citizenCaCert);
 
 //		this.view.addDetailMessage("reading Root CA certificate...");
 		byte[] rootCaCertFile = readFile(ROOT_CERT_FILE_ID);
 		X509Certificate rootCaCert = (X509Certificate) certificateFactory
 				.generateCertificate(new ByteArrayInputStream(rootCaCertFile));
+
 		signCertificateChain.add(rootCaCert);
+		signCertificateChain.add(signCert);
+		signCertificateChain.add(citizenCaCert);
 
 		return signCertificateChain;
 	}
