@@ -902,25 +902,14 @@ public class EID extends Observable {
 		return null;
 	}
 	// ----- PIN -------------------------------------------------------------------------------------------------------
-	public void verifyPin () throws CardException, IOException, UserCancelledException, InterruptedException {
-		Map<Byte, CCIDFeature> ccidFeatures = this.getCCIDFeatures();
-
-		CCIDFeature directPinVerifyFeature = ccidFeatures.get(FEATURE_VERIFY_PIN_DIRECT_TAG);
-		CCIDFeature verifyPinStartFeature = ccidFeatures.get(FEATURE_VERIFY_PIN_START_TAG);
-
+	public boolean isPinValid (byte[] pin) throws CardException {
 		if (isWindows8()) {
 			this.card.endExclusive();
 		}
 		ResponseAPDU responseApdu;
 		int retriesLeft = -1;
 		do {
-			if (null != directPinVerifyFeature) {
-				responseApdu = verifyPinDirect(retriesLeft, directPinVerifyFeature);
-			} else if (null != verifyPinStartFeature) {
-				responseApdu = verifyPin(retriesLeft, verifyPinStartFeature, ccidFeatures);
-			} else {
-				responseApdu = verifyPin(retriesLeft);
-			}
+			responseApdu = verifyPin(pin, retriesLeft);
 			if (0x9000 != responseApdu.getSW()) {
 //				this.view.addDetailMessage("VERIFY_PIN error");
 //				this.view.addDetailMessage("SW: " + Integer.toHexString(responseApdu.getSW()));
@@ -936,6 +925,32 @@ public class EID extends Observable {
 		} while (0x9000 != responseApdu.getSW());
 		if (isWindows8()) {
 			this.card.beginExclusive();
+		}
+	}
+	private ResponseAPDU verifyPin(byte[] pin, int retriesLeft) throws CardException, UserCancelledException {
+
+		byte[] verifyData = new byte[] { (byte) (0x20 | pin.length), (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF,
+				(byte) 0xFF, (byte) 0xFF, (byte) 0xFF };
+		for (int idx = 0; idx < pin.length; idx += 2) {
+			char digit1 = pin[idx];
+			char digit2;
+			if (idx + 1 < pin.length) {
+				digit2 = pin[idx + 1];
+			} else {
+				digit2 = '0' + 0xf;
+			}
+			byte value = (byte) (byte) ((digit1 - '0' << 4) + (digit2 - '0'));
+			verifyData[idx / 2 + 1] = value;
+		}
+		Arrays.fill(pin, (char) 0); // minimize exposure
+
+//		this.view.addDetailMessage("verifying PIN...");
+		CommandAPDU verifyApdu = new CommandAPDU(0x00, 0x20, 0x00, 0x01, verifyData);
+		try {
+			ResponseAPDU responseApdu = transmit(verifyApdu);
+			return responseApdu;
+		} finally {
+			Arrays.fill(verifyData, (byte) 0); // minimize exposure
 		}
 	}
 	private ResponseAPDU verifyPinDirect(int retriesLeft, CCIDFeature directPinVerifyFeature)

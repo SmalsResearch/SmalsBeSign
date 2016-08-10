@@ -15,6 +15,7 @@
 
 
 <?import com.jfoenix.controls.JFXSpinner?>
+<?import com.jfoenix.controls.JFXPasswordField?>
 <StackPane fx:id="masterSign" xmlns="http://javafx.com/javafx/8.0.101" xmlns:fx="http://javafx.com/fxml/1" fx:controller="be.smals.research.bulksign.desktopapp.controllers.SignController">
    <children>
       <GridPane fx:id="rootSign" stylesheets="@css/common.css">
@@ -95,6 +96,20 @@
                       </body>
                       <actions>
                           <JFXButton minWidth="96" onAction="#handleCancelNoEIDDialogAction" styleClass="button-s">OK</JFXButton>
+                      </actions>
+                  </JFXDialogLayout>
+              </JFXDialog>
+              <JFXDialog fx:id="getPinDialog">
+                  <JFXDialogLayout>
+                      <heading>
+                          <Label styleClass="color-info">Enter your PIN code</Label>
+                      </heading>
+                      <body>
+                          <Label>You must insert your eID card inside the reader before you proceed</Label>
+                          <JFXPasswordField fx:id="pinField" promptText="Pin code"/>
+                      </body>
+                      <actions>
+                          <JFXButton minWidth="96" onAction="#handleGetPinDialogAction" styleClass="button-s">OK</JFXButton>
                       </actions>
                   </JFXDialogLayout>
               </JFXDialog>

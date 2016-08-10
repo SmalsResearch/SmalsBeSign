@@ -54,6 +54,9 @@ public abstract class Service {
     public void verifyPin () throws CardException, UserCancelledException, InterruptedException, IOException {
         this.eID.verifyPin();
     }
+    public boolean isPinValid (byte[] pin) {
+        return this.eID.isPinValid(pin);
+    }
     // ----- Base
     public void close () throws CardException {
         this.eID.close();

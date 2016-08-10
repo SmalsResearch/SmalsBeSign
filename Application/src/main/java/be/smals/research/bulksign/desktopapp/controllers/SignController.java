@@ -9,6 +9,7 @@ import be.smals.research.bulksign.desktopapp.utilities.Settings;
 import be.smals.research.bulksign.desktopapp.utilities.Settings.Signer;
 import be.smals.research.bulksign.desktopapp.utilities.SigningOutput;
 import com.jfoenix.controls.JFXDialog;
+import com.jfoenix.controls.JFXPasswordField;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -62,7 +63,8 @@ public class SignController extends Controller{
     @FXML private JFXDialog noDefaultAppDialog;
     @FXML private JFXDialog saveOutputDialog;
     @FXML private JFXDialog noEIDDialog;
-
+    @FXML private JFXDialog getPinDialog;
+    @FXML private JFXPasswordField pinField;
 
     /**
      * Constructor
@@ -97,56 +99,6 @@ public class SignController extends Controller{
         HBox bottomPane = (HBox) viewerPane.getBottom();
         bottomPane.getChildren().remove(0, 2);
     }
-
-    /**
-     * Sign the selected file
-     *
-     * @param event click on signFile button
-     */
-    @FXML
-    private void handleSignFilesButtonAction(ActionEvent event) {
-        List<File> selectedFiles = this.getSelectedFiles ();
-        if (selectedFiles.isEmpty()){
-            noFileDialog.setTransitionType(JFXDialog.DialogTransition.TOP);
-            noFileDialog.show(masterSign);
-        } else {
-            // Sign Process
-            FileInputStream[] inputFiles = new FileInputStream[selectedFiles.size()];
-
-            try {
-                // Is card present ?
-                if (!EIDService.getInstance().isEIDReaderPresent() || !EIDService.getInstance().isEIDStillPresent()) {
-                    noEIDDialog.setTransitionType(JFXDialog.DialogTransition.TOP);
-                    noEIDDialog.show(masterSign);
-                } else {
-                    // Prepare files
-                    for (int i = 0; i < selectedFiles.size(); i++) {
-                        inputFiles[i] = new FileInputStream(selectedFiles.get(i));
-                    }
-                    // Sign
-                    this.signingService.prepareSigning();
-
-                    byte[] signature = this.signingService.signAlt(inputFiles);
-                    // Real signer
-                    // --- end
-                    List<X509Certificate> certificateChain = (Settings.getInstance().getSigner().equals(Signer.EID)) ?
-                            EIDKeyService.getInstance().getCertificateChain() : EIDService.getInstance().getCertificateChain();
-                    this.saveSigningOutput(signature, certificateChain);
-
-                    for (FileInputStream file : inputFiles)
-                        file.close();
-
-                    EIDService.getInstance().close();
-                }
-
-            } catch (IOException | ParserConfigurationException | TransformerException e) {
-                e.printStackTrace();
-            } catch (CardException|CertificateException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
     private void waitForReaderAndCard() throws CardException, InterruptedException {
         noEIDDialog.setTransitionType(JFXDialog.DialogTransition.TOP);
         noEIDDialog.show(masterSign);
@@ -159,20 +111,6 @@ public class SignController extends Controller{
             EIDService.getInstance().waitForCard();
         }
         noEIDDialog.close();
-    }
-
-    /**
-     * Defines the selected file
-     *
-     * @param event click on the selectFile button
-     */
-    @FXML private void handleSelectFilesToSignButtonAction(ActionEvent event) {
-        List<File> files = fileChooser.showOpenMultipleDialog(this.stage);
-        if (files != null) {
-            files.stream().filter(file -> !this.filesToSign.contains(file)).forEach(file -> this.filesToSign.add(file));
-            this.fileCountLabel.textProperty().set(this.filesToSign.size() + " file(s)");
-            this.populateListView();
-        }
     }
     /**
      * Handles the output file saving process
@@ -205,7 +143,6 @@ public class SignController extends Controller{
             saveCanceledAlert.showAndWait();
         }
     }
-
     /**
      * Populates the ListView with the files selected by the user
      */
@@ -257,6 +194,68 @@ public class SignController extends Controller{
         return selectedFiles;
     }
 
+    // ---------- Actions ----------------------------------------------------------------------------------------------
+    /**
+     * Sign the selected file
+     *
+     * @param event click on signFile button
+     */
+    @FXML private void handleSignFilesButtonAction(ActionEvent event) {
+        List<File> selectedFiles = this.getSelectedFiles ();
+        if (selectedFiles.isEmpty()){
+            noFileDialog.setTransitionType(JFXDialog.DialogTransition.TOP);
+            noFileDialog.show(masterSign);
+        } else {
+            // Sign Process
+            FileInputStream[] inputFiles = new FileInputStream[selectedFiles.size()];
+
+            try {
+                // Is card present ?
+                if (!EIDService.getInstance().isEIDReaderPresent() || !EIDService.getInstance().isEIDStillPresent()) {
+                    noEIDDialog.setTransitionType(JFXDialog.DialogTransition.TOP);
+                    noEIDDialog.show(masterSign);
+                } else {
+                    // Prepare files
+                    for (int i = 0; i < selectedFiles.size(); i++) {
+                        inputFiles[i] = new FileInputStream(selectedFiles.get(i));
+                    }
+                    // Sign
+                    this.signingService.prepareSigning();
+                    this.isPinValid();
+                    byte[] signature = this.signingService.signAlt(inputFiles);
+                    // Real signer
+                    // --- end
+                    List<X509Certificate> certificateChain = (Settings.getInstance().getSigner().equals(Signer.EID)) ?
+                            EIDKeyService.getInstance().getCertificateChain() : EIDService.getInstance().getCertificateChain();
+                    this.saveSigningOutput(signature, certificateChain);
+
+                    for (FileInputStream file : inputFiles)
+                        file.close();
+
+                    EIDService.getInstance().close();
+                }
+
+            } catch (IOException | ParserConfigurationException | TransformerException e) {
+                e.printStackTrace();
+            } catch (CardException|CertificateException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+    /**
+     * Defines the selected file
+     *
+     * @param event click on the selectFile button
+     */
+    @FXML private void handleSelectFilesToSignButtonAction(ActionEvent event) {
+        List<File> files = fileChooser.showOpenMultipleDialog(this.stage);
+        if (files != null) {
+            files.stream().filter(file -> !this.filesToSign.contains(file)).forEach(file -> this.filesToSign.add(file));
+            this.fileCountLabel.textProperty().set(this.filesToSign.size() + " file(s)");
+            this.populateListView();
+        }
+    }
+
     // ---------- Dialog action ----------------------------------------------------------------------------------------
     @FXML private void handleCancelNoFileDialogAction (ActionEvent event) {
         noFileDialog.close();
@@ -266,5 +265,12 @@ public class SignController extends Controller{
     }
     @FXML private void handleCancelNoEIDDialogAction (ActionEvent event) {
         noEIDDialog.close();
+    }
+
+    // ----------
+    private boolean isPinValid() {
+        this.getPinDialog.setTransitionType(JFXDialog.DialogTransition.TOP);
+        this.getPinDialog.show(masterSign);
+        return EIDService.getInstance().isPinValid (pinField.getText().getBytes());
     }
 }
