@@ -39,7 +39,6 @@ public class MainController extends Controller {
         exitDialog.setTransitionType(JFXDialog.DialogTransition.TOP);
         exitDialog.show(masterPane);
     }
-
     public void signMenuItemAction() {
         FXMLLoader signViewLoader = new FXMLLoader(getClass().getClassLoader().getResource("views/sign.fxml"));
         try {
@@ -52,7 +51,6 @@ public class MainController extends Controller {
             e1.printStackTrace();
         }
     }
-
     public void verifyMenuItemAction() {
         FXMLLoader verifyViewLoader = new FXMLLoader(getClass().getClassLoader().getResource("views/verify.fxml"));
         try {
@@ -73,6 +71,7 @@ public class MainController extends Controller {
         this.exitDialog.close();
     }
     @FXML private void handleExitAppButtonAction (ActionEvent event) {
+        System.exit(0);
         Platform.exit();
     }
 }

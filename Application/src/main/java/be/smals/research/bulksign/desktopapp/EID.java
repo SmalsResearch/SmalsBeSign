@@ -34,7 +34,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
@@ -48,7 +47,7 @@ import java.util.List;
  * @author Frank Cornelis
  * 
  */
-public class EId extends Observable {
+public class EID extends Observable {
 
 	public static final int MIN_PIN_SIZE = 4;
 	public static final int MAX_PIN_SIZE = 12;
@@ -129,7 +128,7 @@ public class EId extends Observable {
 		}
 	}
 
-	public EId() {
+	public EID() {
 		this.terminalFactory = TerminalFactory.getDefault();
 	}
 
@@ -206,7 +205,6 @@ public class EId extends Observable {
 	public CardChannel getCardChannel() {
 		return this.cardChannel;
 	}
-
 	public boolean hasCardReader() throws CardException {
 		TerminalFactory factory = TerminalFactory.getDefault();
 		CardTerminals cardTerminals = factory.terminals();
@@ -217,7 +215,6 @@ public class EId extends Observable {
 		}
 		return false;
 	}
-
 	/**
 	 * Checks if any card reader is connected if not, wait until one is connected
      */
@@ -247,7 +244,6 @@ public class EId extends Observable {
 			throw new RuntimeException(e);
 		}
 	}
-
 	public boolean isEidPresent() throws CardException {
 
 		if (null == cardTerminalList || cardTerminalList.isEmpty()) {
@@ -343,9 +339,6 @@ public class EId extends Observable {
 		this.cardChannel = card.getBasicChannel();
 		return true;
 	}
-
-
-
 	private CardTerminal selectCardTerminal(Set<CardTerminal> eIDCardTerminals) throws CardException, IOException {
 		// Multiple eID card detected...
 		DefaultListModel listModel = new DefaultListModel();
@@ -400,7 +393,6 @@ public class EId extends Observable {
 
 		return selectedListData.getCardTerminal();
 	}
-
 	private void selectFile(byte[] fileId) throws CardException, FileNotFoundException {
 //		this.view.addDetailMessage("selecting file");
 		CommandAPDU selectFileApdu = new CommandAPDU(0x00, 0xA4, 0x08, 0x0C, fileId);
@@ -416,7 +408,6 @@ public class EId extends Observable {
 			throw new RuntimeException("sleep error: " + e.getMessage());
 		}
 	}
-
 	private boolean matchesEidAtr(ATR atr) {
 		byte[] atrBytes = atr.getBytes();
 		if (atrBytes.length != ATR_PATTERN.length) {
@@ -430,7 +421,6 @@ public class EId extends Observable {
 		}
 		return false;
 	}
-
 	public void waitForEidPresent() throws CardException, InterruptedException {
 		while (true) {
 
@@ -479,7 +469,6 @@ public class EId extends Observable {
 			}
 		}
 	}
-
 	public void removeCard() throws CardException {
 		/*
 		 * Next doesn't work all the time.
@@ -493,11 +482,9 @@ public class EId extends Observable {
 			}
 		}
 	}
-
 	public boolean isCardStillPresent() throws CardException {
 		return this.cardTerminal.isCardPresent();
 	}
-
 	public void yieldExclusive(boolean yield) throws CardException {
 		if (yield) {
 			getCard().endExclusive();
@@ -505,7 +492,6 @@ public class EId extends Observable {
 			getCard().beginExclusive();
 		}
 	}
-
 	public List<X509Certificate> getAuthnCertificateChain() throws CardException, IOException, CertificateException {
 		List<X509Certificate> authnCertificateChain = new LinkedList<X509Certificate>();
 		CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509");
@@ -530,7 +516,6 @@ public class EId extends Observable {
 
 		return authnCertificateChain;
 	}
-
 	private Map<Byte, CCIDFeature> getCCIDFeatures() {
 		final boolean onMsWindows = (System.getProperty("os.name") != null
 				&& System.getProperty("os.name").startsWith("Windows"));
@@ -545,7 +530,7 @@ public class EId extends Observable {
 		byte[] features;
 		try {
 			features = this.card.transmitControlCommand(ioctl, new byte[0]);
-			Map<Byte, CCIDFeature> ccidFeatures = new HashMap<Byte, EId.CCIDFeature>();
+			Map<Byte, CCIDFeature> ccidFeatures = new HashMap<Byte, EID.CCIDFeature>();
 			int idx = 0;
 			while (idx < features.length) {
 				byte tag = features[idx];
@@ -591,7 +576,7 @@ public class EId extends Observable {
 						.transmit(new CommandAPDU((byte) 0xff, (byte) 0xc2, 0x01, 0x00, new byte[] {}, 32));
 //				this.view.addDetailMessage("PPDU response: " + Integer.toHexString(responseAPDU.getSW()));
 				if (responseAPDU.getSW() == 0x9000) {
-					Map<Byte, CCIDFeature> ccidFeatures = new HashMap<Byte, EId.CCIDFeature>();
+					Map<Byte, CCIDFeature> ccidFeatures = new HashMap<Byte, EID.CCIDFeature>();
 					features = responseAPDU.getData();
 					for (byte feature : features) {
 						ccidFeatures.put(feature, new CCIDFeature(feature));
@@ -623,13 +608,10 @@ public class EId extends Observable {
 			}
 		}
 	}
-
 	private Set<String> ppduNames = new HashSet<String>();
-
 	public void addPPDUName(String name) {
 		this.ppduNames.add(name.toLowerCase());
 	}
-
 	private boolean isPPDUCardTerminal(String name) {
 		name = name.toLowerCase();
 		for (String ppduName : this.ppduNames) {
@@ -639,7 +621,6 @@ public class EId extends Observable {
 		}
 		return false;
 	}
-
 	private static class CCIDFeature {
 		private final byte feature;
 		private final Integer ioctl;
@@ -679,7 +660,6 @@ public class EId extends Observable {
 			}
 		}
 	}
-
 	public byte[] sign(byte[] digestValue, String digestAlgo, byte keyId, boolean requireSecureReader)
 			throws CardException, IOException, InterruptedException, UserCancelledException {
 		Map<Byte, CCIDFeature> ccidFeatures = getCCIDFeatures();
@@ -795,26 +775,22 @@ public class EId extends Observable {
 		byte[] signatureValue = responseApdu.getData();
 		return signatureValue;
 	}
-
 	public void verifyPin() throws IOException, CardException, InterruptedException, UserCancelledException {
 		Map<Byte, CCIDFeature> ccidFeatures = getCCIDFeatures();
 		CCIDFeature directPinVerifyFeature = ccidFeatures.get(FEATURE_VERIFY_PIN_DIRECT_TAG);
 		CCIDFeature verifyPinStartFeature = ccidFeatures.get(FEATURE_VERIFY_PIN_START_TAG);
 		verifyPin(directPinVerifyFeature, verifyPinStartFeature, ccidFeatures);
 	}
-
 	public void endExclusive() throws CardException {
 		if (isWindows8()) {
 			this.card.endExclusive();
 		}
 	}
-
 	public void beginExclusive() throws CardException {
 		if (isWindows8()) {
 			this.card.beginExclusive();
 		}
 	}
-
 	private void verifyPin(CCIDFeature directPinVerifyFeature, CCIDFeature verifyPinStartFeature,
 			Map<Byte, CCIDFeature> ccidFeatures)
 					throws IOException, CardException, InterruptedException, UserCancelledException {
@@ -850,7 +826,6 @@ public class EId extends Observable {
 			this.card.beginExclusive();
 		}
 	}
-
 	private ResponseAPDU verifyPin(int retriesLeft, CCIDFeature verifyPinStartFeature,
 			Map<Byte, CCIDFeature> ccidFeatures)
 					throws IOException, CardException, InterruptedException, UserCancelledException {
@@ -868,7 +843,6 @@ public class EId extends Observable {
 		ResponseAPDU responseApdu = verifyPinFinishIoctl.transmit(new byte[0], this.card, this.cardChannel);
 		return responseApdu;
 	}
-
 	private ResponseAPDU verifyPinDirect(int retriesLeft, CCIDFeature directPinVerifyFeature)
 			throws IOException, CardException, UserCancelledException {
 //		this.view.addDetailMessage("direct PIN verification...");
@@ -888,27 +862,6 @@ public class EId extends Observable {
 		}
 		return responseApdu;
 	}
-
-	private ResponseAPDU verifyPukDirect(int retriesLeft, CCIDFeature directPinVerifyFeature)
-			throws IOException, CardException, UserCancelledException {
-//		this.view.addDetailMessage("direct PUK verification...");
-		byte[] verifyCommandData = createPINVerificationDataStructure(0x2C);
-//		this.dialogs.showPUKPadFrame(retriesLeft);
-		ResponseAPDU responseApdu;
-		try {
-			responseApdu = directPinVerifyFeature.transmit(verifyCommandData, this.card, this.cardChannel);
-		} finally {
-//			this.dialogs.disposePINPadFrame();
-		}
-		if (0x6401 == responseApdu.getSW()) {
-//			this.view.addDetailMessage("canceled by user");
-			throw new UserCancelledException();
-		} else if (0x6400 == responseApdu.getSW()) {
-//			this.view.addDetailMessage("PIN pad timeout");
-		}
-		return responseApdu;
-	}
-
 	private byte[] createPINVerificationDataStructure(int apduIns) throws IOException {
 		ByteArrayOutputStream verifyCommand = new ByteArrayOutputStream();
 		verifyCommand.write(30); // bTimeOut
@@ -984,7 +937,6 @@ public class EId extends Observable {
 		byte[] verifyCommandData = verifyCommand.toByteArray();
 		return verifyCommandData;
 	}
-
 	private byte getLanguageId() {
 		/*
 		 * USB language Ids
@@ -1001,120 +953,6 @@ public class EId extends Observable {
 		}
 		return 0x09; // ENGLISH
 	}
-
-	private byte[] createPINModificationDataStructure(int apduIns) throws IOException {
-		ByteArrayOutputStream modifyCommand = new ByteArrayOutputStream();
-		modifyCommand.write(30); // bTimeOut
-		modifyCommand.write(30); // bTimeOut2
-		modifyCommand.write(0x80 | 0x08 | 0x00 | 0x01); // bmFormatString
-		/*
-		 * bmFormatString. bit 7: 1 = system units are bytes
-		 * 
-		 * bit 6-3: 1 = PIN position in APDU command after Lc, so just after the
-		 * 0x20 | pinSize.
-		 * 
-		 * bit 2: 0 = left justify data
-		 * 
-		 * bit 1-0: 1 = BCD
-		 */
-
-		modifyCommand.write(0x47); // bmPINBlockString
-		/*
-		 * bmPINBlockString
-		 * 
-		 * bit 7-4: 4 = PIN length
-		 * 
-		 * bit 3-0: 7 = PIN block size (7 times 0xff)
-		 */
-
-		modifyCommand.write(0x04); // bmPINLengthFormat
-		/*
-		 * bmPINLengthFormat. weird... the values do not make any sense to me.
-		 * 
-		 * bit 7-5: 0 = RFU
-		 * 
-		 * bit 4: 0 = system units are bits
-		 * 
-		 * bit 3-0: 4 = PIN length position in APDU
-		 */
-
-		modifyCommand.write(0x00); // bInsertionOffsetOld
-		/*
-		 * bInsertionOffsetOld: Insertion position offset in bytes for the
-		 * current PIN
-		 */
-
-		modifyCommand.write(0x8); // bInsertionOffsetNew
-		/*
-		 * bInsertionOffsetNew: Insertion position offset in bytes for the new
-		 * PIN
-		 */
-
-		modifyCommand.write(new byte[] { (byte) MAX_PIN_SIZE, (byte) MIN_PIN_SIZE }); // wPINMaxExtraDigit
-		/*
-		 * first byte = maximum PIN size in digit
-		 * 
-		 * second byte = minimum PIN size in digit.
-		 */
-
-		modifyCommand.write(0x03); // bConfirmPIN
-		/*
-		 * bConfirmPIN: Flags governing need for confirmation of new PIN
-		 */
-
-		modifyCommand.write(0x02); // bEntryValidationCondition
-		/*
-		 * 0x02 = validation key pressed. So the user must press the green
-		 * button on his pinpad.
-		 */
-
-		modifyCommand.write(0x03); // bNumberMessage
-		/*
-		 * 0x03 = message with index in bMsgIndex
-		 */
-
-		modifyCommand.write(new byte[] { getLanguageId(), 0x04 }); // wLangId
-		/*
-		 * 0x04 = default sub-language
-		 */
-
-		modifyCommand.write(0x00); // bMsgIndex1
-		/*
-		 * 0x00 = PIN insertion prompt
-		 */
-
-		modifyCommand.write(0x01); // bMsgIndex2
-		/*
-		 * 0x01 = new PIN prompt
-		 */
-
-		modifyCommand.write(0x02); // bMsgIndex3
-		/*
-		 * 0x02 = new PIN again prompt
-		 */
-
-		modifyCommand.write(new byte[] { 0x00, 0x00, 0x00 }); // bTeoPrologue
-		/*
-		 * bTeoPrologue : only significant for T=1 protocol.
-		 */
-
-		byte[] modifyApdu = new byte[] { 0x00, // CLA
-				(byte) apduIns, // INS
-				0x00, // P1
-				0x01, // P2
-				0x10, // Lc = 16 bytes in command data
-				(byte) 0x20, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF,
-				(byte) 0x20, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF,
-				(byte) 0xFF };
-		modifyCommand.write(modifyApdu.length & 0xff); // ulDataLength[0]
-		modifyCommand.write(0x00); // ulDataLength[1]
-		modifyCommand.write(0x00); // ulDataLength[2]
-		modifyCommand.write(0x00); // ulDataLength[3]
-		modifyCommand.write(modifyApdu); // abData
-		byte[] modifyCommandData = modifyCommand.toByteArray();
-		return modifyCommandData;
-	}
-
 	private ResponseAPDU verifyPin(int retriesLeft) throws CardException, UserCancelledException {
 //		char[] pin = this.dialogs.getPin(retriesLeft);
 		char [] pin = null;
@@ -1142,17 +980,6 @@ public class EId extends Observable {
 			Arrays.fill(verifyData, (byte) 0); // minimize exposure
 		}
 	}
-
-	public byte[] signAuthn(byte[] toBeSigned, boolean requireSecureReader)
-			throws NoSuchAlgorithmException, CardException, IOException, InterruptedException, UserCancelledException {
-		MessageDigest messageDigest = MessageDigest.getInstance("SHA-1");
-		byte[] digest = messageDigest.digest(toBeSigned);
-		byte keyId = AUTHN_KEY_ID;
-
-		byte[] signatureValue = sign(digest, "SHA-1", keyId, requireSecureReader);
-		return signatureValue;
-	}
-
 //	private void ccidWaitForOK(CCIDFeature getKeyPressedFeature)
 //			throws CardException, InterruptedException, UserCancelledException {
 //		// wait for key pressed
@@ -1187,7 +1014,6 @@ public class EId extends Observable {
 //			}
 //		}
 //	}
-
 	public List<X509Certificate> getSignCertificateChain() throws CardException, IOException, CertificateException {
 		List<X509Certificate> signCertificateChain = new LinkedList<X509Certificate>();
 		CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509");
@@ -1212,14 +1038,12 @@ public class EId extends Observable {
 
 		return signCertificateChain;
 	}
-
 	public byte[] sign(byte[] digestValue, String digestAlgo, boolean requireSecureReader)
 			throws NoSuchAlgorithmException, CardException, IOException, InterruptedException, UserCancelledException {
 		byte keyId = NON_REP_KEY_ID;
 		byte[] signatureValue = sign(digestValue, digestAlgo, keyId, requireSecureReader);
 		return signatureValue;
 	}
-
 	public void logoff() throws Exception {
 		CommandAPDU logoffApdu = new CommandAPDU(0x80, 0xE6, 0x00, 0x00);
 //		this.view.addDetailMessage("logoff...");
@@ -1233,7 +1057,6 @@ public class EId extends Observable {
 			throw new RuntimeException("logoff failed");
 		}
 	}
-
 	public void logoff(String readerName) throws Exception {
 //		this.view.addDetailMessage("logoff from reader: \"" + readerName + "\"");
 		TerminalFactory factory = TerminalFactory.getDefault();
@@ -1266,7 +1089,6 @@ public class EId extends Observable {
 			card.disconnect(true);
 		}
 	}
-
 	private ResponseAPDU transmit(CommandAPDU commandApdu) throws CardException {
 		ResponseAPDU responseApdu = this.cardChannel.transmit(commandApdu);
 		if (0x6c == responseApdu.getSW1()) {
@@ -1284,22 +1106,14 @@ public class EId extends Observable {
 		}
 		return responseApdu;
 	}
-
-	public byte[] signAuthn(byte[] toBeSigned)
-			throws NoSuchAlgorithmException, CardException, IOException, InterruptedException, UserCancelledException {
-		return signAuthn(toBeSigned, false);
-	}
-
 	public byte[] sign(byte[] digestValue, String digestAlgo)
 			throws NoSuchAlgorithmException, CardException, IOException, InterruptedException, UserCancelledException {
 		return this.sign(digestValue, digestAlgo, false);
 	}
-
 	public boolean isOSX() {
 		String osName = System.getProperty("os.name");
 		return osName.contains("OS X");
 	}
-
 	public boolean isWindows8() {
 		String osName = System.getProperty("os.name");
 		boolean win8 = osName.contains("Windows 8");

@@ -1,4 +1,4 @@
-package be.smals.research.bulksign.desktopapp.utilities;
+package be.smals.research.bulksign.desktopapp.ui;
 
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXCheckBox;

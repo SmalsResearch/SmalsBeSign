@@ -4,7 +4,7 @@ import be.smals.research.bulksign.desktopapp.abstracts.Controller;
 import be.smals.research.bulksign.desktopapp.services.EIDKeyService;
 import be.smals.research.bulksign.desktopapp.services.MockKeyService;
 import be.smals.research.bulksign.desktopapp.services.SigningService;
-import be.smals.research.bulksign.desktopapp.utilities.FileListItem;
+import be.smals.research.bulksign.desktopapp.ui.FileListItem;
 import be.smals.research.bulksign.desktopapp.utilities.Settings;
 import be.smals.research.bulksign.desktopapp.utilities.Settings.Signer;
 import be.smals.research.bulksign.desktopapp.utilities.SigningOutput;

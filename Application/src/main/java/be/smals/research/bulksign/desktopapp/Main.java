@@ -2,8 +2,10 @@ package be.smals.research.bulksign.desktopapp;
 
 
 import be.smals.research.bulksign.desktopapp.controllers.MainController;
+import be.smals.research.bulksign.desktopapp.ui.StatusBar;
 import be.smals.research.bulksign.desktopapp.utilities.Settings;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -31,7 +33,7 @@ public class Main extends Application {
 //                }
 //
 //                @Override
-//                public void setStatusMessage(Status status, Messages.MESSAGE_ID messageId) {
+//                public void setStatusMessage(Status status, Message.MESSAGE_ID messageId) {
 //                    System.out.print("*status message: "+status);
 //                    System.out.println(" / " + messageId);
 //                }
@@ -107,7 +109,7 @@ public class Main extends Application {
 //                    System.out.println(">called getApplet");
 //                    return null;
 //                }
-//            }, new Messages(Locale.US));
+//            }, new Message(Locale.US));
 //        } catch (IOException e) {
 //            e.printStackTrace();
 //        } catch (PKCS11Exception e) {
@@ -121,7 +123,7 @@ public class Main extends Application {
 //            }
 //
 //            @Override
-//            public void setStatusMessage(Status status, Messages.MESSAGE_ID messageId) {
+//            public void setStatusMessage(Status status, Message.MESSAGE_ID messageId) {
 //                System.out.print(status);
 //                System.out.println("  "+messageId);
 //            }
@@ -163,7 +165,7 @@ public class Main extends Application {
 //                System.out.println("confirming signing of ["+description+"] and algo ["+digestAlgo+"] with answer "+result);
 //                return result;
 //            }
-//        }, new Messages(Locale.US));*/
+//        }, new Message(Locale.US));*/
 //        int inputlength = 160;
 //        byte[] input = new byte[inputlength];
 //        IntStream.range(0,inputlength).forEach(i-> input[i] = (byte)i);
@@ -244,6 +246,7 @@ public class Main extends Application {
         Menu signerMenu         = new Menu("Signer");
         Menu helpMenu           = new Menu("Help");
         menuBar.getMenus().addAll(fileMenu, taskMenu, signerMenu, helpMenu);
+        MenuItem homeMenuItem   = new MenuItem("Home");
         MenuItem exitMenuItem   = new MenuItem("Exit...");
         MenuItem signMenuItem   = new MenuItem("Sign");
         MenuItem verifyMenuItem = new MenuItem("Verify");
@@ -256,7 +259,7 @@ public class Main extends Application {
         eidMenuItem.setToggleGroup(signerGroup);
         mockMenuItem.setToggleGroup(signerGroup);
         signerGroup.selectToggle(mockMenuItem);
-        fileMenu.getItems().addAll(exitMenuItem);
+        fileMenu.getItems().addAll(homeMenuItem, exitMenuItem);
         taskMenu.getItems().addAll(signMenuItem, verifyMenuItem);
         signerMenu.getItems().addAll(mockMenuItem, eidMenuItem);
         helpMenu.getItems().addAll(aboutMenuItem);
@@ -278,7 +281,16 @@ public class Main extends Application {
             }
         });
 
+        root.setBottom(new StatusBar());
+
         primaryStage.setScene(new Scene(masterPane, 800, 480));
         primaryStage.show();
+    }
+
+    @Override
+    public void stop() throws Exception {
+        super.stop();
+        System.exit(0);
+        Platform.exit();
     }
 }

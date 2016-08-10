@@ -7,17 +7,17 @@ import java.util.Map;
 /**
  * Created by cea on 09/08/2016.
  */
-public class Messages {
+public class Message {
 
     public enum MessageType {
         ERROR, SUCCESS, INFO
     }
 
-    private static Messages instance = new Messages();
+    private static Message instance = new Message();
     private Map<MessageType, List<String>> messages;
 
-    private Messages () {}
-    public static Messages getInstance() {
+    private Message() {}
+    public static Message getInstance() {
         return instance;
     }
 

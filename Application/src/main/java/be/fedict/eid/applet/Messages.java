@@ -33,7 +33,7 @@ import javax.swing.UIManager;
  */
 public class Messages {
 
-	public static final String RESOURCE_BUNDLE_NAME = "be.fedict.eid.applet.Messages";
+	public static final String RESOURCE_BUNDLE_NAME = "be.fedict.eid.applet.Message";
 
 	private final ResourceBundle resourceBundle;
 
