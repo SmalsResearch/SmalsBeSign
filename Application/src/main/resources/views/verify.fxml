@@ -1,49 +1,91 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXDialog?>
+<?import com.jfoenix.controls.JFXDialogLayout?>
+<?import com.jfoenix.controls.JFXListView?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.StackPane?>
 
 <StackPane fx:id="masterVerify" xmlns="http://javafx.com/javafx/8.0.101" xmlns:fx="http://javafx.com/fxml/1" fx:controller="be.smals.research.bulksign.desktopapp.controllers.VerifyController">
    <children>
-      <GridPane fx:id="rootVerify" stylesheets="@css/common.css">
+      <GridPane fx:id="rootVerify" alignment="CENTER" stylesheets="@css/common.css">
         <columnConstraints>
-         <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" percentWidth="75.0" />
+         <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" percentWidth="30.0" />
             <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" percentWidth="5.0" />
-         <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" percentWidth="20.0" />
+         <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" percentWidth="65.0" />
         </columnConstraints>
         <rowConstraints>
          <RowConstraints percentHeight="10.0" valignment="CENTER" vgrow="SOMETIMES" />
-         <RowConstraints percentHeight="80.0" valignment="CENTER" vgrow="SOMETIMES" />
+         <RowConstraints percentHeight="60.0" valignment="CENTER" vgrow="SOMETIMES" />
             <RowConstraints percentHeight="10.0" valignment="CENTER" vgrow="SOMETIMES" />
+            <RowConstraints percentHeight="5.0" valignment="CENTER" vgrow="SOMETIMES" />
+            <RowConstraints percentHeight="15.0" valignment="CENTER" vgrow="SOMETIMES" />
         </rowConstraints>
         <children>
-           <JFXButton fx:id="selectSignFileButton" layoutX="10.0" layoutY="43.0" mnemonicParsing="false" onAction="#handleSelectSignFileButtonAction" styleClass="button-s" text="Select a signed file">
+           <JFXButton fx:id="selectSignFileButton" layoutX="10.0" layoutY="43.0" mnemonicParsing="false" onAction="#handleSelectSignFileButtonAction" styleClass="button-s" text="Select files" GridPane.halignment="RIGHT">
               <GridPane.margin>
-                 <Insets right="12.0" />
+                 <Insets />
               </GridPane.margin>
            </JFXButton>
-           <Label fx:id="signedFileLabel" text="No file selected">
+           <Label fx:id="filesToSignCount" text="No file selected" GridPane.halignment="LEFT">
               <GridPane.margin>
-                 <Insets left="172.0" />
+                 <Insets />
               </GridPane.margin>
            </Label>
-           <JFXButton fx:id="verifyFileButton" layoutX="422.0" layoutY="13.0" mnemonicParsing="false" onAction="#handleVerifyFileButtonAction" styleClass="button-raised" text="Verify signed file" GridPane.columnIndex="2" />
-           <JFXButton fx:id="selectVerifyFileButton" layoutX="22.0" layoutY="13.0" mnemonicParsing="false" onAction="#handleSelectVerifyFileButtonAction" styleClass="button-s" text="Select a signature file" GridPane.rowIndex="2" />
-        <Label fx:id="signatureFileLabel" layoutX="158.0" layoutY="17.0" text="No file selected" GridPane.rowIndex="2">
+           <JFXButton fx:id="verifyFileButton" layoutX="422.0" layoutY="13.0" mnemonicParsing="false" onAction="#handleVerifyFilesButtonAction" styleClass="button-raised" text="Verify signed file" GridPane.rowIndex="4" />
+           <JFXButton fx:id="selectVerifyFileButton" layoutX="22.0" layoutY="13.0" mnemonicParsing="false" onAction="#handleSelectVerifyFileButtonAction" styleClass="button-s" text="Select a signature" GridPane.halignment="RIGHT" GridPane.rowIndex="2" />
+        <Label fx:id="signatureFileLabel" layoutX="158.0" layoutY="17.0" text="No file selected" GridPane.halignment="LEFT" GridPane.rowIndex="2">
            <GridPane.margin>
-              <Insets left="172.0" />
+              <Insets />
            </GridPane.margin>
         </Label>
-            <Separator orientation="VERTICAL" prefHeight="200.0" GridPane.columnIndex="1" />
-            <Separator orientation="VERTICAL" prefHeight="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-            <ListView fx:id="fileListView" prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="1" />
+            <Separator orientation="VERTICAL" GridPane.columnIndex="1" />
+            <Separator orientation="VERTICAL" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <ListView fx:id="filesListView" GridPane.rowIndex="1" />
+            <Separator orientation="VERTICAL" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <Pane fx:id="readerPane" GridPane.columnIndex="2" GridPane.columnSpan="2147483647" GridPane.rowSpan="2147483647" />
+
+            <JFXDialog fx:id="infoDialog">
+                <JFXDialogLayout>
+                    <heading>
+                        <Label id="infoDialogTitle" fx:id="infoDialogTile" styleClass="color-info" />
+                    </heading>
+                    <body>
+                        <Label id="infoDialogBody" fx:id="infoDialogBody" />
+                    </body>
+                </JFXDialogLayout>
+            </JFXDialog>
+            <JFXDialog fx:id="errorDialog">
+                <JFXDialogLayout>
+                    <heading>
+                        <Label id="errorDialogTitle" fx:id="errorDialogTitle" styleClass="color-danger" />
+                    </heading>
+                    <body>
+                        <Label id="errorDialogBody" fx:id="errorDialogBody" />
+                    </body>
+                </JFXDialogLayout>
+            </JFXDialog>
+            <JFXDialog fx:id="verifyResultDialog">
+                <JFXDialogLayout>
+                    <heading>
+                        <Label id="verifyResultTitle" styleClass="color-info">Verify Result</Label>
+                    </heading>
+                    <body>
+                        <JFXListView id="verifyResultListView" />
+                    </body>
+                </JFXDialogLayout>
+            </JFXDialog>
+            <Separator GridPane.rowIndex="3" />
+            <Separator orientation="VERTICAL" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+            <Separator orientation="VERTICAL" GridPane.columnIndex="1" GridPane.rowIndex="3" />
         </children>
           <padding>
               <Insets bottom="24.0" left="24.0" right="24.0" top="24.0" />

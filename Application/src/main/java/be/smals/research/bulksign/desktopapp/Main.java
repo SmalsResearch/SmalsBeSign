@@ -119,14 +119,14 @@ public class Main extends Application {
 //            e.printStackTrace();
 //        }
 //
-//        /*PcscEid eidReader = new PcscEid(new View() {
+//        PcscEid eidReader = new PcscEid(new View() {
 //            @Override
 //            public void addDetailMessage(String detailMessage) {
 //                System.out.println(detailMessage);
 //            }
 //
 //            @Override
-//            public void setStatusMessage(Status status, Message.MESSAGE_ID messageId) {
+//            public void setStatusMessage(Status status, Messages.MESSAGE_ID messageId) {
 //                System.out.print(status);
 //                System.out.println("  "+messageId);
 //            }
@@ -168,12 +168,20 @@ public class Main extends Application {
 //                System.out.println("confirming signing of ["+description+"] and algo ["+digestAlgo+"] with answer "+result);
 //                return result;
 //            }
-//        }, new Message(Locale.US));*/
+//        }, new Messages(Locale.US));
 //        int inputlength = 160;
 //        byte[] input = new byte[inputlength];
 //        IntStream.range(0,inputlength).forEach(i-> input[i] = (byte)i);
 //        byte[] digest = getSha1(input);
 //        System.out.println("INPUT: "+ Arrays.toString(digest));
+//        try {
+//            eidReader.waitForEidPresent();
+//            eidReader.unblockPin(false);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+
+
 //        try {
 ////            System.out.println("TRYING TO SIGN! ");
 ////            InputStream[] inputs = new InputStream[1];
@@ -188,6 +196,7 @@ public class Main extends Application {
 //            //System.out.println("LENGTH: "+result.length);
 //
 //            SignatureDataMessage signatureDataMessage = (SignatureDataMessage) controller.performEidSignOperation(request1);
+//
 //            result = signatureDataMessage.signatureValue;
 //            System.out.println("OUTPUT: "+Arrays.toString(result));
 //            System.out.println("LENGTH: "+result.length);
@@ -195,7 +204,8 @@ public class Main extends Application {
 //        } catch (Exception e) {
 //            e.printStackTrace();
 //            System.exit(-1);
-//        } /*catch (NoSuchAlgorithmException e) {
+//        }
+//        /*catch (NoSuchAlgorithmException e) {
 //            e.printStackTrace();
 //        } catch (CardException e) {
 //            e.printStackTrace();

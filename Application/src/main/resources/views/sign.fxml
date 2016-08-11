@@ -99,7 +99,7 @@
               <JFXDialog fx:id="infoDialog">
               <JFXDialogLayout>
                   <heading>
-                      <Label fx:id="infoDialogTile" styleClass="color-info"></Label>
+                      <Label fx:id="infoDialogTitle" styleClass="color-info"></Label>
                   </heading>
                   <body>
                       <Label fx:id="infoDialogBody"></Label>
@@ -109,7 +109,7 @@
               <JFXDialog fx:id="errorDialog">
                   <JFXDialogLayout>
                       <heading>
-                          <Label id="errorDialogTitle" fx:id="errorDialogTitle" styleClass="color-error"></Label>
+                          <Label id="errorDialogTitle" fx:id="errorDialogTitle" styleClass="color-danger"></Label>
                       </heading>
                       <body>
                           <Label id="errorDialogBody" fx:id="errorDialogBody"></Label>

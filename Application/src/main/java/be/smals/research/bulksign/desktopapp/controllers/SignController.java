@@ -93,7 +93,6 @@ public class SignController extends Controller{
         this.viewerFx.getRoot().prefWidthProperty().bind(readerPane.widthProperty());
         this.viewerFx.getRoot().prefHeightProperty().bind(readerPane.heightProperty());
         this.viewerFx.setupViewer();
-
         // Update viewer look
         BorderPane viewerPane = (BorderPane) this.readerPane.getChildren().get(0);
         viewerPane.setTop(null);
