@@ -2,6 +2,7 @@ package be.smals.research.bulksign.desktopapp.ui;
 
 import be.smals.research.bulksign.desktopapp.services.EIDService;
 import be.smals.research.bulksign.desktopapp.utilities.Message.MessageType;
+import be.smals.research.bulksign.desktopapp.utilities.Settings;
 import com.jfoenix.controls.JFXSpinner;
 import javafx.application.Platform;
 import javafx.concurrent.Service;
@@ -42,6 +43,7 @@ public class StatusBar extends HBox{
                     protected String call() throws Exception {
                         try {
                             while (true) {
+                                Settings.getInstance().setEIDCardPresent(false);
                                 Platform.runLater(() -> {
                                     getChildren().add(spinner);
                                     setMessage(MessageType.DEFAULT, "Waiting for an eID card reader...");
@@ -49,6 +51,7 @@ public class StatusBar extends HBox{
                                 EIDService.getInstance().waitForReader();
                                 Platform.runLater(() -> setMessage(MessageType.DEFAULT, "Waiting for an eID card..."));
                                 EIDService.getInstance().waitForCard();
+                                Settings.getInstance().setEIDCardPresent(true);
                                 Platform.runLater(() -> {
                                     getChildren().remove(spinner);
                                     setMessage(MessageType.DEFAULT, "Ready to sign!");

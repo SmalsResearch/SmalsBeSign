@@ -169,7 +169,6 @@ public class EID extends Observable {
 	public EID() {
 		this.terminalFactory = TerminalFactory.getDefault();
 	}
-
 	public List<String> getReaderList() throws CardException {
 		List<String> readerList = new LinkedList<String>();
 		TerminalFactory factory = TerminalFactory.getDefault();
@@ -182,20 +181,16 @@ public class EID extends Observable {
 		}
 		return readerList;
 	}
-
 	public byte[] readFile(byte[] fileId) throws CardException, IOException {
 		selectFile(fileId);
 		byte[] data = readBinary();
 		return data;
 	}
-
 	public void close() throws CardException {
 		// this.card.endExclusive();
 		this.card.disconnect(true);
 	}
-
 	private static final int BLOCK_SIZE = 0xff;
-
 	private byte[] readBinary() throws CardException, IOException {
 		int offset = 0;
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -253,37 +248,7 @@ public class EID extends Observable {
 		}
 		return false;
 	}
-	/**
-	 * Checks if any card reader is connected if not, wait until one is connected
-     */
-	public void waitForCardReader() {
-		try {
-			TerminalFactory terminalFactory = TerminalFactory.getDefault();
-			CardTerminals terminals = terminalFactory.terminals();
-
-			List<CardTerminal> terminalList;
-			try {
-				terminalList = terminals.list();
-			} catch (CardException e) {
-				terminalList = Collections.emptyList();
-			}
-			while (terminalList.isEmpty()) {
-				Thread.sleep(2000);
-				terminals = terminalFactory.terminals();
-				try {
-					terminalList = terminals.list();
-				} catch (CardException e) {
-					terminalList = Collections.emptyList();
-				}
-			}
-
-			this.cardTerminalList = terminalList;
-		} catch (InterruptedException e) {
-			throw new RuntimeException(e);
-		}
-	}
 	public boolean isEidPresent() throws CardException {
-
 		if (null == cardTerminalList || cardTerminalList.isEmpty()) {
 
 			try {
@@ -302,6 +267,7 @@ public class EID extends Observable {
 						// Windows only - NO reader available
 					}
 				}
+				e.printStackTrace();
 				return false;
 			}
 
@@ -375,7 +341,36 @@ public class EID extends Observable {
 		this.card = this.cardTerminal.connect("T=0");
 		this.card.beginExclusive();
 		this.cardChannel = card.getBasicChannel();
+		this.card.endExclusive();
 		return true;
+	}
+
+
+	public void waitForCardReader() {
+		try {
+			TerminalFactory terminalFactory = TerminalFactory.getDefault();
+			CardTerminals terminals = terminalFactory.terminals();
+
+			List<CardTerminal> terminalList;
+			try {
+				terminalList = terminals.list();
+			} catch (CardException e) {
+				terminalList = Collections.emptyList();
+			}
+			while (terminalList.isEmpty()) {
+				Thread.sleep(2000);
+				terminals = terminalFactory.terminals();
+				try {
+					terminalList = terminals.list();
+				} catch (CardException e) {
+					terminalList = Collections.emptyList();
+				}
+			}
+
+			this.cardTerminalList = terminalList;
+		} catch (InterruptedException e) {
+			throw new RuntimeException(e);
+		}
 	}
 	private CardTerminal selectCardTerminal(Set<CardTerminal> eIDCardTerminals) throws CardException, IOException {
 		// Multiple eID card detected...
@@ -908,21 +903,19 @@ public class EID extends Observable {
 		}
 		ResponseAPDU responseApdu;
 		int retriesLeft = -1;
-		do {
-			responseApdu = verifyPin(pin, retriesLeft);
-			if (0x9000 != responseApdu.getSW()) {
-//				this.view.addDetailMessage("VERIFY_PIN error");
-//				this.view.addDetailMessage("SW: " + Integer.toHexString(responseApdu.getSW()));
-				if (0x6983 == responseApdu.getSW()) {
-					throw new RuntimeException("eID card blocked!");
-				}
-				if (0x63 != responseApdu.getSW1()) {
-					throw new RuntimeException("PIN verification error.");
-				}
-				retriesLeft = responseApdu.getSW2() & 0xf;
-//				this.view.addDetailMessage("retries left: " + retriesLeft);
+
+		responseApdu = verifyPin(pin, retriesLeft);
+		if (0x9000 != responseApdu.getSW()) {
+			if (0x6983 == responseApdu.getSW()) {
+				throw new CardException("This eID card is blocked!");
 			}
-		} while (0x9000 != responseApdu.getSW());
+			if (0x63 != responseApdu.getSW1()) {
+				throw new CardException("PIN verification error.");
+			}
+			retriesLeft = responseApdu.getSW2() & 0xf;
+			System.out.println("retries left: " + retriesLeft);
+		}
+
 		if (isWindows8()) {
 			this.card.beginExclusive();
 		}
@@ -946,7 +939,7 @@ public class EID extends Observable {
 		}
 		Arrays.fill(pin, (char) 0); // minimize exposure
 
-//		this.view.addDetailMessage("verifying PIN...");
+		System.out.println("verifying PIN...");
 		CommandAPDU verifyApdu = new CommandAPDU(0x00, 0x20, 0x00, 0x01, verifyData);
 		try {
 			ResponseAPDU responseApdu = transmit(verifyApdu);

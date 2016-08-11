@@ -16,10 +16,9 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
+import javafx.scene.control.*;
+import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -42,6 +41,7 @@ import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Main screen controller
@@ -55,6 +55,7 @@ public class SignController extends Controller{
     private FileChooser fileChooser;
     private List<File> filesToSign;
     private OpenViewerFX viewerFx;
+    private boolean pinValid;
 
     @FXML private Label fileCountLabel;
     @FXML private ListView filesListView;
@@ -62,10 +63,9 @@ public class SignController extends Controller{
     @FXML private StackPane masterSign;
     @FXML private JFXDialog noFileDialog;
     @FXML private JFXDialog noDefaultAppDialog;
-    @FXML private JFXDialog saveOutputDialog;
     @FXML private JFXDialog noEIDDialog;
-    @FXML private JFXDialog getPinDialog;
-    @FXML private JFXPasswordField pinField;
+    @FXML private JFXDialog infoDialog;
+    @FXML private JFXDialog errorDialog;
 
     /**
      * Constructor
@@ -99,6 +99,10 @@ public class SignController extends Controller{
         viewerPane.setTop(null);
         HBox bottomPane = (HBox) viewerPane.getBottom();
         bottomPane.getChildren().remove(0, 2);
+
+        // Setup dialogs
+        this.infoDialog.setTransitionType(JFXDialog.DialogTransition.TOP);
+        this.errorDialog.setTransitionType(JFXDialog.DialogTransition.TOP);
     }
     private void waitForReaderAndCard() throws CardException, InterruptedException {
         noEIDDialog.setTransitionType(JFXDialog.DialogTransition.TOP);
@@ -213,7 +217,7 @@ public class SignController extends Controller{
             try {
                 if (Settings.getInstance().getSigner().equals(Signer.EID)) {
                     // Is card present ?
-                    if (EIDService.getInstance().isEIDReaderPresent() || !EIDService.getInstance().isEIDStillPresent()) {
+                    if (!Settings.getInstance().isEIDCardPresent()) {
                         noEIDDialog.setTransitionType(JFXDialog.DialogTransition.TOP);
                         noEIDDialog.show(masterSign);
                     } else {
@@ -223,15 +227,16 @@ public class SignController extends Controller{
                         }
                         // Sign
                         this.signingService.prepareSigning();
-                        this.isPinValid();
-                        byte[] signature = this.signingService.signWithEID(inputFiles);
-                        List<X509Certificate> certificateChain = EIDService.getInstance().getCertificateChain();
-                        this.saveSigningOutput(signature, certificateChain);
+                        if (this.askForPin()) {
+                            byte[] signature = this.signingService.signWithEID(inputFiles);
+                            List<X509Certificate> certificateChain = EIDService.getInstance().getCertificateChain();
+                            this.saveSigningOutput(signature, certificateChain);
 
-                        for (FileInputStream file : inputFiles)
-                            file.close();
+                            for (FileInputStream file : inputFiles)
+                                file.close();
 
-                        EIDService.getInstance().close();
+                            EIDService.getInstance().close();
+                        }
                     }
                 } else {
                     // Prepare files
@@ -280,15 +285,30 @@ public class SignController extends Controller{
         noEIDDialog.close();
     }
 
-    // ----------
-    private boolean isPinValid() {
-        this.getPinDialog.setTransitionType(JFXDialog.DialogTransition.TOP);
-        this.getPinDialog.show(masterSign);
-        try {
-            return EIDService.getInstance().isPinValid (pinField.getText().toCharArray());
-        } catch (UserCancelledException|CardException e) {
-            e.printStackTrace();
+    // ---------- ------------------------------------------------------------------------------------------------------
+    private boolean askForPin() {
+        Dialog<String> pinDialog = new Dialog<>();
+        pinDialog.setTitle("PIN Code");
+        pinDialog.setHeaderText("Enter your Pin code");
+        JFXPasswordField passwordField = new JFXPasswordField();
+        passwordField.getStyleClass().add("jfx-text-field");
+        ButtonType validateButtonType = new ButtonType("Ok", ButtonBar.ButtonData.OK_DONE);
+        pinDialog.getDialogPane().getButtonTypes().add(validateButtonType);
+        pinDialog.getDialogPane().setContent(passwordField);
+
+        Optional<String> result = pinDialog.showAndWait();
+        if (result.isPresent()) {
+            try {
+                return EIDService.getInstance().isPinValid(passwordField.getText().toCharArray());
+            } catch (UserCancelledException|CardException e) {
+                errorDialog.show(masterSign);
+                Label title     = (Label) this.stage.getScene().lookup("#errorDialogTitle");
+                Label body      = (Label) this.stage.getScene().lookup("#errorDialogBody");
+                body.setText("Unable to verify your pin.\nError message : "+e.getMessage());
+                title.setText("Verify PIN code...");
+            }
         }
+
         return false;
     }
 }

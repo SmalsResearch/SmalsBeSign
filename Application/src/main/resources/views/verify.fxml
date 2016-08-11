@@ -9,19 +9,19 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.StackPane?>
 
-
 <StackPane fx:id="masterVerify" xmlns="http://javafx.com/javafx/8.0.101" xmlns:fx="http://javafx.com/fxml/1" fx:controller="be.smals.research.bulksign.desktopapp.controllers.VerifyController">
    <children>
-      <GridPane>
-       <columnConstraints>
+      <GridPane fx:id="rootVerify" stylesheets="@css/common.css">
+        <columnConstraints>
          <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" percentWidth="75.0" />
             <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" percentWidth="5.0" />
          <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" percentWidth="20.0" />
-       </columnConstraints>
-       <rowConstraints>
+        </columnConstraints>
+        <rowConstraints>
          <RowConstraints percentHeight="10.0" vgrow="SOMETIMES" />
          <RowConstraints percentHeight="10.0" vgrow="SOMETIMES" />
-       </rowConstraints>
+            <RowConstraints percentHeight="80.0" vgrow="SOMETIMES" />
+        </rowConstraints>
         <children>
            <JFXButton fx:id="selectSignFileButton" layoutX="10.0" layoutY="43.0" mnemonicParsing="false" onAction="#handleSelectSignFileButtonAction" styleClass="button-s" text="Select a signed file">
               <GridPane.margin>
@@ -43,9 +43,9 @@
             <Separator orientation="VERTICAL" prefHeight="200.0" GridPane.columnIndex="1" />
             <Separator orientation="VERTICAL" prefHeight="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
         </children>
-         <padding>
-            <Insets bottom="24.0" left="24.0" right="24.0" top="24.0" />
-         </padding>
+          <padding>
+              <Insets bottom="24.0" left="24.0" right="24.0" top="24.0" />
+          </padding>
       </GridPane>
    </children>
 </StackPane>

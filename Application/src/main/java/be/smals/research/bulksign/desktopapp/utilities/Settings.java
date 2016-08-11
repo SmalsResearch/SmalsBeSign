@@ -7,6 +7,7 @@ public class Settings {
     private static Settings instance = new Settings();
 
     private Signer signer;
+    private boolean eIDCardIsPresent;
 
     public enum Signer {
         EID, MOCK
@@ -16,7 +17,6 @@ public class Settings {
         this.signer = Signer.MOCK;
     }
 
-
     public static Settings getInstance () {
         return instance;
     }
@@ -25,5 +25,11 @@ public class Settings {
     }
     public Signer getSigner () {
         return this.signer;
+    }
+    public void setEIDCardPresent (boolean connected) {
+        this.eIDCardIsPresent = connected;
+    }
+    public boolean isEIDCardPresent () {
+        return this.eIDCardIsPresent;
     }
 }

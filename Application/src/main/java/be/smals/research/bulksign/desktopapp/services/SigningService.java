@@ -66,7 +66,6 @@ public class SigningService {
 
                 return (signature);
             } catch (Exception e) {
-                e.printStackTrace();
                 System.out.println("[Catch] Exception: " + e.getMessage());
                 return (signErrorOutput);
             }
@@ -84,7 +83,6 @@ public class SigningService {
             return EIDService.getInstance().signAt(this.masterDigest.getBytes(), DigestService.getInstance().getAlgorithm());
         } catch (Exception e) {
             e.printStackTrace();
-            System.out.println("[Catch] Exception: " + e.getMessage());
             return (signErrorOutput);
         }
     }
