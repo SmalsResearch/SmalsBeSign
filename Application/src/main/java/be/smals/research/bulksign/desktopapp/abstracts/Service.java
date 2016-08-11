@@ -51,10 +51,10 @@ public abstract class Service {
 //        return this.eID.sign(masterDigest.getBytes(), DigestService.getInstance().getAlgorithm(), EID.NON_REP_KEY_ID, false);
 //    }
     // ----- PIN -------------------------------------------------------------------------------------------------------
-    public void verifyPin () throws CardException, UserCancelledException, InterruptedException, IOException {
-        this.eID.verifyPin();
-    }
-    public boolean isPinValid (byte[] pin) {
+//    public void verifyPin () throws CardException, UserCancelledException, InterruptedException, IOException {
+//        this.eID.verifyPin();
+//    }
+    public boolean isPinValid (char[] pin) throws UserCancelledException, CardException {
         return this.eID.isPinValid(pin);
     }
     // ----- Base

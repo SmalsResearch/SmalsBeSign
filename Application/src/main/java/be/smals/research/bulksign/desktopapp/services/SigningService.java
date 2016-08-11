@@ -1,7 +1,5 @@
 package be.smals.research.bulksign.desktopapp.services;
 
-import be.smals.research.bulksign.desktopapp.utilities.Settings;
-import be.smals.research.bulksign.desktopapp.utilities.Settings.Signer;
 import be.smals.research.bulksign.desktopapp.utilities.SigningOutput;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -58,30 +56,19 @@ public class SigningService {
         byte[] signErrorOutput = new byte[0];
 
         try {
-            //Open the P11 session
-            long p11_session = pkcs11.C_OpenSession(0, PKCS11Constants.CKF_SERIAL_SESSION, null, null);
             try {
                 this.masterDigest = DigestService.getInstance().computeMasterDigest(inputStreams);
                 byte[] signature;
-                if (Settings.getInstance().getSigner() == Signer.EID) {
-                    System.out.println("EID SIGNER");
-//                    EIDSigningService.getInstance().initSign(pkcs11, p11_session);
-                    signature = EIDSigningService.getInstance().sign(pkcs11, p11_session, this.masterDigest);
-//                    signature = EIDService.getInstance().sign(masterDigest);
-                } else {
-                    System.out.println("MOCK SIGNER");
-                    MockSigningService.getInstance().initSign(this.masterDigest);
-                    signature = MockSigningService.getInstance().sign();
-                }
+
+                System.out.println("MOCK SIGNER");
+                MockSigningService.getInstance().initSign(this.masterDigest);
+                signature = MockSigningService.getInstance().sign();
 
                 return (signature);
             } catch (Exception e) {
                 e.printStackTrace();
                 System.out.println("[Catch] Exception: " + e.getMessage());
                 return (signErrorOutput);
-            } finally {
-                //Close the session
-                pkcs11.C_CloseSession(p11_session);
             }
         } catch (Exception e) {
             System.out.println("[Catch] Exception: " + e.getMessage());
@@ -89,24 +76,12 @@ public class SigningService {
         }
     }
 
-    public byte[] signAlt(FileInputStream[] inputFiles) {
+    public byte[] signWithEID(FileInputStream[] inputFiles) {
         byte[] signErrorOutput = new byte[0];
 
         try {
             this.masterDigest = DigestService.getInstance().computeMasterDigest(inputFiles);
-            byte[] signature;
-            if (Settings.getInstance().getSigner() == Signer.EID) {
-                System.out.println("EID SIGNER");
-//                    EIDSigningService.getInstance().initSign(pkcs11, p11_session);
-//                    signature = EIDSigningService.getInstance().sign(pkcs11, p11_session, this.masterDigest);
-                signature = EIDService.getInstance().signAt(this.masterDigest.getBytes(), DigestService.getInstance().getAlgorithm());
-            } else {
-                System.out.println("MOCK SIGNER");
-                MockSigningService.getInstance().initSign(this.masterDigest);
-                signature = MockSigningService.getInstance().sign();
-            }
-
-            return (signature);
+            return EIDService.getInstance().signAt(this.masterDigest.getBytes(), DigestService.getInstance().getAlgorithm());
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("[Catch] Exception: " + e.getMessage());

@@ -1,8 +1,9 @@
 package be.smals.research.bulksign.desktopapp.controllers;
 
+import be.fedict.eid.applet.UserCancelledException;
 import be.smals.research.bulksign.desktopapp.abstracts.Controller;
-import be.smals.research.bulksign.desktopapp.services.EIDKeyService;
 import be.smals.research.bulksign.desktopapp.services.EIDService;
+import be.smals.research.bulksign.desktopapp.services.MockKeyService;
 import be.smals.research.bulksign.desktopapp.services.SigningService;
 import be.smals.research.bulksign.desktopapp.ui.FileListItem;
 import be.smals.research.bulksign.desktopapp.utilities.Settings;
@@ -210,29 +211,41 @@ public class SignController extends Controller{
             FileInputStream[] inputFiles = new FileInputStream[selectedFiles.size()];
 
             try {
-                // Is card present ?
-                if (!EIDService.getInstance().isEIDReaderPresent() || !EIDService.getInstance().isEIDStillPresent()) {
-                    noEIDDialog.setTransitionType(JFXDialog.DialogTransition.TOP);
-                    noEIDDialog.show(masterSign);
+                if (Settings.getInstance().getSigner().equals(Signer.EID)) {
+                    // Is card present ?
+                    if (EIDService.getInstance().isEIDReaderPresent() || !EIDService.getInstance().isEIDStillPresent()) {
+                        noEIDDialog.setTransitionType(JFXDialog.DialogTransition.TOP);
+                        noEIDDialog.show(masterSign);
+                    } else {
+                        // Prepare files
+                        for (int i = 0; i < selectedFiles.size(); i++) {
+                            inputFiles[i] = new FileInputStream(selectedFiles.get(i));
+                        }
+                        // Sign
+                        this.signingService.prepareSigning();
+                        this.isPinValid();
+                        byte[] signature = this.signingService.signWithEID(inputFiles);
+                        List<X509Certificate> certificateChain = EIDService.getInstance().getCertificateChain();
+                        this.saveSigningOutput(signature, certificateChain);
+
+                        for (FileInputStream file : inputFiles)
+                            file.close();
+
+                        EIDService.getInstance().close();
+                    }
                 } else {
                     // Prepare files
                     for (int i = 0; i < selectedFiles.size(); i++) {
                         inputFiles[i] = new FileInputStream(selectedFiles.get(i));
                     }
                     // Sign
-                    this.signingService.prepareSigning();
-                    this.isPinValid();
-                    byte[] signature = this.signingService.signAlt(inputFiles);
-                    // Real signer
-                    // --- end
-                    List<X509Certificate> certificateChain = (Settings.getInstance().getSigner().equals(Signer.EID)) ?
-                            EIDKeyService.getInstance().getCertificateChain() : EIDService.getInstance().getCertificateChain();
+                    byte[] signature = this.signingService.sign(inputFiles);
+
+                    List<X509Certificate> certificateChain = MockKeyService.getInstance().getCertificateChain();
                     this.saveSigningOutput(signature, certificateChain);
 
                     for (FileInputStream file : inputFiles)
                         file.close();
-
-                    EIDService.getInstance().close();
                 }
 
             } catch (IOException | ParserConfigurationException | TransformerException e) {
@@ -271,6 +284,11 @@ public class SignController extends Controller{
     private boolean isPinValid() {
         this.getPinDialog.setTransitionType(JFXDialog.DialogTransition.TOP);
         this.getPinDialog.show(masterSign);
-        return EIDService.getInstance().isPinValid (pinField.getText().getBytes());
+        try {
+            return EIDService.getInstance().isPinValid (pinField.getText().toCharArray());
+        } catch (UserCancelledException|CardException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 }

@@ -902,7 +902,7 @@ public class EID extends Observable {
 		return null;
 	}
 	// ----- PIN -------------------------------------------------------------------------------------------------------
-	public boolean isPinValid (byte[] pin) throws CardException {
+	public boolean isPinValid (char[] pin) throws CardException, UserCancelledException {
 		if (isWindows8()) {
 			this.card.endExclusive();
 		}
@@ -926,8 +926,10 @@ public class EID extends Observable {
 		if (isWindows8()) {
 			this.card.beginExclusive();
 		}
+
+		return true;
 	}
-	private ResponseAPDU verifyPin(byte[] pin, int retriesLeft) throws CardException, UserCancelledException {
+	private ResponseAPDU verifyPin(char[] pin, int retriesLeft) throws CardException, UserCancelledException {
 
 		byte[] verifyData = new byte[] { (byte) (0x20 | pin.length), (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF,
 				(byte) 0xFF, (byte) 0xFF, (byte) 0xFF };

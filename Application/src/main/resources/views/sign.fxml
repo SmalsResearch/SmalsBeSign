@@ -109,7 +109,7 @@
                           <JFXPasswordField fx:id="pinField" promptText="Pin code"/>
                       </body>
                       <actions>
-                          <JFXButton minWidth="96" onAction="#handleGetPinDialogAction" styleClass="button-s">OK</JFXButton>
+                          <!--<JFXButton minWidth="96" onAction="#handleGetPinDialogAction" styleClass="button-s">OK</JFXButton>-->
                       </actions>
                   </JFXDialogLayout>
               </JFXDialog>
