@@ -9,9 +9,6 @@ import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.List;
 
-/**
- * Created by cea on 09/08/2016.
- */
 public abstract class Service {
     private EID eID;
 
@@ -44,16 +41,13 @@ public abstract class Service {
     public void prepareSigning (String digestAlgo) throws CardException {
         this.eID.prepareSigning(digestAlgo,  EID.NON_REP_KEY_ID);
     }
-    public byte[] signAt(byte[] masterDigest, String algorithm) throws IOException, CardException {
+    public byte[] sign(byte[] masterDigest, String algorithm) throws IOException, CardException {
         return this.eID.signAlt(masterDigest, algorithm);
     }
 //    public byte[] sign (String masterDigest) throws CardException, UserCancelledException, InterruptedException, IOException {
 //        return this.eID.sign(masterDigest.getBytes(), DigestService.getInstance().getAlgorithm(), EID.NON_REP_KEY_ID, false);
 //    }
     // ----- PIN -------------------------------------------------------------------------------------------------------
-//    public void verifyPin () throws CardException, UserCancelledException, InterruptedException, IOException {
-//        this.eID.verifyPin();
-//    }
     public boolean isPinValid (char[] pin) throws UserCancelledException, CardException {
         return this.eID.isPinValid(pin);
     }

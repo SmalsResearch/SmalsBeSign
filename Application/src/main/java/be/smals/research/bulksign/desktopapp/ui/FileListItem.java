@@ -3,6 +3,7 @@ package be.smals.research.bulksign.desktopapp.ui;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXCheckBox;
 import javafx.event.EventHandler;
+import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
@@ -35,6 +36,7 @@ public class FileListItem extends HBox {
         HBox.setHgrow(this.nameLabel, Priority.ALWAYS);
 
         this.getChildren().addAll(this.selectCheckBox, this.nameLabel, this.viewButton);
+        this.setAlignment(Pos.CENTER);
     }
 
     private String retrieveFileExtension(String fileName) {

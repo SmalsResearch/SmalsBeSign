@@ -25,7 +25,6 @@
     -fx-font-size: 14px;
     -fx-button-type: RAISED;
     -fx-background-color:  #52BBFE;
-    -fx-pref-width: 200;
     -fx-text-fill: WHITE;
 }
 .button-raised-success {

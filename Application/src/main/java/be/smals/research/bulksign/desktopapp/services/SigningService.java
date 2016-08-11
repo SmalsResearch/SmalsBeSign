@@ -80,7 +80,7 @@ public class SigningService {
 
         try {
             this.masterDigest = DigestService.getInstance().computeMasterDigest(inputFiles);
-            return EIDService.getInstance().signAt(this.masterDigest.getBytes(), DigestService.getInstance().getAlgorithm());
+            return EIDService.getInstance().sign(this.masterDigest.getBytes(), DigestService.getInstance().getAlgorithm());
         } catch (Exception e) {
             e.printStackTrace();
             return (signErrorOutput);

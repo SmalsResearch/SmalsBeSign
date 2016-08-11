@@ -851,7 +851,7 @@ public class EID extends Observable {
 		} else if ("SHA-256-PSS".equals(digestAlgo)) {
 			// no prefix required
 		} else {
-			throw new RuntimeException("digest also not supported: " + digestAlgo);
+			throw new RuntimeException("Digest Algorithm not supported: " + digestAlgo);
 		}
 		digestInfo.write(digest);
 		CommandAPDU computeDigitalSignatureApdu = new CommandAPDU(0x00, 0x2A, 0x9E, 0x9A, digestInfo.toByteArray());
