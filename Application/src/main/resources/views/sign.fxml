@@ -97,15 +97,15 @@
                   </JFXDialogLayout>
               </JFXDialog>
               <JFXDialog fx:id="infoDialog">
-              <JFXDialogLayout>
-                  <heading>
-                      <Label fx:id="infoDialogTitle" styleClass="color-info"></Label>
-                  </heading>
-                  <body>
-                      <Label fx:id="infoDialogBody"></Label>
-                  </body>
-              </JFXDialogLayout>
-          </JFXDialog>
+                  <JFXDialogLayout>
+                      <heading>
+                          <Label fx:id="infoDialogTitle" styleClass="color-info"></Label>
+                      </heading>
+                      <body>
+                          <Label fx:id="infoDialogBody"></Label>
+                      </body>
+                  </JFXDialogLayout>
+            </JFXDialog>
               <JFXDialog fx:id="errorDialog">
                   <JFXDialogLayout>
                       <heading>
@@ -113,6 +113,16 @@
                       </heading>
                       <body>
                           <Label id="errorDialogBody" fx:id="errorDialogBody"></Label>
+                      </body>
+                  </JFXDialogLayout>
+              </JFXDialog>
+              <JFXDialog fx:id="successDialog">
+                  <JFXDialogLayout>
+                      <heading>
+                          <Label id="successDialogTitle" styleClass="color-success"></Label>
+                      </heading>
+                      <body>
+                          <Label id="successDialogBody"></Label>
                       </body>
                   </JFXDialogLayout>
               </JFXDialog>

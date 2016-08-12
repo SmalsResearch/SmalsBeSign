@@ -25,6 +25,7 @@
     -fx-font-size: 14px;
     -fx-button-type: RAISED;
     -fx-background-color:  #52BBFE;
+    -fx-pref-width: 180;
     -fx-text-fill: WHITE;
 }
 .button-raised-success {
@@ -109,6 +110,15 @@
 .jfx-layout-actions {
 	-fx-padding: 10.0px 0.0 0.0 0.0 ;
 	-fx-alignment: center-right ;
+}
+/*
+========== ListView
+*/
+.list-view .scroll-bar:horizontal .increment-arrow,
+.list-view .scroll-bar:horizontal .decrement-arrow,
+.list-view .scroll-bar:horizontal .increment-button,
+.list-view .scroll-bar:horizontal .decrement-button {
+    -fx-padding:0;
 }
 
 /*

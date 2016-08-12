@@ -31,7 +31,6 @@ public class FileListItem extends HBox {
         this.fileExtension = this.retrieveFileExtension(this.file.getName());
         this.viewButton = (this.fileExtension.equalsIgnoreCase("pdf")) ? new JFXButton("Preview") : new JFXButton("Open");
         this.viewButton.getStyleClass().add("button-s");
-        this.viewButton.toFront();
         this.nameLabel.setMaxWidth(Double.MAX_VALUE);
         HBox.setHgrow(this.nameLabel, Priority.ALWAYS);
 

@@ -11,8 +11,6 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.BorderPane;
@@ -139,9 +137,20 @@ public class VerifyController extends Controller {
                 Label resultLabel       = (Label) this.stage.getScene().lookup("#verifyResultTitle");
                 JFXListView resultList  = (JFXListView) this.stage.getScene().lookup("#verifyResultListView");
                 resultList.getItems().clear();
-                if (pass.isEmpty()) resultLabel.setText("All files failed verification!");
-                else if (fail.isEmpty()) resultLabel.setText("All files pass!");
-                else resultLabel.setText(pass.size() + " file out of "+(pass.size()+fail.size())+ " pass the verification");
+                resultList.setMaxWidth(Double.MAX_VALUE);
+                if (pass.isEmpty()) {
+                    resultLabel.getStyleClass().clear();
+                    resultLabel.getStyleClass().add("color-danger");
+                    resultLabel.setText("No file has passed the verification!");
+                } else if (fail.isEmpty()) {
+                    resultLabel.getStyleClass().clear();
+                    resultLabel.getStyleClass().add("color-success");
+                    resultLabel.setText("All files passed!");
+                } else {
+                    resultLabel.getStyleClass().clear();
+                    resultLabel.getStyleClass().add("color-info");
+                    resultLabel.setText(pass.size() + " file(s) out of "+(pass.size()+fail.size())+ " passed");
+                }
                 for (String passFile : pass) {
                     Label label = new Label(passFile);
                     label.getStyleClass().add("color-success");
@@ -154,21 +163,29 @@ public class VerifyController extends Controller {
                 }
 
             } catch (IOException|SAXException|ParserConfigurationException e) {
-                Alert corruptedFileDialog = new Alert(Alert.AlertType.ERROR, "The signature file is corrupted !", ButtonType.CLOSE);
-                corruptedFileDialog.setTitle("Corrupted file");
-                corruptedFileDialog.showAndWait();
-                e.printStackTrace();
+                errorDialog.show(masterVerify);
+                Label title     = (Label) this.stage.getScene().lookup("#errorDialogTitle");
+                Label body      = (Label) this.stage.getScene().lookup("#errorDialogBody");
+                body.setText("Unable to parse that signature file.\nIt looks like the file is corrupted.");
+                title.setText("Invalid signature file!");
             } catch (SignatureException e) {
-                Alert errorDialog = new Alert(Alert.AlertType.ERROR, "Invalid Signature", ButtonType.CLOSE);
-                errorDialog.showAndWait();
+                errorDialog.show(masterVerify);
+                Label title     = (Label) this.stage.getScene().lookup("#errorDialogTitle");
+                Label body      = (Label) this.stage.getScene().lookup("#errorDialogBody");
+                body.setText("That signature file .\nIs it the wright signature file ?");
+                title.setText("Invalid signature!");
             } catch (NoSuchAlgorithmException|InvalidKeyException e) {
-                Alert corruptedFileDialog = new Alert(Alert.AlertType.ERROR, "The signature is incorrect.", ButtonType.CLOSE);
-                corruptedFileDialog.setTitle("Invalid Signature");
-                corruptedFileDialog.showAndWait();
+                errorDialog.show(masterVerify);
+                Label title     = (Label) this.stage.getScene().lookup("#errorDialogTitle");
+                Label body      = (Label) this.stage.getScene().lookup("#errorDialogBody");
+                body.setText("Unable to validate the signature. Your file may be corrupted.");
+                title.setText("Invalid key");
             } catch (CertificateException e) {
-                Alert corruptedFileDialog = new Alert(Alert.AlertType.ERROR, "Invalid certificate", ButtonType.CLOSE);
-                corruptedFileDialog.setTitle("Invalid Certificate");
-                corruptedFileDialog.showAndWait();
+                errorDialog.show(masterVerify);
+                Label title     = (Label) this.stage.getScene().lookup("#errorDialogTitle");
+                Label body      = (Label) this.stage.getScene().lookup("#errorDialogBody");
+                body.setText("Unable to validate your certificate.\nIs your signature file corrupted ?");
+                title.setText("Invalid certificate!");
             } catch (NoSuchProviderException e) {
                 e.printStackTrace();
             }

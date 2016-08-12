@@ -66,6 +66,7 @@ public class SignController extends Controller{
     @FXML private JFXDialog noEIDDialog;
     @FXML private JFXDialog infoDialog;
     @FXML private JFXDialog errorDialog;
+    @FXML private JFXDialog successDialog;
 
     /**
      * Constructor
@@ -102,6 +103,7 @@ public class SignController extends Controller{
         // Setup dialogs
         this.infoDialog.setTransitionType(JFXDialog.DialogTransition.TOP);
         this.errorDialog.setTransitionType(JFXDialog.DialogTransition.TOP);
+        this.successDialog.setTransitionType(JFXDialog.DialogTransition.TOP);
     }
     private void waitForReaderAndCard() throws CardException, InterruptedException {
         noEIDDialog.setTransitionType(JFXDialog.DialogTransition.TOP);
@@ -133,18 +135,20 @@ public class SignController extends Controller{
             try {
                 SigningOutput signingOutput = new SigningOutput(null, signature, certificateChain);
                 this.signingService.saveSigningOutput(signingOutput, fileToSave.getPath());
-                Alert saveAlert = new Alert(Alert.AlertType.CONFIRMATION, "Signature successfully saved !", ButtonType.CLOSE);
-                saveAlert.setTitle("Save Notification");
-                saveAlert.setHeaderText("Saved !");
-                saveAlert.showAndWait();
+                successDialog.show(masterSign);
+                Label title     = (Label) this.stage.getScene().lookup("#successDialogTitle");
+                Label body      = (Label) this.stage.getScene().lookup("#successDialogBody");
+                body.setText("Signature successfully saved!\nThe signature file can be found at "+fileToSave.getPath());
+                title.setText("File saved!");
             } catch (CertificateEncodingException e) {
                 e.printStackTrace();
             }
         } else {
-            Alert saveCanceledAlert = new Alert(Alert.AlertType.INFORMATION, "Save aborted", ButtonType.CLOSE);
-            saveCanceledAlert.setTitle("Save canceled");
-            saveCanceledAlert.setHeaderText(null);
-            saveCanceledAlert.showAndWait();
+            errorDialog.show(masterSign);
+            Label title     = (Label) this.stage.getScene().lookup("#errorDialogTitle");
+            Label body      = (Label) this.stage.getScene().lookup("#errorDialogBody");
+            body.setText("Nothing is saved from your last signing request.");
+            title.setText("Save aborted");
         }
     }
     /**

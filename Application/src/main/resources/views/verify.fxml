@@ -79,7 +79,7 @@
                         <Label id="verifyResultTitle" styleClass="color-info">Verify Result</Label>
                     </heading>
                     <body>
-                        <JFXListView id="verifyResultListView" />
+                        <JFXListView id="verifyResultListView" styleClass="list-view"/>
                     </body>
                 </JFXDialogLayout>
             </JFXDialog>
