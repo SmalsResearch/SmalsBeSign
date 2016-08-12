@@ -133,34 +133,7 @@ public class VerifyController extends Controller {
                 }
 
                 // Display result
-                verifyResultDialog.show(masterVerify);
-                Label resultLabel       = (Label) this.stage.getScene().lookup("#verifyResultTitle");
-                JFXListView resultList  = (JFXListView) this.stage.getScene().lookup("#verifyResultListView");
-                resultList.getItems().clear();
-                resultList.setMaxWidth(Double.MAX_VALUE);
-                if (pass.isEmpty()) {
-                    resultLabel.getStyleClass().clear();
-                    resultLabel.getStyleClass().add("color-danger");
-                    resultLabel.setText("No file has passed the verification!");
-                } else if (fail.isEmpty()) {
-                    resultLabel.getStyleClass().clear();
-                    resultLabel.getStyleClass().add("color-success");
-                    resultLabel.setText("All files passed!");
-                } else {
-                    resultLabel.getStyleClass().clear();
-                    resultLabel.getStyleClass().add("color-info");
-                    resultLabel.setText(pass.size() + " file(s) out of "+(pass.size()+fail.size())+ " passed");
-                }
-                for (String passFile : pass) {
-                    Label label = new Label(passFile);
-                    label.getStyleClass().add("color-success");
-                    resultList.getItems().add(label);
-                }
-                for (String failFile : fail) {
-                    Label label = new Label(failFile);
-                    label.getStyleClass().add("color-danger");
-                    resultList.getItems().add(label);
-                }
+                this.displayVerifyResult(pass, fail);
 
             } catch (IOException|SAXException|ParserConfigurationException e) {
                 errorDialog.show(masterVerify);
@@ -175,6 +148,7 @@ public class VerifyController extends Controller {
                 body.setText("That signature file .\nIs it the wright signature file ?");
                 title.setText("Invalid signature!");
             } catch (NoSuchAlgorithmException|InvalidKeyException e) {
+                e.printStackTrace();
                 errorDialog.show(masterVerify);
                 Label title     = (Label) this.stage.getScene().lookup("#errorDialogTitle");
                 Label body      = (Label) this.stage.getScene().lookup("#errorDialogBody");
@@ -189,6 +163,37 @@ public class VerifyController extends Controller {
             } catch (NoSuchProviderException e) {
                 e.printStackTrace();
             }
+        }
+    }
+
+    private void displayVerifyResult(List<String> pass, List<String> fail) {
+        verifyResultDialog.show(masterVerify);
+        Label resultLabel       = (Label) this.stage.getScene().lookup("#verifyResultTitle");
+        JFXListView resultList  = (JFXListView) this.stage.getScene().lookup("#verifyResultListView");
+        resultList.getItems().clear();
+        resultList.setMaxWidth(Double.MAX_VALUE);
+        if (pass.isEmpty()) {
+            resultLabel.getStyleClass().clear();
+            resultLabel.getStyleClass().add("color-danger");
+            resultLabel.setText("No file has passed the verification!");
+        } else if (fail.isEmpty()) {
+            resultLabel.getStyleClass().clear();
+            resultLabel.getStyleClass().add("color-success");
+            resultLabel.setText("All files passed!");
+        } else {
+            resultLabel.getStyleClass().clear();
+            resultLabel.getStyleClass().add("color-info");
+            resultLabel.setText(pass.size() + " file(s) out of "+(pass.size()+fail.size())+ " passed");
+        }
+        for (String passFile : pass) {
+            Label label = new Label(passFile);
+            label.getStyleClass().add("color-success");
+            resultList.getItems().add(label);
+        }
+        for (String failFile : fail) {
+            Label label = new Label(failFile);
+            label.getStyleClass().add("color-danger");
+            resultList.getItems().add(label);
         }
     }
     @FXML
@@ -258,6 +263,9 @@ public class VerifyController extends Controller {
             files.add(item.getFile());
         }
         return files;
+    }
+    private void showDialog (JFXDialog dialog, String title, String message) {
+
     }
 
 }

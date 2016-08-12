@@ -1,6 +1,5 @@
 package be.smals.research.bulksign.desktopapp.services;
 
-import be.smals.research.bulksign.desktopapp.exception.BulkSignException;
 import be.smals.research.bulksign.desktopapp.utilities.SigningOutput;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -12,7 +11,9 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.*;
 import java.security.*;
-import java.security.cert.*;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,31 +31,10 @@ public class VerifySigningService {
             return false;
 
         Signature signer = Signature.getInstance("SHA1withRSA", "BC");
-        signer.initVerify(MockKeyService.getInstance().getPublicKey());
-        for (int j = 0; j < signingOutput.masterDigest.length(); j++) {
-            signer.update(signingOutput.masterDigest.getBytes()[j]);
-        }
+        signer.initVerify(signingOutput.certificateChain.get(2).getPublicKey()); // [2] is the user certificate
+        signer.update(signingOutput.masterDigest.getBytes());
 
         return signer.verify(signingOutput.signature);
-    }
-    public boolean verifySigning (FileInputStream file, byte[] signature, String masterDigest, PublicKey key)
-            throws NoSuchProviderException, NoSuchAlgorithmException, IOException, BulkSignException,
-                    InvalidKeyException, SignatureException {
-        String individualDigest = DigestService.getInstance().computeIndividualDigest(file);
-
-        // Verify that Individual Digest is part of Master Digest.
-        boolean found = this.isIndividualDigestPartOfMasterDigest(masterDigest, individualDigest);
-        if (!found)
-            return false;
-
-        // Verify that Signature of Master Digest is Valid
-        Signature signer = Signature.getInstance("SHA1withRSA", "BC");
-        signer.initVerify(key);
-        for (int j = 0; j < masterDigest.length(); j++) {
-            signer.update(masterDigest.getBytes()[j]);
-        }
-
-        return signer.verify(signature);
     }
 
     public boolean isCertificateChainValid(List<X509Certificate> certificateChain)
@@ -62,9 +42,10 @@ public class VerifySigningService {
         X509Certificate rootCert    = certificateChain.get(0);
         X509Certificate intermCert  = certificateChain.get(1);
         X509Certificate userCert    = certificateChain.get(2);
-        return (this.isCertificateValid(userCert, intermCert.getPublicKey())
-                && this.isCertificateValid(intermCert, rootCert.getPublicKey())
-                && this.isCertificateValid(rootCert, rootCert.getPublicKey()));
+        boolean userCertValid       = this.isCertificateValid(userCert, intermCert.getPublicKey());
+        boolean intermCertValid     = this.isCertificateValid(intermCert, rootCert.getPublicKey());
+        boolean rootCertValid       = this.isCertificateValid(rootCert, rootCert.getPublicKey());
+        return userCertValid && intermCertValid && rootCertValid;
     }
     private boolean isCertificateValid (X509Certificate certificate, PublicKey authorityPubKey)
             throws CertificateException, NoSuchProviderException, NoSuchAlgorithmException, InvalidKeyException, SignatureException {
@@ -72,7 +53,6 @@ public class VerifySigningService {
         certificate.verify(authorityPubKey);
         return true;
     }
-
     public SigningOutput getSigningOutput (File signingOutputFile) throws ParserConfigurationException, IOException, SAXException, CertificateException, NoSuchProviderException {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = factory.newDocumentBuilder();

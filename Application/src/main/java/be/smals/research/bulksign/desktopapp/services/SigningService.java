@@ -21,8 +21,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -84,11 +87,24 @@ public class SigningService {
     public byte[] signWithEID(FileInputStream[] inputFiles) {
         try {
             this.masterDigest = DigestService.getInstance().computeMasterDigest(inputFiles);
-            return EIDService.getInstance().sign(this.masterDigest.getBytes(), DigestService.getInstance().getAlgorithm());
+            // SHA-1 digest
+            return EIDService.getInstance().sign(getSha1(this.masterDigest.getBytes()), "SHA-1");
         } catch (Exception e) {
             e.printStackTrace();
             return new byte[0];
         }
+    }
+    private static byte[] getSha1(byte[] input) {
+        System.out.println("HASH: "+ Arrays.toString(input));
+        MessageDigest digest = null;
+        try {
+            digest = MessageDigest.getInstance("SHA-1");
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        byte[] result = digest.digest(input);
+        System.out.println("HASH: "+Arrays.toString(result));
+        return result;
     }
 
     /**

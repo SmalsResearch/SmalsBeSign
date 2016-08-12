@@ -480,8 +480,8 @@ public class EID {
 				.generateCertificate(new ByteArrayInputStream(rootCaCertFile));
 
 		signCertificateChain.add(rootCaCert);
-		signCertificateChain.add(signCert);
 		signCertificateChain.add(citizenCaCert);
+		signCertificateChain.add(signCert);
 
 		return signCertificateChain;
 	}
