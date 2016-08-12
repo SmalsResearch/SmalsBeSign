@@ -1,6 +1,7 @@
 package be.smals.research.bulksign.desktopapp;
 
 import be.smals.research.bulksign.desktopapp.controllers.MainController;
+import be.smals.research.bulksign.desktopapp.services.EIDService;
 import be.smals.research.bulksign.desktopapp.ui.StatusBar;
 import be.smals.research.bulksign.desktopapp.utilities.Settings;
 import javafx.application.Application;
@@ -35,7 +36,9 @@ public class Main extends Application {
         createTop(controller, root);
 
         // ----- BOTTOM ------------------------------------------------------------------------------------------------
-        root.setBottom(new StatusBar());
+        StatusBar statusBar = new StatusBar();
+        EIDService.getInstance().registerObserver(statusBar);
+        root.setBottom(statusBar);
 
         // ----- CENTER ------------------------------------------------------------------------------------------------
         createCenter (controller, root);
@@ -43,7 +46,6 @@ public class Main extends Application {
         primaryStage.setScene(new Scene(masterPane, 800, 480));
         primaryStage.show();
     }
-
     /**
      * Creates TOP components : the menu bar and defines actions
      *
@@ -62,6 +64,7 @@ public class Main extends Application {
         MenuItem signMenuItem   = new MenuItem("Sign");
         MenuItem verifyMenuItem = new MenuItem("Verify");
         MenuItem aboutMenuItem  = new MenuItem("About");
+        exitMenuItem.setId("exitMenuItem");
         final ToggleGroup signerGroup   = new ToggleGroup();
         RadioMenuItem eidMenuItem       = new RadioMenuItem("eID");
         RadioMenuItem mockMenuItem      = new RadioMenuItem("Mock");
@@ -88,7 +91,6 @@ public class Main extends Application {
             }
         });
     }
-
     /**
      *  Creates home screen
      * @param controller
@@ -97,7 +99,6 @@ public class Main extends Application {
     private void createCenter (MainController controller, BorderPane root) {
         Platform.runLater( () -> controller.homeMenuItemAction ());
     }
-
     @Override
     public void stop() throws Exception {
         super.stop();

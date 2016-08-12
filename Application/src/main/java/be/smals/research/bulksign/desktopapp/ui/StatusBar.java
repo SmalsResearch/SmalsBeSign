@@ -1,5 +1,6 @@
 package be.smals.research.bulksign.desktopapp.ui;
 
+import be.smals.research.bulksign.desktopapp.eid.EIDServiceObserver;
 import be.smals.research.bulksign.desktopapp.services.EIDService;
 import be.smals.research.bulksign.desktopapp.utilities.Message.MessageType;
 import be.smals.research.bulksign.desktopapp.utilities.Settings;
@@ -14,7 +15,7 @@ import javafx.scene.layout.Priority;
 
 import javax.smartcardio.CardException;
 
-public class StatusBar extends HBox{
+public class StatusBar extends HBox implements EIDServiceObserver{
     private Label messageLabel;
     private JFXSpinner spinner;
     public StatusBar () {
@@ -44,12 +45,7 @@ public class StatusBar extends HBox{
                         try {
                             while (true) {
                                 Settings.getInstance().setEIDCardPresent(false);
-                                Platform.runLater(() -> {
-                                    getChildren().add(spinner);
-                                    setMessage(MessageType.DEFAULT, "Waiting for an eID card reader...");
-                                });
                                 EIDService.getInstance().waitForReader();
-                                Platform.runLater(() -> setMessage(MessageType.DEFAULT, "Waiting for an eID card..."));
                                 EIDService.getInstance().waitForCard();
                                 Settings.getInstance().setEIDCardPresent(true);
                                 Platform.runLater(() -> {
@@ -61,9 +57,7 @@ public class StatusBar extends HBox{
                                     ;
                                 Thread.sleep(2000);
                             }
-                        } catch (CardException e) {
-                            e.printStackTrace();
-                        } catch (InterruptedException e) {
+                        } catch (CardException|InterruptedException e) {
                             e.printStackTrace();
                         }
                         return "CheckCardTask Finished.";
@@ -95,4 +89,21 @@ public class StatusBar extends HBox{
         messageLabel.setText(message);
     }
 
+    // ----- Implements ------------------------------------------------------------------------------------------------
+    @Override
+    public void getPinCode() {}
+    @Override
+    public void cardReaderNeeded() {
+        Platform.runLater(() -> {
+            if (!this.getChildren().contains(spinner))
+                getChildren(). add(spinner);
+            setMessage(MessageType.DEFAULT, "Waiting for an eID card reader...");
+        });
+    }
+    @Override
+    public void cardNeeded() {
+        if (!this.getChildren().contains(spinner))
+            getChildren(). add(spinner);
+        Platform.runLater(() -> setMessage(MessageType.DEFAULT, "Waiting for an eID card..."));
+    }
 }

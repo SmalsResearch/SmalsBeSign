@@ -56,8 +56,6 @@ public class VerifyController extends Controller {
     @FXML private JFXDialog errorDialog;
     @FXML private JFXDialog verifyResultDialog;
 
-    private Stage stage;
-
     private List<File> filesToVerify;
     private File signatureFile;
 
@@ -73,9 +71,8 @@ public class VerifyController extends Controller {
     /**
      * {@inheritDoc}
      */
-    @Override
-    public void setStage (Stage stage) {
-        this.stage = stage;
+    @Override public void setStage (Stage stage) {
+        super.setStage(stage);
         this.viewerFx = new OpenViewerFX(readerPane, getClass().getClassLoader().getResource("lib/OpenViewerFx/preferences/custom.xml").getPath());
         this.viewerFx.getRoot().prefWidthProperty().bind(readerPane.widthProperty());
         this.viewerFx.getRoot().prefHeightProperty().bind(readerPane.heightProperty());
@@ -105,8 +102,7 @@ public class VerifyController extends Controller {
         }
         return selectedFiles;
     }
-    @FXML
-    private void handleVerifyFilesButtonAction(ActionEvent event) {
+    @FXML private void handleVerifyFilesButtonAction(ActionEvent event) {
         List<File> selectedFiles = this.getSelectedFiles ();
         if (selectedFiles.isEmpty()){
             infoDialog.show(masterVerify);
@@ -165,7 +161,6 @@ public class VerifyController extends Controller {
             }
         }
     }
-
     private void displayVerifyResult(List<String> pass, List<String> fail) {
         verifyResultDialog.show(masterVerify);
         Label resultLabel       = (Label) this.stage.getScene().lookup("#verifyResultTitle");
@@ -196,8 +191,7 @@ public class VerifyController extends Controller {
             resultList.getItems().add(label);
         }
     }
-    @FXML
-    private void handleSelectVerifyFileButtonAction (ActionEvent event) {
+    @FXML private void handleSelectVerifyFileButtonAction (ActionEvent event) {
         this.fileChooser.setTitle("Select the signature file");
         this.fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Signature files (SIG)", "*.sig"));
         File file = this.fileChooser.showOpenDialog(this.stage);
@@ -209,14 +203,12 @@ public class VerifyController extends Controller {
             System.out.println("ERROR - No file found.");
         }
     }
-
     /**
      * Defines the selected file
      *
      * @param event click on the selectFile button
      */
-    @FXML
-    private void handleSelectSignFileButtonAction(ActionEvent event) {
+    @FXML private void handleSelectSignFileButtonAction(ActionEvent event) {
         List<File> files = this.fileChooser.showOpenMultipleDialog(this.stage);
         if (files != null) {
             files.stream().filter(file -> !this.filesToVerify.contains(file)).forEach(file -> this.filesToVerify.add(file));
@@ -264,8 +256,4 @@ public class VerifyController extends Controller {
         }
         return files;
     }
-    private void showDialog (JFXDialog dialog, String title, String message) {
-
-    }
-
 }

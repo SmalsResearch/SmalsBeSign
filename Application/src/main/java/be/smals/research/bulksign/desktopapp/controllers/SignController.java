@@ -52,7 +52,6 @@ import java.util.Optional;
  */
 public class SignController extends Controller{
 
-    private Stage stage;
     private SigningService signingService;
     private FileChooser fileChooser;
     private List<File> filesToSign;
@@ -89,7 +88,7 @@ public class SignController extends Controller{
      */
     @Override
     public void setStage (Stage stage) {
-        this.stage = stage;
+        super.setStage(stage);
 
         this.viewerFx = new OpenViewerFX(readerPane, getClass().getClassLoader().getResource("lib/OpenViewerFx/preferences/custom.xml").getPath());
         this.viewerFx.getRoot().prefWidthProperty().bind(readerPane.widthProperty());
@@ -288,7 +287,6 @@ public class SignController extends Controller{
         for (FileInputStream file : inputFiles)
             file.close();
     }
-
     /**
      * Performs signing with eID card process
      *
@@ -324,5 +322,7 @@ public class SignController extends Controller{
             }
         }
     }
-
+    private void showDialog (JFXDialog dialog, String title, String message) {
+        dialog.show();
+    }
 }

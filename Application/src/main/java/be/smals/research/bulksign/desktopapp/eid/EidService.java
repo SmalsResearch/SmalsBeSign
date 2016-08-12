@@ -5,8 +5,6 @@ import be.smals.research.bulksign.desktopapp.eid.external.Messages;
 import be.smals.research.bulksign.desktopapp.eid.external.shared.SignRequestMessage;
 import be.smals.research.bulksign.desktopapp.eid.external.shared.SignatureDataMessage;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.Locale;
 import java.util.stream.IntStream;
@@ -43,9 +41,6 @@ public class EidService {
         }
         return null;
     }
-
-    //todo move to util class
-
 
     //todo call to be refactored code in PcscEid
     public boolean isCardReaderConnected() {

@@ -8,6 +8,7 @@ import javax.smartcardio.CardException;
 import java.io.IOException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -25,6 +26,7 @@ public class EIDService {
 
     private EIDService () {
         this.eID = new EID();
+        this.observers = new ArrayList<>();
     }
     public static EIDService getInstance(){
         return instance;
@@ -66,12 +68,14 @@ public class EIDService {
      * @throws InterruptedException
      */
     public void waitForCard() throws CardException, InterruptedException {
+        this.notifyObservers(Services.WAITINGFOR_CARD);
         this.eID.waitForEidPresent();
     }
     /**
      * Loop until an eID card reader is connected to the computer
      */
     public void waitForReader () {
+        this.notifyObservers(Services.WAITINGFOR_CARDREADER);
         this.eID.waitForCardReader();
     }
     /**
@@ -146,5 +150,9 @@ public class EIDService {
                 break;
         }
 
+    }
+    public void registerObserver (EIDServiceObserver observer){
+        if (!this.observers.contains(observer))
+            this.observers.add(observer);
     }
 }

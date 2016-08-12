@@ -20,7 +20,6 @@ import java.io.IOException;
  */
 public class MainController extends Controller{
 
-    private Stage stage;
     @FXML private StackPane masterPane;
     @FXML private BorderPane root;
     @FXML private JFXDialog exitDialog;
@@ -35,7 +34,7 @@ public class MainController extends Controller{
      */
     @Override
     public void setStage(Stage stage) {
-        this.stage = stage;
+        super.setStage(stage);
     }
     public BorderPane getRoot () {
         return this.root;
