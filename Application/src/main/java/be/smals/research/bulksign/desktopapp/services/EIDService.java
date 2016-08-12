@@ -3,7 +3,7 @@ package be.smals.research.bulksign.desktopapp.services;
 import be.smals.research.bulksign.desktopapp.abstracts.Service;
 
 /**
- * Created by cea on 09/08/2016.
+ * Service to access eID card and reader operations
  */
 public class EIDService extends Service {
     private static EIDService instance = new EIDService();
