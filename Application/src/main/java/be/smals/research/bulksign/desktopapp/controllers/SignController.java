@@ -44,9 +44,9 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Main screen controller
+ * Sign screen controller
  *
- * Handles events from main screen
+ * Handles events from Sign view
  */
 public class SignController extends Controller{
 
@@ -55,7 +55,6 @@ public class SignController extends Controller{
     private FileChooser fileChooser;
     private List<File> filesToSign;
     private OpenViewerFX viewerFx;
-    private boolean pinValid;
 
     @FXML private Label fileCountLabel;
     @FXML private ListView filesListView;

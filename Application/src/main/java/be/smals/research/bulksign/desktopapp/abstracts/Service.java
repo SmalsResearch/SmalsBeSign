@@ -10,7 +10,7 @@ import java.security.cert.X509Certificate;
 import java.util.List;
 
 /**
- *
+ * Service superclass - Gives access to eID card operations
  */
 public abstract class Service {
     private EID eID;
@@ -40,6 +40,7 @@ public abstract class Service {
     public List<X509Certificate> getCertificateChain () throws CertificateException, IOException, CardException {
         return this.eID.getSignCertificateChain();
     }
+
     // ----- Sign ------------------------------------------------------------------------------------------------------
     public void prepareSigning (String digestAlgo) throws CardException {
         this.eID.prepareSigning(digestAlgo,  EID.NON_REP_KEY_ID);

@@ -10,14 +10,16 @@ import java.security.NoSuchProviderException;
 import java.security.Security;
 
 /**
- * Service used to computeMasterDigest the digest of files to sign
- *
+ * Service used to create the digest of a single or multiple files
  */
 public class DigestService {
 
     private static DigestService instance = new DigestService();
     private String algorithm;
 
+    /**
+     * Constructor - Initializes java security's provider
+     */
     private DigestService() {
         Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
         this.algorithm = "SHA-256";

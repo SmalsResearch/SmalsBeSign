@@ -41,12 +41,9 @@ import java.util.*;
 import java.util.List;
 
 /**
- * Holds all functions related to eID card access over PC/SC.
- * 
- * @author Frank Cornelis
- * 
+ * Holds the functions related to eID card access over PC/SC.
  */
-public class EID extends Observable {
+public class EID {
 
 	public static final int MIN_PIN_SIZE = 4;
 	public static final int MAX_PIN_SIZE = 12;
@@ -205,11 +202,6 @@ public class EID extends Observable {
 			if (0x9000 != sw) {
 				throw new IOException("APDU response error: " + responseApdu.getSW());
 			}
-			/*
-			 * Notify our progress observers.
-			 */
-			setChanged();
-			notifyObservers();
 
 			/*
 			 * Introduce some delay for old Belpic V1 eID cards.

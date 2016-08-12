@@ -25,29 +25,29 @@ import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 import java.util.List;
 
-
+/**
+ * Collection of methods used to sign and save the output
+ */
 public class SigningService {
 
-    private PKCS11 pkcs11;
     private String masterDigest;
 
     /**
      * Constructor
      */
-    public SigningService() throws IOException, PKCS11Exception {
-        String osName = System.getProperty("os.name");
+    public SigningService() throws IOException, PKCS11Exception {}
 
-        if (osName.contains("Windows"))
-            pkcs11 = PKCS11.getInstance("beidpkcs11.dll", "C_GetFunctionList", null, false);
-        else
-            pkcs11 = PKCS11.getInstance("libbeidpkcs11.so", "C_GetFunctionList", null, false);
-    }
-
+    /**
+     * Prepares the eID card to sign
+     *
+     * @throws CardException
+     */
     public void prepareSigning () throws CardException {
         EIDService.getInstance().prepareSigning (DigestService.getInstance().getAlgorithm());
     }
+
     /**
-     * Used to sign given files
+     * Computes the digest of given files and sign them
      *
      * @param inputStreams files to sign
      * @return the signature
@@ -75,6 +75,12 @@ public class SigningService {
         }
     }
 
+    /**
+     * Computes the digest of files sign them with an eID
+     *
+     * @param inputFiles files to sign
+     * @return the signature
+     */
     public byte[] signWithEID(FileInputStream[] inputFiles) {
         try {
             this.masterDigest = DigestService.getInstance().computeMasterDigest(inputFiles);
@@ -85,6 +91,16 @@ public class SigningService {
         }
     }
 
+    /**
+     * Turns a signing output to xml document and saves it
+     *
+     * @param signingOutput the result of a signing process
+     * @param filePath saving path
+     * @throws IOException
+     * @throws ParserConfigurationException
+     * @throws TransformerException
+     * @throws CertificateEncodingException
+     */
     public void saveSigningOutput(SigningOutput signingOutput, String filePath) throws IOException, ParserConfigurationException, TransformerException, CertificateEncodingException {
         // XML - Create
         DocumentBuilderFactory factory  = DocumentBuilderFactory.newInstance();
@@ -112,6 +128,14 @@ public class SigningService {
         this.writeXMLDocument(filePath, document);
     }
 
+    /**
+     * Creates the "Certificate" and his children nodes
+     *
+     * @param certificateChain the object to turn into xml node
+     * @param document the xml document
+     * @return the created element
+     * @throws CertificateEncodingException when it's unable to get the encoded version of an X509Certificate
+     */
     private Element createCertificateXMLElement(List<X509Certificate> certificateChain, Document document) throws CertificateEncodingException {
         Element certificateElement              = document.createElement("Certificate");
         Element rootCertificateElement          = document.createElement("Root");
@@ -132,6 +156,13 @@ public class SigningService {
         return certificateElement;
     }
 
+    /**
+     * Writes the XML Document to file
+     *
+     * @param filePath file path
+     * @param document the document to write
+     * @throws TransformerException mainly when the save failed
+     */
     private void writeXMLDocument(String filePath, Document document) throws TransformerException {
         TransformerFactory transformerFactory   = TransformerFactory.newInstance();
         Transformer transformer                 = transformerFactory.newTransformer();
