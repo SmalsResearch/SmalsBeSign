@@ -17,13 +17,10 @@
  * http://www.gnu.org/licenses/.
  */
 
-package be.fedict.eid.applet;
+package be.smals.research.bulksign.desktopapp.eid.external;
 
-import sun.util.ResourceBundleEnumeration;
-
+import javax.swing.*;
 import java.util.*;
-
-import javax.swing.UIManager;
 
 /**
  * Util class to manage the i18n messages used within the eID Applet UI.

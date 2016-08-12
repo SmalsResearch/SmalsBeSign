@@ -3,10 +3,10 @@ package be.smals.research.bulksign.desktopapp.eid;
 /**
  * Created by kova on 09/08/2016.
  */
-public interface EidServiceObserver {
+public interface EIDServiceObserver {
 
     /**
-     * Called when the eID controller needs the user's incode
+     * Called when the eID controller needs the user's pincode
      * @return The pincode, make sure it is purely numerical
      */
     char[] getPinCode();

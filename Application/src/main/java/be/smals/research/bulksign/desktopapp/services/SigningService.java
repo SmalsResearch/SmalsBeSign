@@ -1,10 +1,11 @@
 package be.smals.research.bulksign.desktopapp.services;
 
 import be.smals.research.bulksign.desktopapp.utilities.SigningOutput;
+import be.smals.research.bulksign.desktopapp.utilities.Utilities;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Text;
-import sun.security.pkcs11.wrapper.*;
+import sun.security.pkcs11.wrapper.PKCS11Exception;
 
 import javax.smartcardio.CardException;
 import javax.xml.bind.DatatypeConverter;
@@ -21,11 +22,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -55,7 +53,7 @@ public class SigningService {
      * @param inputStreams files to sign
      * @return the signature
      */
-    public byte[] sign (InputStream[] inputStreams) {
+    public byte[] signWithMock (InputStream[] inputStreams) {
         byte[] signErrorOutput = new byte[0];
 
         try {
@@ -63,7 +61,6 @@ public class SigningService {
                 this.masterDigest = DigestService.getInstance().computeMasterDigest(inputStreams);
                 byte[] signature;
 
-                System.out.println("MOCK SIGNER");
                 MockSigningService.getInstance().initSign(this.masterDigest);
                 signature = MockSigningService.getInstance().sign();
 
@@ -88,23 +85,11 @@ public class SigningService {
         try {
             this.masterDigest = DigestService.getInstance().computeMasterDigest(inputFiles);
             // SHA-1 digest
-            return EIDService.getInstance().sign(getSha1(this.masterDigest.getBytes()), "SHA-1");
+            return EIDService.getInstance().sign(Utilities.getInstance().getSha1(this.masterDigest.getBytes()), "SHA-1");
         } catch (Exception e) {
             e.printStackTrace();
             return new byte[0];
         }
-    }
-    private static byte[] getSha1(byte[] input) {
-        System.out.println("HASH: "+ Arrays.toString(input));
-        MessageDigest digest = null;
-        try {
-            digest = MessageDigest.getInstance("SHA-1");
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        }
-        byte[] result = digest.digest(input);
-        System.out.println("HASH: "+Arrays.toString(result));
-        return result;
     }
 
     /**

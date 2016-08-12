@@ -19,13 +19,9 @@
 
 package be.smals.research.bulksign.desktopapp.eid.external;
 
+import javax.swing.*;
 import java.applet.AppletContext;
-import java.awt.CardLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.FlowLayout;
-import java.awt.Toolkit;
+import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
@@ -40,21 +36,6 @@ import java.security.AccessController;
 import java.security.Permission;
 import java.security.PrivilegedAction;
 import java.util.Locale;
-
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.JApplet;
-import javax.swing.JButton;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JProgressBar;
-import javax.swing.JRootPane;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
 
 /**
  * The main class of the eID Applet. The {@link #init()} method is where it all

@@ -1,7 +1,7 @@
 package be.smals.research.bulksign.desktopapp.controllers;
 
-import be.fedict.eid.applet.UserCancelledException;
 import be.smals.research.bulksign.desktopapp.abstracts.Controller;
+import be.smals.research.bulksign.desktopapp.eid.external.UserCancelledException;
 import be.smals.research.bulksign.desktopapp.services.EIDService;
 import be.smals.research.bulksign.desktopapp.services.MockKeyService;
 import be.smals.research.bulksign.desktopapp.services.SigningService;
@@ -11,6 +11,7 @@ import be.smals.research.bulksign.desktopapp.utilities.Settings.Signer;
 import be.smals.research.bulksign.desktopapp.utilities.SigningOutput;
 import com.jfoenix.controls.JFXDialog;
 import com.jfoenix.controls.JFXPasswordField;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -23,6 +24,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.jpedal.examples.viewer.Commands;
@@ -216,51 +218,6 @@ public class SignController extends Controller{
             }
         }
     }
-
-    private void signWithMock(List<File> selectedFiles)
-            throws IOException, ParserConfigurationException, TransformerException {
-
-        FileInputStream[] inputFiles = new FileInputStream[selectedFiles.size()];
-        // Prepare files
-        for (int i = 0; i < selectedFiles.size(); i++) {
-            inputFiles[i] = new FileInputStream(selectedFiles.get(i));
-        }
-        // Sign
-        byte[] signature = this.signingService.sign(inputFiles);
-
-        List<X509Certificate> certificateChain = MockKeyService.getInstance().getCertificateChain();
-        this.saveSigningOutput(signature, certificateChain);
-
-        for (FileInputStream file : inputFiles)
-            file.close();
-    }
-
-    private void signWithEID(List<File> selectedFiles)
-            throws CardException, CertificateException, IOException, ParserConfigurationException, TransformerException {
-
-        FileInputStream[] inputFiles = new FileInputStream[selectedFiles.size()];
-        if (!Settings.getInstance().isEIDCardPresent()) {
-            noEIDDialog.show(masterSign);
-        } else {
-            // Prepare files
-            for (int i = 0; i < selectedFiles.size(); i++) {
-                inputFiles[i] = new FileInputStream(selectedFiles.get(i));
-            }
-            // Sign
-            this.signingService.prepareSigning();
-            if (this.askAndVerifyPin()) {
-                byte[] signature = this.signingService.signWithEID(inputFiles);
-                List<X509Certificate> certificateChain = EIDService.getInstance().getCertificateChain();
-                this.saveSigningOutput(signature, certificateChain);
-
-                for (FileInputStream file : inputFiles)
-                    file.close();
-
-                EIDService.getInstance().close();
-            }
-        }
-    }
-
     /**
      * Defines the selected file
      *
@@ -290,12 +247,14 @@ public class SignController extends Controller{
     private boolean askAndVerifyPin() {
         Dialog<String> pinDialog = new Dialog<>();
         pinDialog.setTitle("PIN Code");
-        pinDialog.setHeaderText("Enter your Pin code");
+        pinDialog.setHeaderText("Please, enter your Pin code");
         JFXPasswordField passwordField = new JFXPasswordField();
-        passwordField.getStyleClass().add("jfx-text-field");
+        passwordField.setFocusColor(Color.web("#52BBFE"));
+        passwordField.setPrefWidth(200);
         ButtonType validateButtonType = new ButtonType("Ok", ButtonBar.ButtonData.OK_DONE);
         pinDialog.getDialogPane().getButtonTypes().add(validateButtonType);
         pinDialog.getDialogPane().setContent(passwordField);
+        Platform.runLater( () -> passwordField.requestFocus());
 
         Optional<String> result = pinDialog.showAndWait();
         if (result.isPresent()) {
@@ -305,11 +264,54 @@ public class SignController extends Controller{
                 errorDialog.show(masterSign);
                 Label title     = (Label) this.stage.getScene().lookup("#errorDialogTitle");
                 Label body      = (Label) this.stage.getScene().lookup("#errorDialogBody");
-                body.setText("Unable to verify your pin.\nError message : "+e.getMessage());
-                title.setText("Verify PIN code...");
+                body.setText("Unable to verify your PIN.\nError message : "+e.getMessage());
+                title.setText("Verifying PIN code...");
             }
         }
 
         return false;
     }
+    private void signWithMock(List<File> selectedFiles)
+            throws IOException, ParserConfigurationException, TransformerException {
+
+        FileInputStream[] inputFiles = new FileInputStream[selectedFiles.size()];
+        // Prepare files
+        for (int i = 0; i < selectedFiles.size(); i++) {
+            inputFiles[i] = new FileInputStream(selectedFiles.get(i));
+        }
+        // Sign
+        byte[] signature = this.signingService.signWithMock(inputFiles);
+
+        List<X509Certificate> certificateChain = MockKeyService.getInstance().getCertificateChain();
+        this.saveSigningOutput(signature, certificateChain);
+
+        for (FileInputStream file : inputFiles)
+            file.close();
+    }
+    private void signWithEID(List<File> selectedFiles)
+            throws CardException, CertificateException, IOException, ParserConfigurationException, TransformerException {
+
+        FileInputStream[] inputFiles = new FileInputStream[selectedFiles.size()];
+        if (!Settings.getInstance().isEIDCardPresent()) {
+            noEIDDialog.show(masterSign);
+        } else {
+            // Prepare files
+            for (int i = 0; i < selectedFiles.size(); i++) {
+                inputFiles[i] = new FileInputStream(selectedFiles.get(i));
+            }
+            // Sign
+            this.signingService.prepareSigning();
+            if (this.askAndVerifyPin()) {
+                byte[] signature = this.signingService.signWithEID(inputFiles);
+                List<X509Certificate> certificateChain = EIDService.getInstance().getCertificateChain();
+                this.saveSigningOutput(signature, certificateChain);
+
+                for (FileInputStream file : inputFiles)
+                    file.close();
+
+                EIDService.getInstance().close();
+            }
+        }
+    }
+
 }

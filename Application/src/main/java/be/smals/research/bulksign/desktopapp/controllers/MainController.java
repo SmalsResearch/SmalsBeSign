@@ -1,27 +1,29 @@
 package be.smals.research.bulksign.desktopapp.controllers;
 
+import be.smals.research.bulksign.desktopapp.abstracts.Controller;
+import com.jfoenix.controls.JFXDialog;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
+import javafx.event.ActionEvent;
 import java.io.IOException;
-import java.util.Optional;
 
 /**
  * Main screen controller
  *
  * Handles events from main screen
  */
-public class MainController {
+public class MainController extends Controller{
 
     private Stage stage;
-    @FXML
-    private BorderPane root;
+    @FXML private StackPane masterPane;
+    @FXML private BorderPane root;
+    @FXML private JFXDialog exitDialog;
 
     /**
      * Constructor

@@ -16,7 +16,7 @@ import java.util.stream.IntStream;
  */
 public class EidService {
 
-    //todo add code to make observable and add EidServiceObserver
+    //todo add code to make observable and add EIDServiceObserver
 
     //todo move to test code
     public static byte[] getMockInput(int length) {
@@ -45,19 +45,7 @@ public class EidService {
     }
 
     //todo move to util class
-    public static byte[] getSha1(byte[] input) {
-        System.out.println("INPUT: " + Arrays.toString(input));
-        MessageDigest digest = null;
-        try {
-            digest = MessageDigest.getInstance("SHA-1");
-            byte[] result = digest.digest(input);
-            System.out.println("HASH: " + Arrays.toString(result));
-            return result;
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
+
 
     //todo call to be refactored code in PcscEid
     public boolean isCardReaderConnected() {
