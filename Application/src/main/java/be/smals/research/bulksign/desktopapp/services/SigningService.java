@@ -76,14 +76,12 @@ public class SigningService {
     }
 
     public byte[] signWithEID(FileInputStream[] inputFiles) {
-        byte[] signErrorOutput = new byte[0];
-
         try {
             this.masterDigest = DigestService.getInstance().computeMasterDigest(inputFiles);
             return EIDService.getInstance().sign(this.masterDigest.getBytes(), DigestService.getInstance().getAlgorithm());
         } catch (Exception e) {
             e.printStackTrace();
-            return (signErrorOutput);
+            return new byte[0];
         }
     }
 
@@ -144,32 +142,5 @@ public class SigningService {
         transformer.transform(source, result);
     }
 
-    /**
-     *
-     * @param p11_session
-     * @return
-     * @throws PKCS11Exception
-     */
-    private long findSignaturePrivateKey(long p11_session) throws PKCS11Exception {
-        CK_ATTRIBUTE[] attributes = new CK_ATTRIBUTE[2];
-        attributes[0] = new CK_ATTRIBUTE();
-        attributes[0].type = PKCS11Constants.CKA_CLASS;
-        attributes[0].pValue = new Long(PKCS11Constants.CKO_PRIVATE_KEY);
-        attributes[1] = new CK_ATTRIBUTE();
-        attributes[1].type = PKCS11Constants.CKA_ID;
-        attributes[1].pValue = 3;
-
-        this.pkcs11.C_FindObjectsInit(p11_session, attributes);
-        long[] keyHandles = pkcs11.C_FindObjects(p11_session, 1);
-        pkcs11.C_FindObjectsFinal(p11_session);
-
-        return keyHandles[0];
-    }
-    private void initializeSignature(long p11_session, long signatureKey) throws PKCS11Exception {
-        CK_MECHANISM mechanism = new CK_MECHANISM();
-        mechanism.mechanism = PKCS11Constants.CKM_SHA1_RSA_PKCS;
-        mechanism.pParameter = null;
-        pkcs11.C_SignInit(p11_session, mechanism, signatureKey);
-    }
 }
                

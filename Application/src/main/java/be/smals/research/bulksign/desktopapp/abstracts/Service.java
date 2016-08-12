@@ -9,6 +9,9 @@ import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.List;
 
+/**
+ *
+ */
 public abstract class Service {
     private EID eID;
 
@@ -44,14 +47,11 @@ public abstract class Service {
     public byte[] sign(byte[] masterDigest, String algorithm) throws IOException, CardException {
         return this.eID.signAlt(masterDigest, algorithm);
     }
-//    public byte[] sign (String masterDigest) throws CardException, UserCancelledException, InterruptedException, IOException {
-//        return this.eID.sign(masterDigest.getBytes(), DigestService.getInstance().getAlgorithm(), EID.NON_REP_KEY_ID, false);
-//    }
+
     // ----- PIN -------------------------------------------------------------------------------------------------------
     public boolean isPinValid (char[] pin) throws UserCancelledException, CardException {
         return this.eID.isPinValid(pin);
     }
-    // ----- Base
     public void close () throws CardException {
         this.eID.close();
     }

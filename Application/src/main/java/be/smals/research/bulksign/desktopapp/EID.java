@@ -53,10 +53,12 @@ public class EID extends Observable {
 	public static final int PUK_SIZE = 6;
 	public static final byte AUTHN_KEY_ID = (byte) 0x82;
 	public static final byte NON_REP_KEY_ID = (byte) 0x83;
+
 	private final static byte[] ATR_PATTERN = new byte[] { 0x3b, (byte) 0x98, 0x00, 0x40, 0x00, (byte) 0x00, 0x00, 0x00,
 			0x01, 0x01, (byte) 0xad, 0x13, 0x10 };
 	private final static byte[] ATR_MASK = new byte[] { (byte) 0xff, (byte) 0xff, 0x00, (byte) 0xff, 0x00, 0x00, 0x00,
 			0x00, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xf0 };
+
 	public static final byte[] IDENTITY_FILE_ID = new byte[] { 0x3F, 0x00, (byte) 0xDF, 0x01, 0x40, 0x31 };
 	public static final byte[] IDENTITY_SIGN_FILE_ID = new byte[] { 0x3F, 0x00, (byte) 0xDF, 0x01, 0x40, 0x32 };
 	public static final byte[] ADDRESS_FILE_ID = new byte[] { 0x3F, 0x00, (byte) 0xDF, 0x01, 0x40, 0x33 };
@@ -81,12 +83,14 @@ public class EID extends Observable {
 	public static final byte FEATURE_MODIFY_PIN_DIRECT_TAG = 0x07;
 	public static final byte FEATURE_EID_PIN_PAD_READER_TAG = (byte) 0x80;
 
+	private static final int BLOCK_SIZE = 0xff;
+
 	private final TerminalFactory terminalFactory;
 	private List<CardTerminal> cardTerminalList;
 	private CardChannel cardChannel;
 	private CardTerminal cardTerminal;
 	private Card card;
-	private Locale locale;
+	private Set<String> ppduNames = new HashSet<>();
 
 	private static class ListData {
 		private CardTerminal cardTerminal;
@@ -166,21 +170,14 @@ public class EID extends Observable {
 		}
 	}
 
+	/**
+	 * Constructor - Initializes the terminal factory
+     */
 	public EID() {
 		this.terminalFactory = TerminalFactory.getDefault();
 	}
-	public List<String> getReaderList() throws CardException {
-		List<String> readerList = new LinkedList<String>();
-		TerminalFactory factory = TerminalFactory.getDefault();
-		CardTerminals cardTerminals = factory.terminals();
 
-		List<CardTerminal> cardTerminalList = cardTerminals.list();
-
-		for (CardTerminal cardTerminal : cardTerminalList) {
-			readerList.add(cardTerminal.getName());
-		}
-		return readerList;
-	}
+	// ----- Basic operations ------------------------------------------------------------------------------------------
 	public byte[] readFile(byte[] fileId) throws CardException, IOException {
 		selectFile(fileId);
 		byte[] data = readBinary();
@@ -190,7 +187,6 @@ public class EID extends Observable {
 		// this.card.endExclusive();
 		this.card.disconnect(true);
 	}
-	private static final int BLOCK_SIZE = 0xff;
 	private byte[] readBinary() throws CardException, IOException {
 		int offset = 0;
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -229,9 +225,25 @@ public class EID extends Observable {
 		} while (BLOCK_SIZE == data.length);
 		return baos.toByteArray();
 	}
+	private ResponseAPDU transmit(CommandAPDU commandApdu) throws CardException {
+		ResponseAPDU responseApdu = this.cardChannel.transmit(commandApdu);
+		if (0x6c == responseApdu.getSW1()) {
+			/*
+			 * A minimum delay of 10 msec between the answer ‘6C xx’ and the
+			 * next APDU is mandatory for eID v1.0 and v1.1 cards.
+			 */
+			System.out.println("sleeping...");
+			try {
+				Thread.sleep(10);
+			} catch (InterruptedException e) {
+				throw new RuntimeException("cannot sleep");
+			}
+			responseApdu = this.cardChannel.transmit(commandApdu);
+		}
+		return responseApdu;
+	}
 
-
-	// ----- Getters & Setters ------------------------------------------------
+	// ----- Getters & Setters -----------------------------------------------------------------------------------------
 	public Card getCard() {
 		return this.card;
 	}
@@ -272,8 +284,6 @@ public class EID extends Observable {
 			}
 
 		}
-
-//		this.view.setStatusMessage(Status.NORMAL, MESSAGE_ID.INSERT_CARD_QUESTION);
 
 		Set<CardTerminal> eIDCardTerminals = new HashSet<CardTerminal>();
 		for (CardTerminal cardTerminal : cardTerminalList) {
@@ -344,166 +354,17 @@ public class EID extends Observable {
 		this.card.endExclusive();
 		return true;
 	}
-
-
-	public void waitForCardReader() {
-		try {
-			TerminalFactory terminalFactory = TerminalFactory.getDefault();
-			CardTerminals terminals = terminalFactory.terminals();
-
-			List<CardTerminal> terminalList;
-			try {
-				terminalList = terminals.list();
-			} catch (CardException e) {
-				terminalList = Collections.emptyList();
-			}
-			while (terminalList.isEmpty()) {
-				Thread.sleep(2000);
-				terminals = terminalFactory.terminals();
-				try {
-					terminalList = terminals.list();
-				} catch (CardException e) {
-					terminalList = Collections.emptyList();
-				}
-			}
-
-			this.cardTerminalList = terminalList;
-		} catch (InterruptedException e) {
-			throw new RuntimeException(e);
-		}
-	}
-	private CardTerminal selectCardTerminal(Set<CardTerminal> eIDCardTerminals) throws CardException, IOException {
-		// Multiple eID card detected...
-		DefaultListModel listModel = new DefaultListModel();
-		for (CardTerminal cardTerminal : eIDCardTerminals) {
-			this.cardTerminal = cardTerminal;
-			this.card = this.cardTerminal.connect("T=0");
-			this.card.beginExclusive();
-			this.cardChannel = this.card.getBasicChannel();
-
-			// Reading photo from: " + this.cardTerminal.getName());
-			byte[] photoFile = readFile(PHOTO_FILE_ID);
-			BufferedImage photo = ImageIO.read(new ByteArrayInputStream(photoFile));
-			listModel.addElement(new ListData(cardTerminal, photo));
-
-			this.card.endExclusive(); // SCARD_E_SHARING_VIOLATION fix
-			this.card.disconnect(true);
-		}
-
-		final JDialog dialog = new JDialog((Frame) null, "Select eID card", true);
-		final ListData selectedListData = new ListData(null, null);
-		dialog.setLayout(new BorderLayout());
-
-		JList list = new JList(listModel);
-		list.setCellRenderer(new EidListCellRenderer());
-		dialog.getContentPane().add(list);
-
-		MouseListener mouseListener = new MouseAdapter() {
-
-			@Override
-			public void mouseClicked(MouseEvent mouseEvent) {
-				JList theList = (JList) mouseEvent.getSource();
-				if (mouseEvent.getClickCount() == 2) {
-					int index = theList.locationToIndex(mouseEvent.getPoint());
-					if (index >= 0) {
-						Object object = theList.getModel().getElementAt(index);
-						ListData listData = (ListData) object;
-						selectedListData.cardTerminal = listData.cardTerminal;
-						selectedListData.photo = listData.photo;
-						dialog.dispose();
-					}
-				}
-			}
-		};
-		list.addMouseListener(mouseListener);
-
-		dialog.pack();
-//		dialog.setLocationRelativeTo(this.view.getParentComponent());
-		dialog.setResizable(false);
-		dialog.setAlwaysOnTop(true);
-
-		dialog.setVisible(true);
-
-		return selectedListData.getCardTerminal();
-	}
-	private void selectFile(byte[] fileId) throws CardException, FileNotFoundException {
-//		this.view.addDetailMessage("selecting file");
-		CommandAPDU selectFileApdu = new CommandAPDU(0x00, 0xA4, 0x08, 0x0C, fileId);
-		ResponseAPDU responseApdu = transmit(selectFileApdu);
-		if (0x9000 != responseApdu.getSW()) {
-			throw new FileNotFoundException(
-					"wrong status word after selecting file: " + Integer.toHexString(responseApdu.getSW()));
-		}
-		try {
-			// SCARD_E_SHARING_VIOLATION fix
-			Thread.sleep(20);
-		} catch (InterruptedException e) {
-			throw new RuntimeException("sleep error: " + e.getMessage());
-		}
-	}
-	private boolean matchesEidAtr(ATR atr) {
-		byte[] atrBytes = atr.getBytes();
-		if (atrBytes.length != ATR_PATTERN.length) {
-			return false;
-		}
-		for (int idx = 0; idx < atrBytes.length; idx++) {
-			atrBytes[idx] &= ATR_MASK[idx];
-		}
-		if (Arrays.equals(atrBytes, ATR_PATTERN)) {
-			return true;
-		}
-		return false;
-	}
-	public void waitForEidPresent() throws CardException, InterruptedException {
-		while (true) {
-
-			if (isOSX()) {
-
-				// on OS X, waitForChange does not work to detect a card, only
-				// way is to try to connect to it and see what happens
-//				this.view.addDetailMessage("sleeping...");
-				Thread.sleep(1000);
-				if (isEidPresent()) {
-					return;
-				}
-
-			} else {
-
-				try {
-					terminalFactory.terminals().waitForChange();
-				} catch (CardException e) {
-//					this.view.addDetailMessage("card error: " + e.getMessage());
-					Throwable cause = e.getCause();
-					if (null != cause) {
-						if ("SCARD_E_NO_READERS_AVAILABLE".equals(cause.getMessage())) {
-							/*
-							 * sun.security.smartcardio.PCSCException
-							 *
-							 * Windows platform.
-							 */
-//							this.view.addDetailMessage("no readers available.");
-//							this.view.setStatusMessage(Status.NORMAL, MESSAGE_ID.CONNECT_READER);
-						}
-					}
-//					this.view.addDetailMessage("sleeping...");
-					Thread.sleep(1000);
-				} catch (IllegalStateException e) {
-//					this.view.addDetailMessage("no terminals at all. sleeping...");
-//					this.view.addDetailMessage("Maybe you should connect a smart card reader?");
-					if (System.getProperty("os.name").startsWith("Linux")) {
-//						this.view.addDetailMessage("Maybe the pcscd service is not running?");
-					}
-					Thread.sleep(1000);
-				}
-				Thread.sleep(50); // SCARD_E_SHARING_VIOLATION fix
-				if (isEidPresent()) {
-					return;
-				}
-			}
-		}
-	}
 	public boolean isCardStillPresent() throws CardException {
 		return this.cardTerminal.isCardPresent();
+	}
+	private boolean isPPDUCardTerminal(String name) {
+		name = name.toLowerCase();
+		for (String ppduName : this.ppduNames) {
+			if (name.contains(ppduName)) {
+				return true;
+			}
+		}
+		return false;
 	}
 	private Map<Byte, CCIDFeature> getCCIDFeatures() {
 		final boolean onMsWindows = (System.getProperty("os.name") != null
@@ -597,165 +458,17 @@ public class EID extends Observable {
 			}
 		}
 	}
-	private Set<String> ppduNames = new HashSet<String>();
-	public void addPPDUName(String name) {
-		this.ppduNames.add(name.toLowerCase());
-	}
-	private boolean isPPDUCardTerminal(String name) {
-		name = name.toLowerCase();
-		for (String ppduName : this.ppduNames) {
-			if (name.contains(ppduName)) {
-				return true;
-			}
-		}
-		return false;
-	}
+	public List<String> getReaderList() throws CardException {
+		List<String> readerList = new LinkedList<String>();
+		TerminalFactory factory = TerminalFactory.getDefault();
+		CardTerminals cardTerminals = factory.terminals();
 
-	public void endExclusive() throws CardException {
-		if (isWindows8()) {
-			this.card.endExclusive();
-		}
-	}
-	public void beginExclusive() throws CardException {
-		if (isWindows8()) {
-			this.card.beginExclusive();
-		}
-	}
+		List<CardTerminal> cardTerminalList = cardTerminals.list();
 
-	private ResponseAPDU verifyPin(int retriesLeft, CCIDFeature verifyPinStartFeature,
-			Map<Byte, CCIDFeature> ccidFeatures)
-					throws IOException, CardException, InterruptedException, UserCancelledException {
-//		this.view.addDetailMessage("CCID verify PIN start/end sequence...");
-		byte[] verifyCommandData = createPINVerificationDataStructure(0x20);
-//		this.dialogs.showPINPadFrame(retriesLeft);
-		try {
-			CCIDFeature getKeyPressedFeature = ccidFeatures.get(FEATURE_GET_KEY_PRESSED_TAG);
-			verifyPinStartFeature.transmitByteResponse(verifyCommandData, this.card, this.cardChannel);
-//			ccidWaitForOK(getKeyPressedFeature);
-		} finally {
-//			this.dialogs.disposePINPadFrame();
+		for (CardTerminal cardTerminal : cardTerminalList) {
+			readerList.add(cardTerminal.getName());
 		}
-		CCIDFeature verifyPinFinishIoctl = ccidFeatures.get(FEATURE_VERIFY_PIN_FINISH_TAG);
-		ResponseAPDU responseApdu = verifyPinFinishIoctl.transmit(new byte[0], this.card, this.cardChannel);
-		return responseApdu;
-	}
-	private byte[] createPINVerificationDataStructure(int apduIns) throws IOException {
-		ByteArrayOutputStream verifyCommand = new ByteArrayOutputStream();
-		verifyCommand.write(30); // bTimeOut
-		verifyCommand.write(30); // bTimeOut2
-		verifyCommand.write(0x80 | 0x08 | 0x00 | 0x01); // bmFormatString
-		/*
-		 * bmFormatString. bit 7: 1 = system units are bytes
-		 * 
-		 * bit 6-3: 1 = PIN position in APDU command after Lc, so just after the
-		 * 0x20 | pinSize.
-		 * 
-		 * bit 2: 0 = left justify data
-		 * 
-		 * bit 1-0: 1 = BCD
-		 */
-		verifyCommand.write(0x47); // bmPINBlockString
-		/*
-		 * bmPINBlockString
-		 * 
-		 * bit 7-4: 4 = PIN length
-		 * 
-		 * bit 3-0: 7 = PIN block size (7 times 0xff)
-		 */
-		verifyCommand.write(0x04); // bmPINLengthFormat
-		/*
-		 * bmPINLengthFormat. weird... the values do not make any sense to me.
-		 * 
-		 * bit 7-5: 0 = RFU
-		 * 
-		 * bit 4: 0 = system units are bits
-		 * 
-		 * bit 3-0: 4 = PIN length position in APDU
-		 */
-		verifyCommand.write(new byte[] { (byte) MAX_PIN_SIZE, (byte) MIN_PIN_SIZE }); // wPINMaxExtraDigit
-		/*
-		 * first byte = maximum PIN size in digit
-		 * 
-		 * second byte = minimum PIN size in digit.
-		 */
-		verifyCommand.write(0x02); // bEntryValidationCondition
-		/*
-		 * 0x02 = validation key pressed. So the user must press the green
-		 * button on his pinpad.
-		 */
-		verifyCommand.write(0x01); // bNumberMessage
-		/*
-		 * 0x01 = message with index in bMsgIndex
-		 */
-		verifyCommand.write(new byte[] { getLanguageId(), 0x04 }); // wLangId
-		/*
-		 * 0x04 = default sub-language
-		 */
-		verifyCommand.write(0x00); // bMsgIndex
-		/*
-		 * 0x00 = PIN insertion prompt
-		 */
-		verifyCommand.write(new byte[] { 0x00, 0x00, 0x00 }); // bTeoPrologue
-		/*
-		 * bTeoPrologue : only significant for T=1 protocol.
-		 */
-		byte[] verifyApdu = new byte[] { 0x00, // CLA
-				(byte) apduIns, // INS
-				0x00, // P1
-				0x01, // P2
-				0x08, // Lc = 8 bytes in command data
-				(byte) 0x20, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF,
-				(byte) 0xFF };
-		verifyCommand.write(verifyApdu.length & 0xff); // ulDataLength[0]
-		verifyCommand.write(0x00); // ulDataLength[1]
-		verifyCommand.write(0x00); // ulDataLength[2]
-		verifyCommand.write(0x00); // ulDataLength[3]
-		verifyCommand.write(verifyApdu); // abData
-		byte[] verifyCommandData = verifyCommand.toByteArray();
-		return verifyCommandData;
-	}
-	private byte getLanguageId() {
-		/*
-		 * USB language Ids
-		 */
-		if (Locale.FRENCH.equals(this.locale)) {
-			return 0x0c;
-		}
-		if (Locale.GERMAN.equals(this.locale)) {
-			return 0x07;
-		}
-		String language = this.locale.getLanguage();
-		if ("nl".equals(language)) {
-			return 0x13;
-		}
-		return 0x09; // ENGLISH
-	}
-	private ResponseAPDU verifyPin(int retriesLeft) throws CardException, UserCancelledException {
-//		char[] pin = this.dialogs.getPin(retriesLeft);
-		char [] pin = null;
-		byte[] verifyData = new byte[] { (byte) (0x20 | pin.length), (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF,
-				(byte) 0xFF, (byte) 0xFF, (byte) 0xFF };
-		for (int idx = 0; idx < pin.length; idx += 2) {
-			char digit1 = pin[idx];
-			char digit2;
-			if (idx + 1 < pin.length) {
-				digit2 = pin[idx + 1];
-			} else {
-				digit2 = '0' + 0xf;
-			}
-			byte value = (byte) (byte) ((digit1 - '0' << 4) + (digit2 - '0'));
-			verifyData[idx / 2 + 1] = value;
-		}
-		Arrays.fill(pin, (char) 0); // minimize exposure
-
-//		this.view.addDetailMessage("verifying PIN...");
-		CommandAPDU verifyApdu = new CommandAPDU(0x00, 0x20, 0x00, 0x01, verifyData);
-		try {
-			ResponseAPDU responseApdu = transmit(verifyApdu);
-			return responseApdu;
-		} finally {
-			Arrays.fill(verifyData, (byte) 0); // minimize exposure
-		}
+		return readerList;
 	}
 	public List<X509Certificate> getSignCertificateChain() throws CardException, IOException, CertificateException {
 		List<X509Certificate> signCertificateChain = new LinkedList<X509Certificate>();
@@ -780,29 +493,171 @@ public class EID extends Observable {
 
 		return signCertificateChain;
 	}
-	private ResponseAPDU transmit(CommandAPDU commandApdu) throws CardException {
-		ResponseAPDU responseApdu = this.cardChannel.transmit(commandApdu);
-		if (0x6c == responseApdu.getSW1()) {
-			/*
-			 * A minimum delay of 10 msec between the answer ‘6C xx’ and the
-			 * next APDU is mandatory for eID v1.0 and v1.1 cards.
-			 */
-//			this.view.addDetailMessage("sleeping...");
-			try {
-				Thread.sleep(10);
-			} catch (InterruptedException e) {
-				throw new RuntimeException("cannot sleep");
+
+	// ----- Wait for --------------------------------------------------------------------------------------------------
+	public void waitForEidPresent() throws CardException, InterruptedException {
+		while (true) {
+
+			if (isOSX()) {
+
+				// on OS X, waitForChange does not work to detect a card, only
+				// way is to try to connect to it and see what happens
+//				this.view.addDetailMessage("sleeping...");
+				Thread.sleep(1000);
+				if (isEidPresent()) {
+					return;
+				}
+
+			} else {
+
+				try {
+					terminalFactory.terminals().waitForChange();
+				} catch (CardException e) {
+//					this.view.addDetailMessage("card error: " + e.getMessage());
+					Throwable cause = e.getCause();
+					if (null != cause) {
+						if ("SCARD_E_NO_READERS_AVAILABLE".equals(cause.getMessage())) {
+							/*
+							 * sun.security.smartcardio.PCSCException
+							 *
+							 * Windows platform.
+							 */
+//							this.view.addDetailMessage("no readers available.");
+//							this.view.setStatusMessage(Status.NORMAL, MESSAGE_ID.CONNECT_READER);
+						}
+					}
+//					this.view.addDetailMessage("sleeping...");
+					Thread.sleep(1000);
+				} catch (IllegalStateException e) {
+//					this.view.addDetailMessage("no terminals at all. sleeping...");
+//					this.view.addDetailMessage("Maybe you should connect a smart card reader?");
+					if (System.getProperty("os.name").startsWith("Linux")) {
+//						this.view.addDetailMessage("Maybe the pcscd service is not running?");
+					}
+					Thread.sleep(1000);
+				}
+				Thread.sleep(50); // SCARD_E_SHARING_VIOLATION fix
+				if (isEidPresent()) {
+					return;
+				}
 			}
-			responseApdu = this.cardChannel.transmit(commandApdu);
 		}
-		return responseApdu;
 	}
+	public void waitForCardReader() {
+		try {
+			TerminalFactory terminalFactory = TerminalFactory.getDefault();
+			CardTerminals terminals = terminalFactory.terminals();
+
+			List<CardTerminal> terminalList;
+			try {
+				terminalList = terminals.list();
+			} catch (CardException e) {
+				terminalList = Collections.emptyList();
+			}
+			while (terminalList.isEmpty()) {
+				Thread.sleep(2000);
+				terminals = terminalFactory.terminals();
+				try {
+					terminalList = terminals.list();
+				} catch (CardException e) {
+					terminalList = Collections.emptyList();
+				}
+			}
+
+			this.cardTerminalList = terminalList;
+		} catch (InterruptedException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	private CardTerminal selectCardTerminal(Set<CardTerminal> eIDCardTerminals) throws CardException, IOException {
+		// Multiple eID card detected...
+		DefaultListModel listModel = new DefaultListModel();
+		for (CardTerminal cardTerminal : eIDCardTerminals) {
+			this.cardTerminal = cardTerminal;
+			this.card = this.cardTerminal.connect("T=0");
+			this.card.beginExclusive();
+			this.cardChannel = this.card.getBasicChannel();
+
+			// Reading photo from: " + this.cardTerminal.getName());
+			byte[] photoFile = readFile(PHOTO_FILE_ID);
+			BufferedImage photo = ImageIO.read(new ByteArrayInputStream(photoFile));
+			listModel.addElement(new ListData(cardTerminal, photo));
+
+			this.card.endExclusive(); // SCARD_E_SHARING_VIOLATION fix
+			this.card.disconnect(true);
+		}
+
+		final JDialog dialog = new JDialog((Frame) null, "Select eID card", true);
+		final ListData selectedListData = new ListData(null, null);
+		dialog.setLayout(new BorderLayout());
+
+		JList list = new JList(listModel);
+		list.setCellRenderer(new EidListCellRenderer());
+		dialog.getContentPane().add(list);
+
+		MouseListener mouseListener = new MouseAdapter() {
+
+			@Override
+			public void mouseClicked(MouseEvent mouseEvent) {
+				JList theList = (JList) mouseEvent.getSource();
+				if (mouseEvent.getClickCount() == 2) {
+					int index = theList.locationToIndex(mouseEvent.getPoint());
+					if (index >= 0) {
+						Object object = theList.getModel().getElementAt(index);
+						ListData listData = (ListData) object;
+						selectedListData.cardTerminal = listData.cardTerminal;
+						selectedListData.photo = listData.photo;
+						dialog.dispose();
+					}
+				}
+			}
+		};
+		list.addMouseListener(mouseListener);
+
+		dialog.pack();
+//		dialog.setLocationRelativeTo(this.view.getParentComponent());
+		dialog.setResizable(false);
+		dialog.setAlwaysOnTop(true);
+
+		dialog.setVisible(true);
+
+		return selectedListData.getCardTerminal();
+	}
+	private void selectFile(byte[] fileId) throws CardException, FileNotFoundException {
+//		this.view.addDetailMessage("selecting file");
+		CommandAPDU selectFileApdu = new CommandAPDU(0x00, 0xA4, 0x08, 0x0C, fileId);
+		ResponseAPDU responseApdu = transmit(selectFileApdu);
+		if (0x9000 != responseApdu.getSW()) {
+			throw new FileNotFoundException(
+					"wrong status word after selecting file: " + Integer.toHexString(responseApdu.getSW()));
+		}
+		try {
+			// SCARD_E_SHARING_VIOLATION fix
+			Thread.sleep(20);
+		} catch (InterruptedException e) {
+			throw new RuntimeException("sleep error: " + e.getMessage());
+		}
+	}
+	private boolean matchesEidAtr(ATR atr) {
+		byte[] atrBytes = atr.getBytes();
+		if (atrBytes.length != ATR_PATTERN.length) {
+			return false;
+		}
+		for (int idx = 0; idx < atrBytes.length; idx++) {
+			atrBytes[idx] &= ATR_MASK[idx];
+		}
+		if (Arrays.equals(atrBytes, ATR_PATTERN)) {
+			return true;
+		}
+		return false;
+	}
+	public void addPPDUName(String name) {
+		this.ppduNames.add(name.toLowerCase());
+	}
+
 	// ----- Sign ------------------------------------------------------------------------------------------------------
 	public void prepareSigning (String digestAlgo, byte keyId) throws CardException {
-//		if (requireSecureReader && null == directPinVerifyFeature && null == verifyPinStartFeature) {
-//			throw new SecurityException("not a secure reader");
-//		}
-
 		// select the key
 		byte algoRef;
 		if ("SHA-1-PSS".equals(digestAlgo)) {
@@ -896,7 +751,8 @@ public class EID extends Observable {
 //		return signatureValue;
 		return null;
 	}
-	// ----- PIN -------------------------------------------------------------------------------------------------------
+
+	// ----- PIN validity check ----------------------------------------------------------------------------------------
 	public boolean isPinValid (char[] pin) throws CardException, UserCancelledException {
 		if (isWindows8()) {
 			this.card.endExclusive();
@@ -923,7 +779,6 @@ public class EID extends Observable {
 		return true;
 	}
 	private ResponseAPDU verifyPin(char[] pin, int retriesLeft) throws CardException, UserCancelledException {
-
 		byte[] verifyData = new byte[] { (byte) (0x20 | pin.length), (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF,
 				(byte) 0xFF, (byte) 0xFF, (byte) 0xFF };
 		for (int idx = 0; idx < pin.length; idx += 2) {
@@ -948,26 +803,8 @@ public class EID extends Observable {
 			Arrays.fill(verifyData, (byte) 0); // minimize exposure
 		}
 	}
-	private ResponseAPDU verifyPinDirect(int retriesLeft, CCIDFeature directPinVerifyFeature)
-			throws IOException, CardException, UserCancelledException {
-//		this.view.addDetailMessage("direct PIN verification...");
-		byte[] verifyCommandData = createPINVerificationDataStructure(0x20);
-//		this.dialogs.showPINPadFrame(retriesLeft);
-		ResponseAPDU responseApdu;
-		try {
-			responseApdu = directPinVerifyFeature.transmit(verifyCommandData, this.card, this.cardChannel);
-		} finally {
-//			this.dialogs.disposePINPadFrame();
-		}
-		if (0x6401 == responseApdu.getSW()) {
-//			this.view.addDetailMessage("canceled by user");
-			throw new UserCancelledException();
-		} else if (0x6400 == responseApdu.getSW()) {
-//			this.view.addDetailMessage("PIN pad timeout");
-		}
-		return responseApdu;
-	}
-	// ----- Utilities -------------------------------------------------------------------------------------------------
+
+	// ----- Platform check --------------------------------------------------------------------------------------------
 	public boolean isOSX() {
 		String osName = System.getProperty("os.name");
 		return osName.contains("OS X");

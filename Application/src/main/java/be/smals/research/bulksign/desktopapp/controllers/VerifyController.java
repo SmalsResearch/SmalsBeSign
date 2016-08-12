@@ -215,7 +215,7 @@ public class VerifyController extends Controller {
         List<File> files = this.fileChooser.showOpenMultipleDialog(this.stage);
         if (files != null) {
             files.stream().filter(file -> !this.filesToVerify.contains(file)).forEach(file -> this.filesToVerify.add(file));
-            this.filesToSignCount.textProperty().set(this.filesToVerify.size() +" file(s) to verify");
+            this.filesToSignCount.textProperty().set(this.filesToVerify.size() +" file(s)");
             this.populateListView();
         }
     }
