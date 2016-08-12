@@ -31,6 +31,26 @@ public class Main extends Application {
         controller.setStage(primaryStage);
         BorderPane root         = controller.getRoot();
 
+        // ----- TOP ---------------------------------------------------------------------------------------------------
+        createTop(controller, root);
+
+        // ----- BOTTOM ------------------------------------------------------------------------------------------------
+        root.setBottom(new StatusBar());
+
+        // ----- CENTER ------------------------------------------------------------------------------------------------
+        createCenter (controller, root);
+
+        primaryStage.setScene(new Scene(masterPane, 800, 480));
+        primaryStage.show();
+    }
+
+    /**
+     * Creates TOP components : the menu bar and defines actions
+     *
+     * @param controller the main controller
+     * @param root the root pane
+     */
+    private void createTop(MainController controller, BorderPane root) {
         MenuBar menuBar         = new MenuBar();
         Menu fileMenu           = new Menu("File");
         Menu taskMenu           = new Menu("Task");
@@ -67,11 +87,15 @@ public class Main extends Application {
                 Settings.getInstance().setSigner(signer);
             }
         });
+    }
 
-        root.setBottom(new StatusBar());
-
-        primaryStage.setScene(new Scene(masterPane, 800, 480));
-        primaryStage.show();
+    /**
+     *  Creates home screen
+     * @param controller
+     * @param root
+     */
+    private void createCenter (MainController controller, BorderPane root) {
+        Platform.runLater( () -> controller.homeMenuItemAction ());
     }
 
     @Override

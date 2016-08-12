@@ -34,7 +34,7 @@
     -fx-font-size: 14px;
     -fx-button-type: RAISED;
     -fx-background-color:  #5cb85c;
-    -fx-pref-width: 200;
+    -fx-pref-width: 180;
     -fx-text-fill: WHITE;
 }
 .button-raised-warning {
@@ -42,7 +42,7 @@
     -fx-font-size: 14px;
     -fx-button-type: RAISED;
     -fx-background-color:  #f0ad4e;
-    -fx-pref-width: 200;
+    -fx-pref-width: 180;
     -fx-text-fill: WHITE;
 }
 .button-raised-danger {
@@ -50,7 +50,7 @@
     -fx-font-size: 14px;
     -fx-button-type: RAISED;
     -fx-background-color:  #d9534f;
-    -fx-pref-width: 200;
+    -fx-pref-width: 180;
     -fx-text-fill: WHITE;
 }
 
@@ -79,6 +79,41 @@
     -fx-font-size: 12px;
     -fx-button-type: FLAT;
     -fx-background-color:  #d9534f;
+    -fx-text-fill: WHITE;
+}
+/*
+----- button-l
+*/
+.button-l {
+    -fx-padding: 0.7em 0.57em;
+    -fx-font-size: 14px;
+    -fx-button-type: FLAT;
+    -fx-background-color:  #52BBFE;
+    -fx-pref-width: 200;
+    -fx-text-fill: WHITE;
+}
+.button-l-success {
+    -fx-padding: 0.7em 0.57em;
+    -fx-font-size: 14px;
+    -fx-button-type: FLAT;
+    -fx-background-color:  #5cb85c;
+    -fx-pref-width: 200;
+    -fx-text-fill: WHITE;
+}
+.button-l-warning {
+    -fx-padding: 0.7em 0.57em;
+    -fx-font-size: 14px;
+    -fx-button-type: FLAT;
+    -fx-background-color:  #f0ad4e;
+    -fx-pref-width: 200;
+    -fx-text-fill: WHITE;
+}
+.button-l-danger {
+    -fx-padding: 0.7em 0.57em;
+    -fx-font-size: 14px;
+    -fx-button-type: FLAT;
+    -fx-background-color:  #d9534f;
+    -fx-pref-width: 200;
     -fx-text-fill: WHITE;
 }
 

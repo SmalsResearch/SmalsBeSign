@@ -1,59 +1,72 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import com.jfoenix.controls.JFXButton?>
 <?import com.jfoenix.controls.JFXDialog?>
 <?import com.jfoenix.controls.JFXDialogLayout?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-<StackPane fx:id="masterSign" xmlns="http://javafx.com/javafx/8.0.101" xmlns:fx="http://javafx.com/fxml/1" fx:controller="be.smals.research.bulksign.desktopapp.controllers.SignController">
+<StackPane fx:id="masterSign" xmlns="http://javafx.com/javafx/8.0.101" xmlns:fx="http://javafx.com/fxml/1" fx:controller="be.smals.research.bulksign.desktopapp.controllers.HomeController">
    <children>
       <GridPane fx:id="rootSign" stylesheets="@css/common.css">
           <columnConstraints>
-              <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" percentWidth="30.0" />
-              <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" percentWidth="5.0" />
-              <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" percentWidth="65.0" />
+              <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" percentWidth="100.0" />
           </columnConstraints>
           <rowConstraints>
-              <RowConstraints percentHeight="10.0" valignment="CENTER" vgrow="SOMETIMES" />
+              <RowConstraints percentHeight="20.0" valignment="CENTER" vgrow="SOMETIMES" />
+              <RowConstraints percentHeight="5.0" valignment="CENTER" vgrow="SOMETIMES" />
               <RowConstraints percentHeight="75.0" valignment="CENTER" vgrow="SOMETIMES" />
-              <RowConstraints percentHeight="15.0" valignment="CENTER" vgrow="SOMETIMES" />
           </rowConstraints>
           <children>
-              <Label text="Hello, you are at home"/>
+              <Label alignment="CENTER" contentDisplay="CENTER" text="BULK SIGN DESKTOP" textAlignment="CENTER" textFill="#52bbfe" wrapText="true">
+               <font>
+                  <Font name="Calibri" size="48.0" />
+               </font></Label>
               <JFXDialog fx:id="infoDialog">
                   <JFXDialogLayout>
                       <heading>
-                          <Label fx:id="infoDialogTitle" styleClass="color-info"></Label>
+                          <Label fx:id="infoDialogTitle" styleClass="color-info" />
                       </heading>
                       <body>
-                          <Label fx:id="infoDialogBody"></Label>
+                          <Label fx:id="infoDialogBody" />
                       </body>
                   </JFXDialogLayout>
             </JFXDialog>
               <JFXDialog fx:id="errorDialog">
                   <JFXDialogLayout>
                       <heading>
-                          <Label id="errorDialogTitle" fx:id="errorDialogTitle" styleClass="color-danger"></Label>
+                          <Label id="errorDialogTitle" fx:id="errorDialogTitle" styleClass="color-danger" />
                       </heading>
                       <body>
-                          <Label id="errorDialogBody" fx:id="errorDialogBody"></Label>
+                          <Label id="errorDialogBody" fx:id="errorDialogBody" />
                       </body>
                   </JFXDialogLayout>
               </JFXDialog>
               <JFXDialog fx:id="successDialog">
                   <JFXDialogLayout>
                       <heading>
-                          <Label id="successDialogTitle" styleClass="color-success"></Label>
+                          <Label id="successDialogTitle" styleClass="color-success" />
                       </heading>
                       <body>
-                          <Label id="successDialogBody"></Label>
+                          <Label id="successDialogBody" />
                       </body>
                   </JFXDialogLayout>
               </JFXDialog>
+            <Separator GridPane.rowIndex="1" />
+            <VBox alignment="CENTER" GridPane.rowIndex="2">
+               <children>
+                  <JFXButton mnemonicParsing="false" styleClass="button-l" text="Sign files" />
+                  <JFXButton mnemonicParsing="false" styleClass="button-l" text="Verify signed files" />
+                  <JFXButton mnemonicParsing="false" styleClass="button-l-danger" text="Exit" />
+               </children>
+            </VBox>
           </children>
           <padding>
               <Insets bottom="24.0" left="24.0" right="24.0" top="24.0" />

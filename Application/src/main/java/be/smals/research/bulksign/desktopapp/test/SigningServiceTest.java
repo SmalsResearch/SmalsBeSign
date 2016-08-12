@@ -57,7 +57,7 @@ public class SigningServiceTest {
             filesToSign[3] = new FileInputStream(new File(getClass().getClassLoader().getResource("testFiles/file.txt").getPath()));
             filesToSign[4] = new FileInputStream(new File(getClass().getClassLoader().getResource("testFiles/file.txt").getPath()));
 
-            byte[] signature = this.signingService.sign(filesToSign);
+            byte[] signature = this.signingService.signWithMock(filesToSign);
 
             Assert.assertNotNull(signature);
 
