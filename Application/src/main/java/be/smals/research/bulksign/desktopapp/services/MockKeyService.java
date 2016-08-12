@@ -13,7 +13,6 @@ import java.security.*;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateParsingException;
 import java.security.cert.X509Certificate;
-import java.security.spec.InvalidKeySpecException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -130,10 +129,6 @@ public class MockKeyService extends KeyService {
     }
     public PublicKey getPublicKey() {
         return this.publicKey;
-    }
-    @Override
-    public PublicKey getPublicKey(BigInteger modulus, BigInteger publicExponent) throws NoSuchAlgorithmException, InvalidKeySpecException {
-        return null;
     }
     @Override
     public List<X509Certificate> getCertificateChain () {
