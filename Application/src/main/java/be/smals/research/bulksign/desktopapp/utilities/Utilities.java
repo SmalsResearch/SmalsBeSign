@@ -9,6 +9,9 @@ import java.security.NoSuchAlgorithmException;
 public class Utilities {
     private static Utilities ourInstance = new Utilities();
 
+    /**
+     * Constructor
+     */
     private Utilities() {}
     public static Utilities getInstance() {
         return ourInstance;

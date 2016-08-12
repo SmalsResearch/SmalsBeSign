@@ -3,7 +3,7 @@ package be.smals.research.bulksign.desktopapp.abstracts;
 import javafx.stage.Stage;
 
 /**
- * Created by cea on 09/08/2016.
+ * Controllers superclass
  */
 public abstract class Controller {
 

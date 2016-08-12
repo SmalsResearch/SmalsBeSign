@@ -57,15 +57,10 @@ public class Main extends Application {
         helpMenu.getItems().addAll(aboutMenuItem);
         root.setTop(menuBar);
 
-        exitMenuItem.setOnAction(event -> {
-            controller.exitMenuItemAction ();
-        });
-        signMenuItem.setOnAction( event -> {
-            controller.signMenuItemAction ();
-        });
-        verifyMenuItem.setOnAction( event -> {
-            controller.verifyMenuItemAction ();
-        });
+        exitMenuItem.setOnAction(event -> controller.exitMenuItemAction ());
+        signMenuItem.setOnAction( event -> controller.signMenuItemAction ());
+        verifyMenuItem.setOnAction( event -> controller.verifyMenuItemAction ());
+        homeMenuItem.setOnAction( event -> controller.homeMenuItemAction());
         signerGroup.selectedToggleProperty().addListener((ov, old_toggle, new_toggle) -> {
             if (signerGroup.getSelectedToggle() != null) {
                 Settings.Signer signer = (Settings.Signer) signerGroup.getSelectedToggle().getUserData();

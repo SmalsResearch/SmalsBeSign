@@ -288,6 +288,17 @@ public class SignController extends Controller{
         for (FileInputStream file : inputFiles)
             file.close();
     }
+
+    /**
+     * Performs signing with eID card process
+     *
+     * @param selectedFiles files to sign
+     * @throws CardException
+     * @throws CertificateException
+     * @throws IOException
+     * @throws ParserConfigurationException
+     * @throws TransformerException
+     */
     private void signWithEID(List<File> selectedFiles)
             throws CardException, CertificateException, IOException, ParserConfigurationException, TransformerException {
 

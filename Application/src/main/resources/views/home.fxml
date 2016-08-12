@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXDialog?>
+<?import com.jfoenix.controls.JFXDialogLayout?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.StackPane?>
+
+<StackPane fx:id="masterSign" xmlns="http://javafx.com/javafx/8.0.101" xmlns:fx="http://javafx.com/fxml/1" fx:controller="be.smals.research.bulksign.desktopapp.controllers.SignController">
+   <children>
+      <GridPane fx:id="rootSign" stylesheets="@css/common.css">
+          <columnConstraints>
+              <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" percentWidth="30.0" />
+              <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" percentWidth="5.0" />
+              <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" percentWidth="65.0" />
+          </columnConstraints>
+          <rowConstraints>
+              <RowConstraints percentHeight="10.0" valignment="CENTER" vgrow="SOMETIMES" />
+              <RowConstraints percentHeight="75.0" valignment="CENTER" vgrow="SOMETIMES" />
+              <RowConstraints percentHeight="15.0" valignment="CENTER" vgrow="SOMETIMES" />
+          </rowConstraints>
+          <children>
+              <Label text="Hello, you are at home"/>
+              <JFXDialog fx:id="infoDialog">
+                  <JFXDialogLayout>
+                      <heading>
+                          <Label fx:id="infoDialogTitle" styleClass="color-info"></Label>
+                      </heading>
+                      <body>
+                          <Label fx:id="infoDialogBody"></Label>
+                      </body>
+                  </JFXDialogLayout>
+            </JFXDialog>
+              <JFXDialog fx:id="errorDialog">
+                  <JFXDialogLayout>
+                      <heading>
+                          <Label id="errorDialogTitle" fx:id="errorDialogTitle" styleClass="color-danger"></Label>
+                      </heading>
+                      <body>
+                          <Label id="errorDialogBody" fx:id="errorDialogBody"></Label>
+                      </body>
+                  </JFXDialogLayout>
+              </JFXDialog>
+              <JFXDialog fx:id="successDialog">
+                  <JFXDialogLayout>
+                      <heading>
+                          <Label id="successDialogTitle" styleClass="color-success"></Label>
+                      </heading>
+                      <body>
+                          <Label id="successDialogBody"></Label>
+                      </body>
+                  </JFXDialogLayout>
+              </JFXDialog>
+          </children>
+          <padding>
+              <Insets bottom="24.0" left="24.0" right="24.0" top="24.0" />
+          </padding>
+      </GridPane>
+   </children>
+</StackPane>
