@@ -1,29 +1,27 @@
 package be.smals.research.bulksign.desktopapp.controllers;
 
-import be.smals.research.bulksign.desktopapp.abstracts.Controller;
-import com.jfoenix.controls.JFXDialog;
 import javafx.application.Platform;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.Optional;
 
 /**
  * Main screen controller
  *
  * Handles events from main screen
  */
-public class MainController extends Controller {
+public class MainController {
 
     private Stage stage;
-    @FXML private BorderPane root;
-    @FXML private JFXDialog exitDialog;
-    @FXML private StackPane masterPane;
+    @FXML
+    private BorderPane root;
 
     /**
      * Constructor
@@ -39,6 +37,7 @@ public class MainController extends Controller {
         exitDialog.setTransitionType(JFXDialog.DialogTransition.TOP);
         exitDialog.show(masterPane);
     }
+
     public void signMenuItemAction() {
         FXMLLoader signViewLoader = new FXMLLoader(getClass().getClassLoader().getResource("views/sign.fxml"));
         try {
