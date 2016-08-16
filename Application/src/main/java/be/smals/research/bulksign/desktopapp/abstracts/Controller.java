@@ -1,5 +1,6 @@
 package be.smals.research.bulksign.desktopapp.abstracts;
 
+import be.smals.research.bulksign.desktopapp.controllers.MainController;
 import com.jfoenix.controls.JFXDialog;
 import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
@@ -10,8 +11,11 @@ import javafx.stage.Stage;
  */
 public abstract class Controller {
     protected Stage stage;
-    public void setStage (Stage stage) {
-        this.stage = stage;
+    protected MainController mainController;
+
+    public void initController(MainController mainController, Stage stage) {
+        this.mainController     = mainController;
+        this.stage              = stage;
     }
     public void showInfoDialog (JFXDialog dialog, StackPane masterPane, String title, String message) {
         dialog.show(masterPane);

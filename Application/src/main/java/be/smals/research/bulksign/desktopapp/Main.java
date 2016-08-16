@@ -29,7 +29,7 @@ public class Main extends Application {
         primaryStage.setTitle("BulkSign Desktop");
 
         MainController controller = loader.getController();
-        controller.setStage(primaryStage);
+        controller.initController(controller, primaryStage);
         BorderPane root         = controller.getRoot();
 
         // ----- TOP ---------------------------------------------------------------------------------------------------

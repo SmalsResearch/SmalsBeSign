@@ -71,8 +71,8 @@ public class VerifyController extends Controller {
     /**
      * {@inheritDoc}
      */
-    @Override public void setStage (Stage stage) {
-        super.setStage(stage);
+    @Override public void initController(MainController mainController, Stage stage) {
+        super.initController(mainController, stage);
         this.viewerFx = new OpenViewerFX(readerPane, getClass().getClassLoader().getResource("lib/OpenViewerFx/preferences/custom.xml").getPath());
         this.viewerFx.getRoot().prefWidthProperty().bind(readerPane.widthProperty());
         this.viewerFx.getRoot().prefHeightProperty().bind(readerPane.heightProperty());

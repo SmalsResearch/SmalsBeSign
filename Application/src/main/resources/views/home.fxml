@@ -25,7 +25,7 @@
               <RowConstraints percentHeight="75.0" valignment="CENTER" vgrow="SOMETIMES" />
           </rowConstraints>
           <children>
-              <Label alignment="CENTER" contentDisplay="CENTER" text="BULK SIGN DESKTOP" textAlignment="CENTER" textFill="#52bbfe" wrapText="true">
+              <Label alignment="CENTER" contentDisplay="CENTER" text="BULKSIGN DESKTOP" textAlignment="CENTER" textFill="#52bbfe" wrapText="true">
                <font>
                   <Font name="Calibri" size="48.0" />
                </font></Label>

@@ -33,8 +33,8 @@ public class MainController extends Controller{
      * {@inheritDoc}
      */
     @Override
-    public void setStage(Stage stage) {
-        super.setStage(stage);
+    public void initController(MainController mainController, Stage stage) {
+        super.initController(this, stage);
     }
     public BorderPane getRoot () {
         return this.root;
@@ -52,7 +52,7 @@ public class MainController extends Controller{
             root.setCenter(signPane);
 
             SignController signController = signViewLoader.getController();
-            signController.setStage(this.stage);
+            signController.initController(this.mainController, this.stage);
         } catch (IOException e1) {
             e1.printStackTrace();
         }
@@ -64,7 +64,7 @@ public class MainController extends Controller{
             root.setCenter(verifyPane);
 
             VerifyController verifyController = verifyViewLoader.getController();
-            verifyController.setStage(this.stage);
+            verifyController.initController(this.mainController, this.stage);
         } catch (IOException e1) {
             e1.printStackTrace();
         }
@@ -76,7 +76,7 @@ public class MainController extends Controller{
             root.setCenter(homePane);
 
             HomeController homeController = homeViewLoader.getController();
-            homeController.setStage(this.stage);
+            homeController.initController(this.mainController, this.stage);
         } catch (IOException e1) {
             e1.printStackTrace();
         }

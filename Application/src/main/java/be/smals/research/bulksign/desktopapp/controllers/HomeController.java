@@ -28,15 +28,20 @@ public class HomeController extends Controller{
      * {@inheritDoc}
      */
     @Override
-    public void setStage (Stage stage) {
-        super.setStage(stage);
+    public void initController(MainController mainController, Stage stage) {
+        super.initController(mainController, stage);
         // Setup dialogs
         this.infoDialog.setTransitionType(JFXDialog.DialogTransition.TOP);
         this.errorDialog.setTransitionType(JFXDialog.DialogTransition.TOP);
         this.successDialog.setTransitionType(JFXDialog.DialogTransition.TOP);
     }
-    @FXML public void handleSignButtonAction(ActionEvent event) {
+    @FXML public void handleVerifyButtonAction(ActionEvent event) {
+        this.mainController.verifyMenuItemAction();
     }
-    @FXML public void handleVerifyButtonAction(ActionEvent event) {}
-    @FXML public void handleExitButtonAction(ActionEvent event) {}
+    @FXML public void handleExitButtonAction(ActionEvent event) {
+        this.mainController.exitMenuItemAction();
+    }
+    @FXML public void handleSignButtonAction(ActionEvent event) {
+        this.mainController.signMenuItemAction();
+    }
 }
