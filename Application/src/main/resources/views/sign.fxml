@@ -13,7 +13,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.StackPane?>
 
-<StackPane fx:id="masterSign" xmlns="http://javafx.com/javafx/8.0.101" xmlns:fx="http://javafx.com/fxml/1" fx:controller="be.smals.research.bulksign.desktopapp.controllers.SignController">
+<StackPane fx:id="masterSign" xmlns="http://javafx.com/javafx/8.0.45" xmlns:fx="http://javafx.com/fxml/1" fx:controller="be.smals.research.bulksign.desktopapp.controllers.SignController">
    <children>
       <GridPane fx:id="rootSign" stylesheets="@css/common.css">
           <columnConstraints>
