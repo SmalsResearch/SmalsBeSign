@@ -17,7 +17,7 @@
  * http://www.gnu.org/licenses/.
  */
 
-package be.smals.research.bulksign.desktopapp;
+package be.smals.research.bulksign.desktopapp.eid;
 
 import be.smals.research.bulksign.desktopapp.eid.external.UserCancelledException;
 import be.smals.research.bulksign.desktopapp.eid.external.sc.Constants;

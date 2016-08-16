@@ -2,7 +2,6 @@ package be.smals.research.bulksign.desktopapp.controllers;
 
 import be.smals.research.bulksign.desktopapp.abstracts.Controller;
 import com.jfoenix.controls.JFXDialog;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
@@ -35,13 +34,25 @@ public class HomeController extends Controller{
         this.errorDialog.setTransitionType(JFXDialog.DialogTransition.TOP);
         this.successDialog.setTransitionType(JFXDialog.DialogTransition.TOP);
     }
-    @FXML public void handleVerifyButtonAction(ActionEvent event) {
+
+    /**
+     * Verify signed files button action - Used to change screen to Verify screen
+     */
+    @FXML public void handleVerifyButtonAction() {
         this.mainController.verifyMenuItemAction();
     }
-    @FXML public void handleExitButtonAction(ActionEvent event) {
+
+    /**
+     * Exit button action - Used to perform exit application
+     */
+    @FXML public void handleExitButtonAction() {
         this.mainController.exitMenuItemAction();
     }
-    @FXML public void handleSignButtonAction(ActionEvent event) {
+
+    /**
+     * Sign files button action - Used to change screen to Sign screen
+     */
+    @FXML public void handleSignButtonAction() {
         this.mainController.signMenuItemAction();
     }
 }

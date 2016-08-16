@@ -1,6 +1,6 @@
 package be.smals.research.bulksign.desktopapp.ui;
 
-import be.smals.research.bulksign.desktopapp.eid.EIDServiceObserver;
+import be.smals.research.bulksign.desktopapp.abstracts.EIDServiceObserver;
 import be.smals.research.bulksign.desktopapp.services.EIDService;
 import be.smals.research.bulksign.desktopapp.utilities.Message.MessageType;
 import be.smals.research.bulksign.desktopapp.utilities.Settings;

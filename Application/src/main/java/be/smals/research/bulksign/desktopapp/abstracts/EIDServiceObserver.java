@@ -1,7 +1,7 @@
-package be.smals.research.bulksign.desktopapp.eid;
+package be.smals.research.bulksign.desktopapp.abstracts;
 
 /**
- * Created by kova on 09/08/2016.
+ * EIDService observer interface
  */
 public interface EIDServiceObserver {
 
@@ -9,9 +9,14 @@ public interface EIDServiceObserver {
      * Called when the eID controller needs the user's pincode
      */
     void getPinCode();
+
     /**
      * Alerts the Observer that an operation was called requiring a card reader, but no reader was detected.
      */
     void cardReaderNeeded();
+
+    /**
+     * Alerts that eID card is needed
+     */
     void cardNeeded();
 }

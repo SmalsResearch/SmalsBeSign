@@ -124,20 +124,13 @@ public class SignController extends Controller{
             try {
                 SigningOutput signingOutput = new SigningOutput(null, signature, certificateChain);
                 this.signingService.saveSigningOutput(signingOutput, fileToSave.getPath());
-                successDialog.show(masterSign);
-                Label title     = (Label) this.stage.getScene().lookup("#successDialogTitle");
-                Label body      = (Label) this.stage.getScene().lookup("#successDialogBody");
-                body.setText("Signature successfully saved!\nThe signature file can be found at "+fileToSave.getPath());
-                title.setText("File saved!");
+                this.showSuccessDialog(successDialog, masterSign, "File saved!",
+                        "Signature successfully saved!\nThe signature file can be found at "+fileToSave.getPath());
             } catch (CertificateEncodingException e) {
                 e.printStackTrace();
             }
         } else {
-            errorDialog.show(masterSign);
-            Label title     = (Label) this.stage.getScene().lookup("#errorDialogTitle");
-            Label body      = (Label) this.stage.getScene().lookup("#errorDialogBody");
-            body.setText("Nothing is saved from your last signing request.");
-            title.setText("Save aborted");
+            this.showErrorDialog(errorDialog, masterSign, "Save aborted!", "Nothing is saved from your last signing request.");
         }
     }
     /**
@@ -318,7 +311,7 @@ public class SignController extends Controller{
                 for (FileInputStream file : inputFiles)
                     file.close();
 
-                EIDService.getInstance().close();
+//                EIDService.getInstance().close();
             }
         }
     }

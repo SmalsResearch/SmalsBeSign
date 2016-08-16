@@ -13,10 +13,25 @@ public abstract class Controller {
     protected Stage stage;
     protected MainController mainController;
 
+    /**
+     * Gives to controllers access to the main stage and controller
+     *
+     * @param mainController
+     * @param stage
+     */
     public void initController(MainController mainController, Stage stage) {
         this.mainController     = mainController;
         this.stage              = stage;
     }
+
+    /**
+     * Displays a classic InfoDialog
+     *
+     * @param dialog
+     * @param masterPane
+     * @param title
+     * @param message
+     */
     public void showInfoDialog (JFXDialog dialog, StackPane masterPane, String title, String message) {
         dialog.show(masterPane);
         Label titleLabel     = (Label) this.stage.getScene().lookup("#infoDialogTitle");
@@ -24,6 +39,15 @@ public abstract class Controller {
         titleLabel.setText(title);
         bodyLabel.setText(message);
     }
+
+    /**
+     * Displays a classic SuccessDialog
+     *
+     * @param dialog
+     * @param masterPane
+     * @param title
+     * @param message
+     */
     public void showSuccessDialog (JFXDialog dialog, StackPane masterPane, String title, String message) {
         dialog.show(masterPane);
         Label titleLabel     = (Label) this.stage.getScene().lookup("#successDialogTitle");
@@ -31,6 +55,15 @@ public abstract class Controller {
         titleLabel.setText(title);
         bodyLabel.setText(message);
     }
+
+    /**
+     * Displays a classic ErrorDialog
+     *
+     * @param dialog
+     * @param masterPane
+     * @param title
+     * @param message
+     */
     public void showErrorDialog (JFXDialog dialog, StackPane masterPane, String title, String message) {
         dialog.show(masterPane);
         Label titleLabel     = (Label) this.stage.getScene().lookup("#errorDialogTitle");
