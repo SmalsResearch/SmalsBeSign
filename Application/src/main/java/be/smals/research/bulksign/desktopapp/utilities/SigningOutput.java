@@ -47,7 +47,7 @@ public class SigningOutput {
             principal = PrincipalUtil.getSubjectX509Principal(certificate.get(2));
             final Vector<?> values = principal.getValues(X509Name.CN);
             final String cn = (String) values.get(0);
-            this.author             = cn;
+            this.author             = cn.substring(0, cn.indexOf("(")-1);
         } catch (CertificateEncodingException e) {
             e.printStackTrace();
         }
