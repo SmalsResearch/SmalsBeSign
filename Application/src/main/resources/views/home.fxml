@@ -70,7 +70,10 @@
                      <VBox.margin>
                         <Insets bottom="4.0" />
                      </VBox.margin></JFXButton>
-                  <JFXButton mnemonicParsing="false" onAction="#handleExitButtonAction" styleClass="button-l-danger" text="Exit" />
+                  <JFXButton mnemonicParsing="false" onAction="#handleExitButtonAction" styleClass="button-l-danger" text="EXIT">
+                     <VBox.margin>
+                        <Insets top="24.0" />
+                     </VBox.margin></JFXButton>
                </children>
             </VBox>
           </children>
