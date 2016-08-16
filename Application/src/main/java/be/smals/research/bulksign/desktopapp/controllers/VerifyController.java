@@ -3,6 +3,7 @@ package be.smals.research.bulksign.desktopapp.controllers;
 import be.smals.research.bulksign.desktopapp.abstracts.Controller;
 import be.smals.research.bulksign.desktopapp.services.VerifySigningService;
 import be.smals.research.bulksign.desktopapp.ui.FileListItem;
+import be.smals.research.bulksign.desktopapp.ui.ResultListItem;
 import be.smals.research.bulksign.desktopapp.utilities.SigningOutput;
 import com.jfoenix.controls.JFXDialog;
 import com.jfoenix.controls.JFXListView;
@@ -33,6 +34,7 @@ import java.security.NoSuchProviderException;
 import java.security.SignatureException;
 import java.security.cert.CertificateException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -128,15 +130,12 @@ public class VerifyController extends Controller {
             resultLabel.getStyleClass().add("color-info");
             resultLabel.setText(pass.size() + " file(s) out of "+(pass.size()+fail.size())+ " passed");
         }
+
         for (String passFile : pass) {
-            Label label = new Label(passFile);
-            label.getStyleClass().add("color-success");
-            resultList.getItems().add(label);
+            resultList.getItems().addAll(new ResultListItem(passFile, true, "Author", new Date()));
         }
         for (String failFile : fail) {
-            Label label = new Label(failFile);
-            label.getStyleClass().add("color-danger");
-            resultList.getItems().add(label);
+            resultList.getItems().addAll(new ResultListItem(failFile, false, "Author", new Date()));
         }
     }
     /**

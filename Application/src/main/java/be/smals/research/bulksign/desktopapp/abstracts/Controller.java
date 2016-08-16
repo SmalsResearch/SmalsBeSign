@@ -1,6 +1,7 @@
 package be.smals.research.bulksign.desktopapp.abstracts;
 
 import be.smals.research.bulksign.desktopapp.controllers.MainController;
+import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXDialog;
 import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
@@ -34,8 +35,11 @@ public abstract class Controller {
      */
     public void showInfoDialog (JFXDialog dialog, StackPane masterPane, String title, String message) {
         dialog.show(masterPane);
-        Label titleLabel     = (Label) this.stage.getScene().lookup("#infoDialogTitle");
-        Label bodyLabel      = (Label) this.stage.getScene().lookup("#infoDialogBody");
+        Label titleLabel        = (Label) this.stage.getScene().lookup("#infoDialogTitle");
+        Label bodyLabel         = (Label) this.stage.getScene().lookup("#infoDialogBody");
+        JFXButton closeButton   = (JFXButton) this.stage.getScene().lookup("#closeInfoDialogButton");
+        closeButton.setOnAction(event -> dialog.close());
+
         titleLabel.setText(title);
         bodyLabel.setText(message);
     }
@@ -52,6 +56,9 @@ public abstract class Controller {
         dialog.show(masterPane);
         Label titleLabel     = (Label) this.stage.getScene().lookup("#successDialogTitle");
         Label bodyLabel      = (Label) this.stage.getScene().lookup("#successDialogBody");
+        JFXButton closeButton   = (JFXButton) this.stage.getScene().lookup("#closeSuccessDialogButton");
+        closeButton.setOnAction(event -> dialog.close());
+
         titleLabel.setText(title);
         bodyLabel.setText(message);
     }
@@ -68,6 +75,9 @@ public abstract class Controller {
         dialog.show(masterPane);
         Label titleLabel     = (Label) this.stage.getScene().lookup("#errorDialogTitle");
         Label bodyLabel      = (Label) this.stage.getScene().lookup("#errorDialogBody");
+        JFXButton closeButton   = (JFXButton) this.stage.getScene().lookup("#closeErrorDialogButton");
+        closeButton.setOnAction(event -> dialog.close());
+
         titleLabel.setText(title);
         bodyLabel.setText(message);
     }

@@ -114,7 +114,7 @@ public class SigningService {
         document.appendChild(rootElement);
         // MasterDigest
         Element masterDigestElement = document.createElement("MasterDigest");
-        masterDigestElement.appendChild(document.createTextNode(signingOutput.masterDigest == null ? this.masterDigest : signingOutput.masterDigest));
+        masterDigestElement.appendChild(document.createTextNode(signingOutput.masterDigest == null ? this.masterDigest.toUpperCase() : signingOutput.masterDigest.toUpperCase()));
         rootElement.appendChild(masterDigestElement);
         // Signature
         Element signatureElement = document.createElement("Signature");

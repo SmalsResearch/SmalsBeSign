@@ -61,7 +61,7 @@ public class VerifySigningService {
         document.getDocumentElement().normalize();
 
         Element signingOutputElement    = (Element) document.getElementsByTagName("SigningOutput").item(0);
-        String masterDigest             = signingOutputElement.getElementsByTagName("MasterDigest").item(0).getTextContent();
+        String masterDigest             = signingOutputElement.getElementsByTagName("MasterDigest").item(0).getTextContent().toLowerCase();
         byte[] signature                = DatatypeConverter.parseHexBinary(signingOutputElement.getElementsByTagName("Signature").item(0).getTextContent());
         Element certificateElement      = (Element) signingOutputElement.getElementsByTagName("Certificate").item(0);
         byte[] rootEncodedCertificate   = DatatypeConverter.parseHexBinary(certificateElement.getElementsByTagName("Root").item(0).getTextContent());
@@ -101,7 +101,7 @@ public class VerifySigningService {
         boolean found = false;
 
         for (int j = 0; j < numDigests; j++) {
-            if (masterDigest.regionMatches(64 * j, individualDigest, 0, 64) == true) {
+            if (masterDigest.regionMatches(64 * j, individualDigest, 0, 64)) {
                 System.out.print("The Individual Digest corresponds to position ");
                 System.out.print(j);
                 System.out.println(" in the Master Digest.");

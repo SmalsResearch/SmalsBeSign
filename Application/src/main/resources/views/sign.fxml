@@ -47,11 +47,14 @@
               <JFXDialog fx:id="infoDialog">
                   <JFXDialogLayout>
                       <heading>
-                          <Label fx:id="infoDialogTitle" styleClass="color-info"></Label>
+                          <Label id="infoDialogTitle" styleClass="color-info"></Label>
                       </heading>
                       <body>
-                          <Label fx:id="infoDialogBody"></Label>
+                          <Label id="infoDialogBody"></Label>
                       </body>
+                      <actions>
+                          <JFXButton id="closeInfoDialogButton" styleClass="button-s-danger" minWidth="96">CLOSE</JFXButton>
+                      </actions>
                   </JFXDialogLayout>
             </JFXDialog>
               <JFXDialog fx:id="errorDialog">
@@ -62,6 +65,9 @@
                       <body>
                           <Label id="errorDialogBody" fx:id="errorDialogBody"></Label>
                       </body>
+                      <actions>
+                          <JFXButton id="closeErrorDialogButton" styleClass="button-s-danger" minWidth="96">CLOSE</JFXButton>
+                      </actions>
                   </JFXDialogLayout>
               </JFXDialog>
               <JFXDialog fx:id="successDialog">
@@ -72,6 +78,9 @@
                       <body>
                           <Label id="successDialogBody"></Label>
                       </body>
+                      <actions>
+                          <JFXButton id="closeSuccessDialogButton" styleClass="button-s-danger" minWidth="96">CLOSE</JFXButton>
+                      </actions>
                   </JFXDialogLayout>
               </JFXDialog>
           </children>

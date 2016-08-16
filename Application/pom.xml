@@ -20,12 +20,16 @@
         </repository>
     </repositories>
 
-
     <dependencies>
         <dependency>
             <groupId>org.jpedal</groupId>
             <artifactId>OpenViewerFX</artifactId>
             <version>7.2.30</version>
+        </dependency>
+        <dependency>
+            <groupId>org.controlsfx</groupId>
+            <artifactId>controlsfx</artifactId>
+            <version>8.40.10</version>
         </dependency>
         <dependency>
             <groupId>com.jfoenix</groupId>

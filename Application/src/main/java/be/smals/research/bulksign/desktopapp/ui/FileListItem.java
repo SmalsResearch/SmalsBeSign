@@ -10,9 +10,6 @@ import javafx.scene.layout.Priority;
 
 import java.io.File;
 
-/**
- * Created by cea on 04/08/2016.
- */
 public class FileListItem extends HBox {
     private Label nameLabel;
     private JFXCheckBox selectCheckBox;

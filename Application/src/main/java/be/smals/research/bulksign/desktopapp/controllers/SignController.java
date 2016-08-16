@@ -109,7 +109,7 @@ public class SignController extends Controller{
      * @throws ParserConfigurationException
      * @throws TransformerException
      */
-    private void saveSigningOutput(byte[] signature, List<X509Certificate> certificateChain) throws IOException, ParserConfigurationException, TransformerException {
+    private void saveSigningOutput(List<File> files, byte[] signature, List<X509Certificate> certificateChain) throws IOException, ParserConfigurationException, TransformerException {
         fileChooser.setTitle("Save the signature output");
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Signature files (SIG)", "*.sig"));
         File fileToSave = fileChooser.showSaveDialog(this.stage);
@@ -274,7 +274,7 @@ public class SignController extends Controller{
         byte[] signature = this.signingService.signWithMock(inputFiles);
 
         List<X509Certificate> certificateChain = MockKeyService.getInstance().getCertificateChain();
-        this.saveSigningOutput(signature, certificateChain);
+        this.saveSigningOutput(selectedFiles, signature, certificateChain);
 
         for (FileInputStream file : inputFiles)
             file.close();
@@ -306,7 +306,7 @@ public class SignController extends Controller{
             if (this.askAndVerifyPin()) {
                 byte[] signature = this.signingService.signWithEID(inputFiles);
                 List<X509Certificate> certificateChain = EIDService.getInstance().getCertificateChain();
-                this.saveSigningOutput(signature, certificateChain);
+                this.saveSigningOutput(selectedFiles, signature, certificateChain);
 
                 for (FileInputStream file : inputFiles)
                     file.close();
