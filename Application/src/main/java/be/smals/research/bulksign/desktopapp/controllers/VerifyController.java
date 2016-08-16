@@ -132,10 +132,10 @@ public class VerifyController extends Controller {
         }
 
         for (String passFile : pass) {
-            resultList.getItems().addAll(new ResultListItem(passFile, true, "Author", new Date()));
+            resultList.getItems().addAll(new ResultListItem(passFile, true, "John Doe", new Date()));
         }
         for (String failFile : fail) {
-            resultList.getItems().addAll(new ResultListItem(failFile, false, "Author", new Date()));
+            resultList.getItems().addAll(new ResultListItem(failFile, false, "John Doe", new Date()));
         }
     }
     /**

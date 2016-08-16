@@ -22,6 +22,7 @@ public class MainController extends Controller{
     @FXML private StackPane masterPane;
     @FXML private BorderPane root;
     @FXML private JFXDialog exitDialog;
+    @FXML private JFXDialog aboutDialog;
 
     /**
      * Constructor
@@ -34,6 +35,7 @@ public class MainController extends Controller{
     @Override
     public void initController(MainController mainController, Stage stage) {
         super.initController(this, stage);
+        aboutDialog.setTransitionType(JFXDialog.DialogTransition.TOP);
     }
 
     /**
@@ -103,6 +105,13 @@ public class MainController extends Controller{
         }
     }
 
+    /**
+     * About MenuItem - Displays About dialog
+     */
+    public void aboutMenuItemAction () {
+        this.aboutDialog.show(masterPane);
+    }
+
     // ----- Dialog actions --------------------------------------------------------------------------------------------
 
     /**
@@ -113,10 +122,17 @@ public class MainController extends Controller{
     }
 
     /**
-     * Exit apllication dialog action - Exit for real
+     * Exit application dialog action - Exit for real
      */
     @FXML private void handleExitAppButtonAction () {
         System.exit(0);
         Platform.exit();
+    }
+
+    /**
+     * Closes About dialog
+     */
+    @FXML private void handleCloseAboutDialogButtonAction () {
+        this.aboutDialog.close();
     }
 }

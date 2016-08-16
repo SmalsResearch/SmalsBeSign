@@ -41,7 +41,7 @@ public class Main extends Application {
         root.setBottom(statusBar);
 
         // ----- CENTER ------------------------------------------------------------------------------------------------
-        createCenter (controller, root);
+        createCenter (controller);
 
         primaryStage.setScene(new Scene(masterPane, 800, 480));
         primaryStage.show();
@@ -80,7 +80,8 @@ public class Main extends Application {
         helpMenu.getItems().addAll(aboutMenuItem);
         root.setTop(menuBar);
 
-        exitMenuItem.setOnAction(event -> controller.exitMenuItemAction ());
+        aboutMenuItem.setOnAction( event -> controller.aboutMenuItemAction ());
+        exitMenuItem.setOnAction( event -> controller.exitMenuItemAction ());
         signMenuItem.setOnAction( event -> controller.signMenuItemAction ());
         verifyMenuItem.setOnAction( event -> controller.verifyMenuItemAction ());
         homeMenuItem.setOnAction( event -> controller.homeMenuItemAction());
@@ -94,9 +95,8 @@ public class Main extends Application {
     /**
      *  Creates home screen
      * @param controller
-     * @param root
      */
-    private void createCenter (MainController controller, BorderPane root) {
+    private void createCenter (MainController controller) {
         Platform.runLater( () -> controller.homeMenuItemAction ());
     }
     @Override

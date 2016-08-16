@@ -119,6 +119,14 @@ public class SigningService {
         document.setXmlVersion("1.1");
         Element rootElement = document.createElement("SigningOutput");
         document.appendChild(rootElement);
+        // Signed by
+        Element signedByDigestElement = document.createElement("SignedBy");
+        signedByDigestElement.appendChild(document.createTextNode(signingOutput.author));
+        rootElement.appendChild(signedByDigestElement);
+        // Signed at
+        Element signedAtDigestElement = document.createElement("SignedAt");
+        signedAtDigestElement.appendChild(document.createTextNode(""+signingOutput.createdAt.getTime()));
+        rootElement.appendChild(signedAtDigestElement);
         // MasterDigest
         Element masterDigestElement = document.createElement("MasterDigest");
         masterDigestElement.appendChild(document.createTextNode(signingOutput.masterDigest == null ? this.masterDigest.toUpperCase() : signingOutput.masterDigest.toUpperCase()));

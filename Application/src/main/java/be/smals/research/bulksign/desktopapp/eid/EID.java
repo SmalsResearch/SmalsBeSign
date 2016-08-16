@@ -742,6 +742,7 @@ public class EID {
 			}
 			retriesLeft = responseApdu.getSW2() & 0xf;
 			System.out.println("retries left: " + retriesLeft);
+			return false;
 		}
 
 		if (isWindows8()) {

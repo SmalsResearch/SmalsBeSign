@@ -28,6 +28,19 @@
                       </actions>
                   </JFXDialogLayout>
               </JFXDialog>
+              <JFXDialog fx:id="aboutDialog">
+                  <JFXDialogLayout>
+                      <heading>
+                          <Label styleClass="color">About</Label>
+                      </heading>
+                      <body>
+                          <Label>... to be added</Label>
+                      </body>
+                      <actions>
+                          <JFXButton onAction="#handleCloseAboutDialogButtonAction" styleClass="button-s" minWidth="96">CLOSE</JFXButton>
+                      </actions>
+                  </JFXDialogLayout>
+              </JFXDialog>
           </bottom>
       </BorderPane>
    </children>

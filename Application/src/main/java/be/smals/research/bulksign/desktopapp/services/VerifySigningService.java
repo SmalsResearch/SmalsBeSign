@@ -15,6 +15,7 @@ import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class VerifySigningService {
@@ -62,6 +63,8 @@ public class VerifySigningService {
 
         Element signingOutputElement    = (Element) document.getElementsByTagName("SigningOutput").item(0);
         String masterDigest             = signingOutputElement.getElementsByTagName("MasterDigest").item(0).getTextContent().toLowerCase();
+        String signedBy                 = signingOutputElement.getElementsByTagName("SignedBy").item(0).getTextContent();
+        Date signedAt                 = new Date(new Long(signingOutputElement.getElementsByTagName("SignedAt").item(0).getTextContent()).longValue());
         byte[] signature                = DatatypeConverter.parseHexBinary(signingOutputElement.getElementsByTagName("Signature").item(0).getTextContent());
         Element certificateElement      = (Element) signingOutputElement.getElementsByTagName("Certificate").item(0);
         byte[] rootEncodedCertificate   = DatatypeConverter.parseHexBinary(certificateElement.getElementsByTagName("Root").item(0).getTextContent());
@@ -80,7 +83,7 @@ public class VerifySigningService {
         certificateChain.add(intermCertificate);
         certificateChain.add(userCertificate);
 
-        return new SigningOutput(masterDigest, signature, certificateChain);
+        return new SigningOutput(masterDigest, signature, certificateChain, signedBy, signedAt);
     }
 
     /**

@@ -53,6 +53,19 @@
             <Separator orientation="VERTICAL" GridPane.columnIndex="1" GridPane.rowIndex="2" />
             <Pane fx:id="readerPane" GridPane.columnIndex="2" GridPane.columnSpan="2147483647" GridPane.rowSpan="2147483647" />
 
+            <JFXDialog fx:id="successDialog">
+                <JFXDialogLayout>
+                    <heading>
+                        <Label id="infoDialogTitle" fx:id="successDialogTile" styleClass="color-info" />
+                    </heading>
+                    <body>
+                        <Label id="infoDialogBody" fx:id="successDialogBody" />
+                    </body>
+                    <actions>
+                        <JFXButton id="closeSuccessDialogButton" styleClass="button-s" minWidth="96">CLOSE</JFXButton>
+                    </actions>
+                </JFXDialogLayout>
+            </JFXDialog>
             <JFXDialog fx:id="infoDialog">
                 <JFXDialogLayout>
                     <heading>
@@ -62,7 +75,7 @@
                         <Label id="infoDialogBody" fx:id="infoDialogBody" />
                     </body>
                     <actions>
-                        <JFXButton id="closeInfoDialogButton" styleClass="button-s-danger" minWidth="96">CLOSE</JFXButton>
+                        <JFXButton id="closeInfoDialogButton" styleClass="button-s" minWidth="96">CLOSE</JFXButton>
                     </actions>
                 </JFXDialogLayout>
             </JFXDialog>
@@ -75,7 +88,7 @@
                         <Label id="errorDialogBody" fx:id="errorDialogBody" />
                     </body>
                     <actions>
-                        <JFXButton id="closeErrorDialogButton" styleClass="button-s-danger" minWidth="96">CLOSE</JFXButton>
+                        <JFXButton id="closeErrorDialogButton" styleClass="button-s" minWidth="96">CLOSE</JFXButton>
                     </actions>
                 </JFXDialogLayout>
             </JFXDialog>
