@@ -14,7 +14,6 @@ import com.jfoenix.controls.JFXPasswordField;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -61,9 +60,6 @@ public class SignController extends Controller{
     @FXML private ListView filesListView;
     @FXML private Pane readerPane;
     @FXML private StackPane masterSign;
-    @FXML private JFXDialog noFileDialog;
-    @FXML private JFXDialog noDefaultAppDialog;
-    @FXML private JFXDialog noEIDDialog;
     @FXML private JFXDialog infoDialog;
     @FXML private JFXDialog errorDialog;
     @FXML private JFXDialog successDialog;
@@ -82,7 +78,6 @@ public class SignController extends Controller{
         this.fileChooser = new FileChooser();
         this.fileChooser.setTitle("Select a file");
     }
-
     /**
      * {@inheritDoc}
      */
@@ -104,9 +99,7 @@ public class SignController extends Controller{
         this.infoDialog.setTransitionType(JFXDialog.DialogTransition.TOP);
         this.errorDialog.setTransitionType(JFXDialog.DialogTransition.TOP);
         this.successDialog.setTransitionType(JFXDialog.DialogTransition.TOP);
-        this.noEIDDialog.setTransitionType(JFXDialog.DialogTransition.TOP);
     }
-
     /**
      * Handles the output file saving process
      *
@@ -153,7 +146,8 @@ public class SignController extends Controller{
                     try {
                         Desktop.getDesktop().open(file);
                     } catch (IOException e) {
-                        this.noDefaultAppDialog.show(masterSign);
+                        this.showErrorDialog(this.errorDialog, this.masterSign, "Unable to open the file...",
+                                "No application associated with the specified file.");
                     }
                 };
             }
@@ -187,14 +181,12 @@ public class SignController extends Controller{
     // ---------- Actions ----------------------------------------------------------------------------------------------
     /**
      * Sign the selected file
-     *
-     * @param event click on signFile button
      */
-    @FXML private void handleSignFilesButtonAction(ActionEvent event) {
+    @FXML private void handleSignFilesButtonAction() {
         List<File> selectedFiles = this.getSelectedFiles ();
         if (selectedFiles.isEmpty()){
-            noFileDialog.setTransitionType(JFXDialog.DialogTransition.TOP);
-            noFileDialog.show(masterSign);
+            this.showInfoDialog(infoDialog, masterSign, "No file to sign",
+                    "Please, select at least one file before you proceed.");
         } else {
             // Sign Process
             try {
@@ -212,27 +204,14 @@ public class SignController extends Controller{
     }
     /**
      * Defines the selected file
-     *
-     * @param event click on the selectFile button
      */
-    @FXML private void handleSelectFilesToSignButtonAction(ActionEvent event) {
+    @FXML private void handleSelectFilesToSignButtonAction() {
         List<File> files = fileChooser.showOpenMultipleDialog(this.stage);
         if (files != null) {
             files.stream().filter(file -> !this.filesToSign.contains(file)).forEach(file -> this.filesToSign.add(file));
             this.fileCountLabel.textProperty().set(this.filesToSign.size() + " file(s)");
             this.populateListView();
         }
-    }
-
-    // ---------- Dialog action ----------------------------------------------------------------------------------------
-    @FXML private void handleCancelNoFileDialogAction (ActionEvent event) {
-        noFileDialog.close();
-    }
-    @FXML private void handleCancelNoDefaultAppDialogAction (ActionEvent event) {
-        noDefaultAppDialog.close();
-    }
-    @FXML private void handleCancelNoEIDDialogAction (ActionEvent event) {
-        noEIDDialog.close();
     }
 
     // ---------- ------------------------------------------------------------------------------------------------------
@@ -295,7 +274,8 @@ public class SignController extends Controller{
 
         FileInputStream[] inputFiles = new FileInputStream[selectedFiles.size()];
         if (!Settings.getInstance().isEIDCardPresent()) {
-            noEIDDialog.show(masterSign);
+            this.showInfoDialog(infoDialog, masterSign, "Missing eID card...",
+                    "You must insert your eID card inside the reader before you proceed");
         } else {
             // Prepare files
             for (int i = 0; i < selectedFiles.size(); i++) {

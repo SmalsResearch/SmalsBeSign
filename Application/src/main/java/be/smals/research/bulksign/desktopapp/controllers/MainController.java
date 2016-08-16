@@ -10,7 +10,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
-import javafx.event.ActionEvent;
 import java.io.IOException;
 
 /**
@@ -36,15 +35,29 @@ public class MainController extends Controller{
     public void initController(MainController mainController, Stage stage) {
         super.initController(this, stage);
     }
+
+    /**
+     * Returns the root pane of Main Screen
+     *
+     * @return a BorderPane
+     */
     public BorderPane getRoot () {
         return this.root;
     }
 
     // ----- MenuItems action ------------------------------------------------------------------------------------------
+
+    /**
+     * Exit Application MenuItem action
+     */
     public void exitMenuItemAction () {
         exitDialog.setTransitionType(JFXDialog.DialogTransition.TOP);
         exitDialog.show(masterPane);
     }
+
+    /**
+     * Sign MenuItem action - Leads to Sign screen
+     */
     public void signMenuItemAction () {
         FXMLLoader signViewLoader = new FXMLLoader(getClass().getClassLoader().getResource("views/sign.fxml"));
         try {
@@ -57,6 +70,10 @@ public class MainController extends Controller{
             e1.printStackTrace();
         }
     }
+
+    /**
+     * Verify MenuItem - Leads to Verify screen
+     */
     public void verifyMenuItemAction () {
         FXMLLoader verifyViewLoader = new FXMLLoader(getClass().getClassLoader().getResource("views/verify.fxml"));
         try {
@@ -69,6 +86,10 @@ public class MainController extends Controller{
             e1.printStackTrace();
         }
     }
+
+    /**
+     * Home MenuItem - Leads back to home screen
+     */
     public void homeMenuItemAction () {
         FXMLLoader homeViewLoader = new FXMLLoader(getClass().getClassLoader().getResource("views/home.fxml"));
         try {
@@ -83,10 +104,18 @@ public class MainController extends Controller{
     }
 
     // ----- Dialog actions --------------------------------------------------------------------------------------------
-    @FXML private void handleCancelDialogButtonAction(ActionEvent event) {
+
+    /**
+     * Exit application dialog action - Cancels the exit request
+     */
+    @FXML private void handleCancelDialogButtonAction() {
         this.exitDialog.close();
     }
-    @FXML private void handleExitAppButtonAction (ActionEvent event) {
+
+    /**
+     * Exit apllication dialog action - Exit for real
+     */
+    @FXML private void handleExitAppButtonAction () {
         System.exit(0);
         Platform.exit();
     }
