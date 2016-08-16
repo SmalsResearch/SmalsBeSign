@@ -43,6 +43,7 @@ import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Sign screen controller
@@ -156,11 +157,15 @@ public class SignController extends Controller{
         });
         this.filesListView.getItems().addAll(FXCollections.observableList(fileListItems));
     }
+
+    /**
+     * Returns files from selected items
+     *
+     * @param items
+     * @return a list of files
+     */
     private List<File> getCurrentFiles (ObservableList<FileListItem> items) {
-        List<File> files = new ArrayList<>();
-        for (FileListItem item : items) {
-            files.add(item.getFile());
-        }
+        List<File> files = items.stream().map(FileListItem::getFile).collect(Collectors.toList());
         return files;
     }
     /**
@@ -215,6 +220,12 @@ public class SignController extends Controller{
     }
 
     // ---------- ------------------------------------------------------------------------------------------------------
+
+    /**
+     * Validates the user pin code
+     *
+     * @return true if the PIN code is correct
+     */
     private boolean askAndVerifyPin() {
         Dialog<String> pinDialog = new Dialog<>();
         pinDialog.setTitle("PIN Code");
@@ -242,6 +253,15 @@ public class SignController extends Controller{
 
         return false;
     }
+
+    /**
+     * Performs signing with mock process
+     *
+     * @param selectedFiles
+     * @throws IOException
+     * @throws ParserConfigurationException
+     * @throws TransformerException
+     */
     private void signWithMock(List<File> selectedFiles)
             throws IOException, ParserConfigurationException, TransformerException {
 
@@ -294,8 +314,5 @@ public class SignController extends Controller{
 //                EIDService.getInstance().close();
             }
         }
-    }
-    private void showDialog (JFXDialog dialog, String title, String message) {
-        dialog.show();
     }
 }

@@ -8,7 +8,6 @@ import com.jfoenix.controls.JFXDialog;
 import com.jfoenix.controls.JFXListView;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
@@ -35,6 +34,7 @@ import java.security.SignatureException;
 import java.security.cert.CertificateException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Main screen controller
@@ -102,65 +102,13 @@ public class VerifyController extends Controller {
         }
         return selectedFiles;
     }
-    @FXML private void handleVerifyFilesButtonAction(ActionEvent event) {
-        List<File> selectedFiles = this.getSelectedFiles ();
-        if (selectedFiles.isEmpty()){
-            infoDialog.show(masterVerify);
-            Label title     = (Label) this.stage.getScene().lookup("#infoDialogTitle");
-            Label body      = (Label) this.stage.getScene().lookup("#infoDialogBody");
-            body.setText("Please, select the signature file and a least one signed file.");
-            title.setText("No file selected");
-        } else {
-            SigningOutput signingOutput = null;
-            List<String> pass = new ArrayList<>();
-            List<String> fail = new ArrayList<>();
-            try {
-                signingOutput = this.verifySigningService.getSigningOutput(this.signatureFile);
 
-                for (File signedFile : selectedFiles) {
-                    FileInputStream file = new FileInputStream(signedFile);
-                    boolean isValid = this.verifySigningService.verifySigning(file, signingOutput);
-                    if (isValid) {
-                        pass.add(signedFile.getName());
-                    } else {
-                        fail.add(signedFile.getName());
-                    }
-                    file.close();
-                }
-
-                // Display result
-                this.displayVerifyResult(pass, fail);
-
-            } catch (IOException|SAXException|ParserConfigurationException e) {
-                errorDialog.show(masterVerify);
-                Label title     = (Label) this.stage.getScene().lookup("#errorDialogTitle");
-                Label body      = (Label) this.stage.getScene().lookup("#errorDialogBody");
-                body.setText("Unable to parse that signature file.\nIt looks like the file is corrupted.");
-                title.setText("Invalid signature file!");
-            } catch (SignatureException e) {
-                errorDialog.show(masterVerify);
-                Label title     = (Label) this.stage.getScene().lookup("#errorDialogTitle");
-                Label body      = (Label) this.stage.getScene().lookup("#errorDialogBody");
-                body.setText("That signature file .\nIs it the wright signature file ?");
-                title.setText("Invalid signature!");
-            } catch (NoSuchAlgorithmException|InvalidKeyException e) {
-                e.printStackTrace();
-                errorDialog.show(masterVerify);
-                Label title     = (Label) this.stage.getScene().lookup("#errorDialogTitle");
-                Label body      = (Label) this.stage.getScene().lookup("#errorDialogBody");
-                body.setText("Unable to validate the signature. Your file may be corrupted.");
-                title.setText("Invalid key");
-            } catch (CertificateException e) {
-                errorDialog.show(masterVerify);
-                Label title     = (Label) this.stage.getScene().lookup("#errorDialogTitle");
-                Label body      = (Label) this.stage.getScene().lookup("#errorDialogBody");
-                body.setText("Unable to validate your certificate.\nIs your signature file corrupted ?");
-                title.setText("Invalid certificate!");
-            } catch (NoSuchProviderException e) {
-                e.printStackTrace();
-            }
-        }
-    }
+    /**
+     * Used to display verification results
+     *
+     * @param pass correct results
+     * @param fail incorrect results
+     */
     private void displayVerifyResult(List<String> pass, List<String> fail) {
         verifyResultDialog.show(masterVerify);
         Label resultLabel       = (Label) this.stage.getScene().lookup("#verifyResultTitle");
@@ -191,31 +139,6 @@ public class VerifyController extends Controller {
             resultList.getItems().add(label);
         }
     }
-    @FXML private void handleSelectVerifyFileButtonAction (ActionEvent event) {
-        this.fileChooser.setTitle("Select the signature file");
-        this.fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Signature files (SIG)", "*.sig"));
-        File file = this.fileChooser.showOpenDialog(this.stage);
-        this.fileChooser.getExtensionFilters().clear();
-        if (file != null) {
-            this.signatureFile = file;
-            this.signatureFileLabel.textProperty().set(file.getName());
-        } else {
-            System.out.println("ERROR - No file found.");
-        }
-    }
-    /**
-     * Defines the selected file
-     *
-     * @param event click on the selectFile button
-     */
-    @FXML private void handleSelectSignFileButtonAction(ActionEvent event) {
-        List<File> files = this.fileChooser.showOpenMultipleDialog(this.stage);
-        if (files != null) {
-            files.stream().filter(file -> !this.filesToVerify.contains(file)).forEach(file -> this.filesToVerify.add(file));
-            this.filesToSignCount.textProperty().set(this.filesToVerify.size() +" file(s)");
-            this.populateListView();
-        }
-    }
     /**
      * Populates the ListView with the files selected by the user
      */
@@ -236,11 +159,8 @@ public class VerifyController extends Controller {
                     try {
                         Desktop.getDesktop().open(file);
                     } catch (IOException e) {
-                        errorDialog.show(masterVerify);
-                        Label title     = (Label) this.stage.getScene().lookup("#errorDialogTitle");
-                        Label body      = (Label) this.stage.getScene().lookup("#errorDialogBody");
-                        body.setText("No application associated with the specified file.");
-                        title.setText("Unable to open the file");
+                        this.showErrorDialog(errorDialog, masterVerify, "Unable to open the file...",
+                                "No application associated with the specified file.");
                     }
                 };
             }
@@ -250,10 +170,76 @@ public class VerifyController extends Controller {
         this.filesListView.getItems().addAll(FXCollections.observableList(fileListItems));
     }
     private List<File> getCurrentFiles (ObservableList<FileListItem> items) {
-        List<File> files = new ArrayList<>();
-        for (FileListItem item : items) {
-            files.add(item.getFile());
-        }
+        List<File> files = items.stream().map(FileListItem::getFile).collect(Collectors.toList());
         return files;
+    }
+
+    /**
+     * Submits verification
+     */
+    @FXML private void handleVerifyFilesButtonAction() {
+        List<File> selectedFiles = this.getSelectedFiles ();
+        if (selectedFiles.isEmpty()){
+            this.showInfoDialog(infoDialog, masterVerify, "No file selected",
+                    "Please, select the signature file and a least one signed file.");
+        } else {
+            SigningOutput signingOutput = null;
+            List<String> pass = new ArrayList<>();
+            List<String> fail = new ArrayList<>();
+            try {
+                signingOutput = this.verifySigningService.getSigningOutput(this.signatureFile);
+
+                for (File signedFile : selectedFiles) {
+                    FileInputStream file = new FileInputStream(signedFile);
+                    boolean isValid = this.verifySigningService.verifySigning(file, signingOutput);
+                    if (isValid) {
+                        pass.add(signedFile.getName());
+                    } else {
+                        fail.add(signedFile.getName());
+                    }
+                    file.close();
+                }
+
+                // Display result
+                this.displayVerifyResult(pass, fail);
+
+            } catch (IOException|SAXException|ParserConfigurationException e) {
+                this.showErrorDialog(errorDialog, masterVerify, "Invalid signature file!",
+                        "Unable to parse that signature file.\nIt looks like the file is corrupted.");
+            } catch (SignatureException e) {
+                this.showErrorDialog(errorDialog, masterVerify, "Invalid signature!",
+                        "Is it the wright signature file ?");
+            } catch (NoSuchAlgorithmException|InvalidKeyException|NoSuchProviderException e) {
+                this.showErrorDialog(errorDialog, masterVerify, "Invalid key...",
+                        "Unable to validate the signature. Your file may be corrupted.");
+            } catch (CertificateException e) {
+                this.showErrorDialog(errorDialog, masterVerify, "Invalid certificate!",
+                        "Unable to validate your certificate.\nIs your signature file corrupted ?");
+            }
+        }
+    }
+    /**
+     * Signature file selection action
+     */
+    @FXML private void handleSelectVerifyFileButtonAction () {
+        this.fileChooser.setTitle("Select the signature file");
+        this.fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Signature files (SIG)", "*.sig"));
+        File file = this.fileChooser.showOpenDialog(this.stage);
+        this.fileChooser.getExtensionFilters().clear();
+        if (file != null) {
+            this.signatureFile = file;
+            this.signatureFileLabel.textProperty().set(file.getName());
+        }
+    }
+    /**
+     * Signed files selection action
+     */
+    @FXML private void handleSelectSignFileButtonAction () {
+        List<File> files = this.fileChooser.showOpenMultipleDialog(this.stage);
+        if (files != null) {
+            files.stream().filter(file -> !this.filesToVerify.contains(file)).forEach(file -> this.filesToVerify.add(file));
+            this.filesToSignCount.textProperty().set(this.filesToVerify.size() +" file(s)");
+            this.populateListView();
+        }
     }
 }
