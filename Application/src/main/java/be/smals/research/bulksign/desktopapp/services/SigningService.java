@@ -18,13 +18,12 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 /**
  * Collection of methods used to sign and save the output
@@ -102,7 +101,15 @@ public class SigningService {
      * @throws TransformerException
      * @throws CertificateEncodingException
      */
-    public void saveSigningOutput(SigningOutput signingOutput, String filePath) throws IOException, ParserConfigurationException, TransformerException, CertificateEncodingException {
+    public void saveSigningOutput(List<File> files, SigningOutput signingOutput, String filePath) throws IOException, ParserConfigurationException, TransformerException, CertificateEncodingException {
+        this.createSignatureFile(signingOutput, filePath);
+        String destinationDir = (new File(filePath)).getParent();
+        for (File file: files) {
+            this.createIndividualZipOutput(file, filePath, destinationDir);
+        }
+
+    }
+    private void createSignatureFile(SigningOutput signingOutput, String filePath) throws ParserConfigurationException, CertificateEncodingException, TransformerException {
         // XML - Create
         DocumentBuilderFactory factory  = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder         =  factory.newDocumentBuilder();
@@ -127,6 +134,33 @@ public class SigningService {
         }
         // XML - Write
         this.writeXMLDocument(filePath, document);
+    }
+    private void createIndividualZipOutput (File originalFile, String sigFilePath, String dirPath) throws IOException {
+        FileOutputStream zipFOS = new FileOutputStream(dirPath +File.separator+ originalFile.getName() + ".signed.zip");
+        ZipOutputStream outputStream = new ZipOutputStream(zipFOS);
+
+        // Entry 1 - Original file
+        this.addFileToZIP(originalFile, outputStream);
+        // Entry 2 - SignatureFile
+        this.addFileToZIP(new File(sigFilePath), outputStream);
+        // Entry 3 - README
+        this.addFileToZIP(new File(this.getClass().getClassLoader().getResource("files/README").getPath()), outputStream);
+        outputStream.closeEntry();
+        outputStream.close();
+    }
+
+    private void addFileToZIP(File file, ZipOutputStream zipOutputStream) throws IOException {
+        byte[] buffer = new byte[1024];
+
+        ZipEntry entry = new ZipEntry(file.getName());
+        zipOutputStream.putNextEntry(entry);
+
+        FileInputStream in  = new FileInputStream(file);
+        int len;
+        while ((len = in.read(buffer)) > 0) {
+            zipOutputStream.write(buffer, 0, len);
+        }
+        in.close();
     }
 
     /**
@@ -171,7 +205,7 @@ public class SigningService {
         transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
         DOMSource source                        = new DOMSource(document);
         StreamResult result                     = new StreamResult(new File(filePath));
-        transformer.transform(source, result);
+        transformer.transform (source, result);
     }
 
 }
