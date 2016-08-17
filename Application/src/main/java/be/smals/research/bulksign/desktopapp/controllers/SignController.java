@@ -9,6 +9,7 @@ import be.smals.research.bulksign.desktopapp.ui.FileListItem;
 import be.smals.research.bulksign.desktopapp.utilities.Settings;
 import be.smals.research.bulksign.desktopapp.utilities.Settings.Signer;
 import be.smals.research.bulksign.desktopapp.utilities.SigningOutput;
+import com.jfoenix.controls.JFXCheckBox;
 import com.jfoenix.controls.JFXDialog;
 import com.jfoenix.controls.JFXPasswordField;
 import javafx.application.Platform;
@@ -64,6 +65,7 @@ public class SignController extends Controller{
     @FXML private JFXDialog infoDialog;
     @FXML private JFXDialog errorDialog;
     @FXML private JFXDialog successDialog;
+    @FXML private JFXCheckBox selectAllCheckBox;
 
     /**
      * Constructor
@@ -241,13 +243,10 @@ public class SignController extends Controller{
         Optional<String> result = pinDialog.showAndWait();
         if (result.isPresent()) {
             try {
-                return EIDService.getInstance().isPinValid(passwordField.getText().toCharArray());
+                return EIDService.getInstance().isPinValid(passwordField.getText().trim().toCharArray());
             } catch (UserCancelledException|CardException e) {
-                errorDialog.show(masterSign);
-                Label title     = (Label) this.stage.getScene().lookup("#errorDialogTitle");
-                Label body      = (Label) this.stage.getScene().lookup("#errorDialogBody");
-                body.setText("Unable to verify your PIN.\nError message : "+e.getMessage());
-                title.setText("Verifying PIN code...");
+                this.showErrorDialog(errorDialog, masterSign, "Verifying PIN code...",
+                        "Unable to verify your PIN.\nError message : "+e.getMessage());
             }
         }
 
@@ -305,14 +304,23 @@ public class SignController extends Controller{
             this.signingService.prepareSigning();
             if (this.askAndVerifyPin()) {
                 byte[] signature = this.signingService.signWithEID(inputFiles);
-                List<X509Certificate> certificateChain = EIDService.getInstance().getCertificateChain();
-                this.saveSigningOutput(selectedFiles, signature, certificateChain);
-
                 for (FileInputStream file : inputFiles)
                     file.close();
+                if (signature != null) {
+                    List<X509Certificate> certificateChain = EIDService.getInstance().getCertificateChain();
+                    this.saveSigningOutput(selectedFiles, signature, certificateChain);
+                } else {
 
-//                EIDService.getInstance().close();
+                }
+
             }
         }
+    }
+    /**
+     * Select / Deselect selected all checkbox action
+     */
+    @FXML public void handleSelectAllAction() {
+        for (Object item : filesListView.getItems())
+            ((FileListItem)item).setFileSelected(selectAllCheckBox.isSelected());
     }
 }

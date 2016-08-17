@@ -650,6 +650,16 @@ public class EID {
 
 	// ----- Sign ------------------------------------------------------------------------------------------------------
 	public void prepareSigning (String digestAlgo, byte keyId) throws CardException {
+//		Map<Byte, CCIDFeature> ccidFeatures = this.getCCIDFeatures();
+//
+//		CCIDFeature directPinVerifyFeature = ccidFeatures.get(FEATURE_VERIFY_PIN_DIRECT_TAG);
+//		CCIDFeature verifyPinStartFeature = ccidFeatures.get(FEATURE_VERIFY_PIN_START_TAG);
+//		CCIDFeature eIDPINPadReaderFeature = ccidFeatures.get(FEATURE_EID_PIN_PAD_READER_TAG);
+//
+//		if (null != eIDPINPadReaderFeature) {
+//			System.out.println("eID-aware secure PIN pad reader detected");
+//		}
+
 		// select the key
 		byte algoRef;
 		if ("SHA-1-PSS".equals(digestAlgo)) {
@@ -704,7 +714,6 @@ public class EID {
 		CommandAPDU computeDigitalSignatureApdu = new CommandAPDU(0x00, 0x2A, 0x9E, 0x9A, digestInfo.toByteArray());
 		System.out.println("COMMAND: "+Arrays.toString(computeDigitalSignatureApdu.getBytes()));
 
-//		this.view.addDetailMessage("computing digital signature...");
 		ResponseAPDU responseApdu = transmit(computeDigitalSignatureApdu);
 		System.out.println("DATA:");
 		System.out.println(Arrays.toString(responseApdu.getData()));
@@ -721,7 +730,26 @@ public class EID {
 			byte[] signatureValue = responseApdu.getData();
 			return signatureValue;
 		}
-		return null;
+		if (0x6982 != responseApdu.getSW()) {
+			System.out.println("SW: " + Integer.toHexString(responseApdu.getSW()));
+			throw new RuntimeException("compute digital signature error");
+		}
+		/*
+		 * 0x6982 = Security status not satisfied, so we do a PIN verification
+		 * before retrying.
+		 */
+		System.out.println("PIN verification required...");
+
+//		verifyPin(directPinVerifyFeature, verifyPinStartFeature, ccidFeatures);
+
+		System.out.println("computing digital signature...");
+		responseApdu = cardChannel.transmit(computeDigitalSignatureApdu);
+		if (0x9000 != responseApdu.getSW()) {
+			throw new RuntimeException("compute digital signature error: " + Integer.toHexString(responseApdu.getSW()));
+		}
+
+		byte[] signatureValue = responseApdu.getData();
+		return signatureValue;
 	}
 
 	// ----- PIN validity check ----------------------------------------------------------------------------------------

@@ -51,7 +51,9 @@ public class FileListItem extends HBox {
     public boolean isFileSelected() {
         return this.selectCheckBox.isSelected();
     }
-
+    public void setFileSelected (boolean selected) {
+        this.selectCheckBox.setSelected(selected);
+    }
     public void setViewButtonAction (EventHandler event) {
         this.viewButton.setOnAction(event);
     }

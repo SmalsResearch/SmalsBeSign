@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXCheckBox?>
 <?import com.jfoenix.controls.JFXDialog?>
 <?import com.jfoenix.controls.JFXDialogLayout?>
 <?import javafx.geometry.Insets?>
@@ -13,7 +14,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.StackPane?>
 
-<StackPane fx:id="masterSign" xmlns="http://javafx.com/javafx/8.0.45" xmlns:fx="http://javafx.com/fxml/1" fx:controller="be.smals.research.bulksign.desktopapp.controllers.SignController">
+<StackPane fx:id="masterSign" xmlns="http://javafx.com/javafx/8.0.101" xmlns:fx="http://javafx.com/fxml/1" fx:controller="be.smals.research.bulksign.desktopapp.controllers.SignController">
    <children>
       <GridPane fx:id="rootSign" stylesheets="@css/common.css">
           <columnConstraints>
@@ -22,12 +23,13 @@
               <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" percentWidth="65.0" />
           </columnConstraints>
           <rowConstraints>
-              <RowConstraints percentHeight="10.0" valignment="CENTER" vgrow="SOMETIMES" />
-              <RowConstraints percentHeight="75.0" valignment="CENTER" vgrow="SOMETIMES" />
+              <RowConstraints percentHeight="8.0" valignment="CENTER" vgrow="SOMETIMES" />
+            <RowConstraints percentHeight="7.0" valignment="CENTER" vgrow="SOMETIMES" />
+              <RowConstraints percentHeight="70.0" valignment="CENTER" vgrow="SOMETIMES" />
               <RowConstraints percentHeight="15.0" valignment="CENTER" vgrow="SOMETIMES" />
           </rowConstraints>
           <children>
-               <JFXButton fx:id="signFilesButton" alignment="CENTER" buttonType="RAISED" contentDisplay="CENTER" mnemonicParsing="false" onAction="#handleSignFilesButtonAction" styleClass="button-raised" text="SIGN FILES" textAlignment="CENTER" textFill="WHITE" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER">
+               <JFXButton fx:id="signFilesButton" alignment="CENTER" buttonType="RAISED" contentDisplay="CENTER" mnemonicParsing="false" onAction="#handleSignFilesButtonAction" styleClass="button-raised" text="SIGN FILES" textAlignment="CENTER" textFill="WHITE" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.valignment="CENTER">
                <opaqueInsets>
                   <Insets />
                </opaqueInsets>
@@ -38,51 +40,56 @@
                      <Insets />
                   </GridPane.margin>
                </Label>
-                <ListView fx:id="filesListView" GridPane.halignment="LEFT" GridPane.rowIndex="1" GridPane.valignment="CENTER" />
+                <ListView fx:id="filesListView" GridPane.halignment="LEFT" GridPane.rowIndex="2" GridPane.valignment="CENTER" />
               <Separator orientation="VERTICAL" GridPane.columnIndex="1" />
-              <Separator orientation="VERTICAL" GridPane.columnIndex="1" GridPane.rowIndex="1" />
               <Separator orientation="VERTICAL" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+              <Separator orientation="VERTICAL" GridPane.columnIndex="1" GridPane.rowIndex="3" />
               <Pane fx:id="readerPane" GridPane.columnIndex="2" GridPane.rowSpan="2147483647" />
               <!-- Dialogs -->
               <JFXDialog fx:id="infoDialog">
                   <JFXDialogLayout>
                       <heading>
-                          <Label id="infoDialogTitle" styleClass="color-info"></Label>
+                          <Label id="infoDialogTitle" styleClass="color-info" />
                       </heading>
                       <body>
-                          <Label id="infoDialogBody"></Label>
+                          <Label id="infoDialogBody" />
                       </body>
                       <actions>
-                          <JFXButton id="closeInfoDialogButton" styleClass="button-s" minWidth="96">CLOSE</JFXButton>
+                          <JFXButton id="closeInfoDialogButton" minWidth="96" styleClass="button-s">CLOSE</JFXButton>
                       </actions>
                   </JFXDialogLayout>
             </JFXDialog>
               <JFXDialog fx:id="errorDialog">
                   <JFXDialogLayout>
                       <heading>
-                          <Label id="errorDialogTitle" fx:id="errorDialogTitle" styleClass="color-danger"></Label>
+                          <Label id="errorDialogTitle" fx:id="errorDialogTitle" styleClass="color-danger" />
                       </heading>
                       <body>
-                          <Label id="errorDialogBody" fx:id="errorDialogBody"></Label>
+                          <Label id="errorDialogBody" fx:id="errorDialogBody" />
                       </body>
                       <actions>
-                          <JFXButton id="closeErrorDialogButton" styleClass="button-s" minWidth="96">CLOSE</JFXButton>
+                          <JFXButton id="closeErrorDialogButton" minWidth="96" styleClass="button-s">CLOSE</JFXButton>
                       </actions>
                   </JFXDialogLayout>
               </JFXDialog>
               <JFXDialog fx:id="successDialog">
                   <JFXDialogLayout>
                       <heading>
-                          <Label id="successDialogTitle" styleClass="color-success"></Label>
+                          <Label id="successDialogTitle" styleClass="color-success" />
                       </heading>
                       <body>
-                          <Label id="successDialogBody"></Label>
+                          <Label id="successDialogBody" />
                       </body>
                       <actions>
-                          <JFXButton id="closeSuccessDialogButton" styleClass="button-s" minWidth="96">CLOSE</JFXButton>
+                          <JFXButton id="closeSuccessDialogButton" minWidth="96" styleClass="button-s">CLOSE</JFXButton>
                       </actions>
                   </JFXDialogLayout>
               </JFXDialog>
+            <JFXCheckBox fx:id="selectAllCheckBox" checkedColor="#52bbfe" mnemonicParsing="false" onAction="#handleSelectAllAction" text="Select all" GridPane.halignment="LEFT" GridPane.rowIndex="1">
+               <GridPane.margin>
+                  <Insets left="8.0" />
+               </GridPane.margin></JFXCheckBox>
+            <Separator orientation="VERTICAL" GridPane.columnIndex="1" GridPane.rowIndex="1" />
           </children>
           <padding>
               <Insets bottom="24.0" left="24.0" right="24.0" top="24.0" />

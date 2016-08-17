@@ -31,7 +31,7 @@
               <JFXDialog fx:id="aboutDialog">
                   <JFXDialogLayout>
                       <heading>
-                          <Label styleClass="color">About</Label>
+                          <Label styleClass="color">About BulkSign Desktop</Label>
                       </heading>
                       <body>
                           <Label>... to be added</Label>

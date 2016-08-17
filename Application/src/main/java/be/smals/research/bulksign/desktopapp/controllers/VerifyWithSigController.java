@@ -44,13 +44,14 @@ import java.util.stream.Collectors;
  *
  * Handles events from main screen
  */
-public class VerifyController extends Controller {
+public class VerifyWithSigController extends Controller {
 
     private VerifySigningService verifySigningService;
     private FileChooser fileChooser;
     private OpenViewerFX viewerFx;
 
     @FXML private Label filesToSignCount;
+    @FXML private Label signatureFileLabel;
     @FXML private StackPane masterVerify;
     @FXML private ListView filesListView;
     @FXML private Pane readerPane;
@@ -60,11 +61,12 @@ public class VerifyController extends Controller {
     @FXML private JFXCheckBox selectAllCheckBox;
 
     private List<File> filesToVerify;
+    private File signatureFile;
 
     /**
      * Constructor
      */
-    public VerifyController() {
+    public VerifyWithSigController() {
         this.verifySigningService   = new VerifySigningService();
         this.fileChooser            = new FileChooser();
         this.filesToVerify          = new ArrayList<>();
@@ -218,10 +220,22 @@ public class VerifyController extends Controller {
         }
     }
     /**
+     * Signature file selection action
+     */
+    @FXML private void handleSelectVerifyFileButtonAction () {
+        this.fileChooser.setTitle("Select the signature file");
+        this.fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Signature files (SIG)", "*.sig"));
+        File file = this.fileChooser.showOpenDialog(this.stage);
+        this.fileChooser.getExtensionFilters().clear();
+        if (file != null) {
+            this.signatureFile = file;
+            this.signatureFileLabel.textProperty().set(file.getName());
+        }
+    }
+    /**
      * Signed files selection action
      */
     @FXML private void handleSelectSignFileButtonAction () {
-
         List<File> files = this.fileChooser.showOpenMultipleDialog(this.stage);
         if (files != null) {
             files.stream().filter(file -> !this.filesToVerify.contains(file)).forEach(file -> this.filesToVerify.add(file));
