@@ -9,12 +9,12 @@ import be.smals.research.bulksign.desktopapp.ui.FileListItem;
 import be.smals.research.bulksign.desktopapp.utilities.Settings;
 import be.smals.research.bulksign.desktopapp.utilities.Settings.Signer;
 import be.smals.research.bulksign.desktopapp.utilities.SigningOutput;
+import be.smals.research.bulksign.desktopapp.utilities.Utilities;
 import com.jfoenix.controls.JFXCheckBox;
 import com.jfoenix.controls.JFXDialog;
 import com.jfoenix.controls.JFXPasswordField;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -44,7 +44,6 @@ import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * Sign screen controller
@@ -133,8 +132,7 @@ public class SignController extends Controller{
      * Populates the ListView with the files selected by the user
      */
     private void populateListView () {
-        ObservableList<FileListItem> items = this.filesListView.getItems();
-        List<File> files = this.getCurrentFiles(items);
+        List<File> files = Utilities.getInstance().getFileListFromFileListView(this.filesListView);
         List<FileListItem> fileListItems = new ArrayList<>();
         this.filesToSign.stream().filter(file -> !files.contains(file)).forEach(file -> {
             FileListItem listItem = new FileListItem(file);
@@ -158,17 +156,6 @@ public class SignController extends Controller{
             fileListItems.add(listItem);
         });
         this.filesListView.getItems().addAll(FXCollections.observableList(fileListItems));
-    }
-
-    /**
-     * Returns files from selected items
-     *
-     * @param items
-     * @return a list of files
-     */
-    private List<File> getCurrentFiles (ObservableList<FileListItem> items) {
-        List<File> files = items.stream().map(FileListItem::getFile).collect(Collectors.toList());
-        return files;
     }
     /**
      * Returns selected files from the file list

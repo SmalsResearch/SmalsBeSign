@@ -5,12 +5,12 @@ import be.smals.research.bulksign.desktopapp.services.VerifySigningService;
 import be.smals.research.bulksign.desktopapp.ui.FileListItem;
 import be.smals.research.bulksign.desktopapp.ui.ResultListItem;
 import be.smals.research.bulksign.desktopapp.utilities.SigningOutput;
+import be.smals.research.bulksign.desktopapp.utilities.Utilities;
 import be.smals.research.bulksign.desktopapp.utilities.VerifySigningOutput;
 import com.jfoenix.controls.JFXCheckBox;
 import com.jfoenix.controls.JFXDialog;
 import com.jfoenix.controls.JFXListView;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
@@ -39,7 +39,6 @@ import java.security.cert.CertificateException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * Main screen controller
@@ -144,8 +143,7 @@ public class VerifyController extends Controller {
      * Populates the ListView with the files selected by the user
      */
     private void populateListView () {
-        ObservableList<FileListItem> items = this.filesListView.getItems();
-        List<File> files = this.getCurrentFiles(items);
+        List<File> files = Utilities.getInstance().getFileListFromFileListView(this.filesListView);
         List<FileListItem> fileListItems = new ArrayList<>();
         this.filesToVerify.stream().filter(file -> !files.contains(file)).forEach(file -> {
             FileListItem listItem = new FileListItem(file);
@@ -169,10 +167,6 @@ public class VerifyController extends Controller {
             fileListItems.add(listItem);
         });
         this.filesListView.getItems().addAll(FXCollections.observableList(fileListItems));
-    }
-    private List<File> getCurrentFiles (ObservableList<FileListItem> items) {
-        List<File> files = items.stream().map(FileListItem::getFile).collect(Collectors.toList());
-        return files;
     }
 
     /**
@@ -229,8 +223,10 @@ public class VerifyController extends Controller {
         for (Object item : this.filesListView.getItems())
             ((FileListItem) item).setFileSelected(this.selectAllCheckBox.isSelected());
     }
-
-    public void handleCloseVerifyDialog() {
+    /**
+     * Used to close verifyResult dialog
+     */
+    @FXML public void handleCloseVerifyDialog() {
         verifyResultDialog.close();
     }
 }

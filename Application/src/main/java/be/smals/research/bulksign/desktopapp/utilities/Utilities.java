@@ -1,7 +1,14 @@
 package be.smals.research.bulksign.desktopapp.utilities;
 
+import be.smals.research.bulksign.desktopapp.ui.FileListItem;
+import javafx.collections.ObservableList;
+import javafx.scene.control.ListView;
+
+import java.io.File;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Random functions
@@ -30,7 +37,7 @@ public class Utilities {
     }
 
     /**
-     * Return a file extension from file name (without the dot)
+     * Returns a file extension from file name (without the dot)
      *
      * @param fileName
      * @return
@@ -46,5 +53,16 @@ public class Utilities {
         }
 
         return extension;
+    }
+
+    /**
+     * Returns a File list from listView
+     * @param listView
+     * @return
+     */
+    public List<File> getFileListFromFileListView(ListView listView) {
+        ObservableList<FileListItem> items = listView.getItems();
+        List<File> files = items.stream().map(FileListItem::getFile).collect(Collectors.toList());
+        return files;
     }
 }
