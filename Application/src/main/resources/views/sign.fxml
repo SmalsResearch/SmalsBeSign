@@ -23,9 +23,9 @@
               <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" percentWidth="65.0" />
           </columnConstraints>
           <rowConstraints>
-              <RowConstraints percentHeight="8.0" valignment="CENTER" vgrow="SOMETIMES" />
-            <RowConstraints percentHeight="7.0" valignment="CENTER" vgrow="SOMETIMES" />
-              <RowConstraints percentHeight="70.0" valignment="CENTER" vgrow="SOMETIMES" />
+              <RowConstraints percentHeight="10.0" valignment="CENTER" vgrow="SOMETIMES" />
+            <RowConstraints percentHeight="10.0" valignment="CENTER" vgrow="SOMETIMES" />
+              <RowConstraints percentHeight="65.0" valignment="CENTER" vgrow="SOMETIMES" />
               <RowConstraints percentHeight="15.0" valignment="CENTER" vgrow="SOMETIMES" />
           </rowConstraints>
           <children>

@@ -1,6 +1,7 @@
 package be.smals.research.bulksign.desktopapp.services;
 
 import be.smals.research.bulksign.desktopapp.utilities.SigningOutput;
+import be.smals.research.bulksign.desktopapp.utilities.Utilities;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
@@ -14,9 +15,9 @@ import java.security.*;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 public class VerifySigningService {
 
@@ -35,6 +36,7 @@ public class VerifySigningService {
         signer.initVerify(signingOutput.certificateChain.get(2).getPublicKey()); // [2] is the user certificate
         signer.update(signingOutput.masterDigest.getBytes());
 
+        file.close();
         return signer.verify(signingOutput.signature);
     }
 
@@ -64,7 +66,7 @@ public class VerifySigningService {
         Element signingOutputElement    = (Element) document.getElementsByTagName("SigningOutput").item(0);
         String masterDigest             = signingOutputElement.getElementsByTagName("MasterDigest").item(0).getTextContent().toLowerCase();
         String signedBy                 = signingOutputElement.getElementsByTagName("SignedBy").item(0).getTextContent();
-        Date signedAt                 = new Date(new Long(signingOutputElement.getElementsByTagName("SignedAt").item(0).getTextContent()).longValue());
+        Date signedAt                   = new Date(new Long(signingOutputElement.getElementsByTagName("SignedAt").item(0).getTextContent()).longValue());
         byte[] signature                = DatatypeConverter.parseHexBinary(signingOutputElement.getElementsByTagName("Signature").item(0).getTextContent());
         Element certificateElement      = (Element) signingOutputElement.getElementsByTagName("Certificate").item(0);
         byte[] rootEncodedCertificate   = DatatypeConverter.parseHexBinary(certificateElement.getElementsByTagName("Root").item(0).getTextContent());
@@ -114,4 +116,42 @@ public class VerifySigningService {
         return found;
     }
 
+    /**
+     * Returns individual files from the Signed file (.signed.zip)
+     *
+     * @param signedFile
+     * @return
+     */
+    public Map<String, File> getFiles(File signedFile) throws IOException {
+        byte[] buffer = new byte[1024];
+        Map<String, File> files = new HashMap<>();
+        ZipInputStream zipInputStream   = new ZipInputStream(new FileInputStream(signedFile));
+        ZipEntry zipEntry               = zipInputStream.getNextEntry();
+
+        while (zipEntry != null) {
+            String fileName         = zipEntry.getName();
+            File newFile            = new File(signedFile.getParent()+File.separator+fileName);
+            FileOutputStream fos    = new FileOutputStream(newFile);
+            int len;
+            while ((len = zipInputStream.read(buffer)) > 0) {
+                fos.write(buffer, 0, len);
+            }
+
+            String fileExt = Utilities.getInstance().getFileExtension(fileName);
+            if (fileExt.equalsIgnoreCase("sig")) {
+                files.put("SIGNATURE", newFile);
+            } else if (fileName.equals("README")) {
+                files.put("README", newFile);
+            } else {
+                files.put("FILE", newFile);
+            }
+            fos.close();
+            zipEntry = zipInputStream.getNextEntry();
+        }
+
+        zipInputStream.closeEntry();
+        zipInputStream.close();
+
+        return files;
+    }
 }

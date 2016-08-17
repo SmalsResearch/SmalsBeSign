@@ -28,4 +28,23 @@ public class Utilities {
         MessageDigest digest = MessageDigest.getInstance("SHA-1");
         return digest.digest(input);
     }
+
+    /**
+     * Return a file extension from file name (without the dot)
+     *
+     * @param fileName
+     * @return
+     */
+    public String getFileExtension(String fileName) {
+        String extension = "";
+        int i = fileName.lastIndexOf('.');
+        // files without extension
+        int p = Math.max(fileName.lastIndexOf('/'), fileName.lastIndexOf('\\'));
+
+        if (i >= p) {
+            extension = fileName.substring(i+1);
+        }
+
+        return extension;
+    }
 }

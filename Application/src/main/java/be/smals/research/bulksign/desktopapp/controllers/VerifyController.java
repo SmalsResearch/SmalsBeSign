@@ -5,6 +5,7 @@ import be.smals.research.bulksign.desktopapp.services.VerifySigningService;
 import be.smals.research.bulksign.desktopapp.ui.FileListItem;
 import be.smals.research.bulksign.desktopapp.ui.ResultListItem;
 import be.smals.research.bulksign.desktopapp.utilities.SigningOutput;
+import be.smals.research.bulksign.desktopapp.utilities.VerifySigningOutput;
 import com.jfoenix.controls.JFXCheckBox;
 import com.jfoenix.controls.JFXDialog;
 import com.jfoenix.controls.JFXListView;
@@ -29,14 +30,15 @@ import java.awt.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.SignatureException;
 import java.security.cert.CertificateException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -111,12 +113,12 @@ public class VerifyController extends Controller {
      * @param pass correct results
      * @param fail incorrect results
      */
-    private void displayVerifyResult(List<String> pass, List<String> fail) {
+    private void displayVerifyResult(List<VerifySigningOutput> pass, List<VerifySigningOutput> fail) {
         verifyResultDialog.show(masterVerify);
         Label resultLabel       = (Label) this.stage.getScene().lookup("#verifyResultTitle");
         JFXListView resultList  = (JFXListView) this.stage.getScene().lookup("#verifyResultListView");
         resultList.getItems().clear();
-        resultList.setMaxWidth(Double.MAX_VALUE);
+
         if (pass.isEmpty()) {
             resultLabel.getStyleClass().clear();
             resultLabel.getStyleClass().add("color-danger");
@@ -124,18 +126,18 @@ public class VerifyController extends Controller {
         } else if (fail.isEmpty()) {
             resultLabel.getStyleClass().clear();
             resultLabel.getStyleClass().add("color-success");
-            resultLabel.setText("All files passed!");
+            resultLabel.setText("All files are ok!");
         } else {
             resultLabel.getStyleClass().clear();
             resultLabel.getStyleClass().add("color-info");
             resultLabel.setText(pass.size() + " file(s) out of "+(pass.size()+fail.size())+ " passed");
         }
 
-        for (String passFile : pass) {
-            resultList.getItems().addAll(new ResultListItem(passFile, true, "John Doe", new Date()));
+        for (VerifySigningOutput passOutput : pass) {
+            resultList.getItems().add(new ResultListItem(passOutput.fileName, true, passOutput.signedBy, passOutput.signedAt));
         }
-        for (String failFile : fail) {
-            resultList.getItems().addAll(new ResultListItem(failFile, false, "John Doe", new Date()));
+        for (VerifySigningOutput failOutput : fail) {
+            resultList.getItems().add(new ResultListItem(failOutput.fileName, false, failOutput.signedBy, failOutput.signedAt));
         }
     }
     /**
@@ -183,46 +185,37 @@ public class VerifyController extends Controller {
                     "Please, select the signature file and a least one signed file.");
         } else {
             SigningOutput signingOutput = null;
-            List<String> pass = new ArrayList<>();
-            List<String> fail = new ArrayList<>();
-            try {
-                signingOutput = this.verifySigningService.getSigningOutput(this.signatureFile);
-
-                for (File signedFile : selectedFiles) {
-                    FileInputStream file = new FileInputStream(signedFile);
-                    boolean isValid = this.verifySigningService.verifySigning(file, signingOutput);
+            List<VerifySigningOutput> pass = new ArrayList<>();
+            List<VerifySigningOutput> fail = new ArrayList<>();
+            for (File signedFile : selectedFiles) {
+                try {
+                    Map<String, File> files = this.verifySigningService.getFiles(signedFile);
+                    signingOutput = this.verifySigningService.getSigningOutput(files.get("SIGNATURE"));
+                    boolean isValid = this.verifySigningService.verifySigning(new FileInputStream(files.get("FILE")), signingOutput);
                     if (isValid) {
-                        pass.add(signedFile.getName());
+                        pass.add(new VerifySigningOutput(signedFile.getName(), signingOutput.author, signingOutput.createdAt));
                     } else {
-                        fail.add(signedFile.getName());
+                        fail.add(new VerifySigningOutput(signedFile.getName(), signingOutput.author, signingOutput.createdAt));
                     }
-                    file.close();
+                    for (File file : files.values())
+                        Files.deleteIfExists(file.toPath());
+                } catch (IOException|SAXException|ParserConfigurationException|CertificateException
+                        |SignatureException|NoSuchAlgorithmException|InvalidKeyException|NoSuchProviderException e) {
+                    fail.add(new VerifySigningOutput(signedFile.getName(), signingOutput.author, signingOutput.createdAt));
                 }
-
-                // Display result
-                this.displayVerifyResult(pass, fail);
-
-            } catch (IOException|SAXException|ParserConfigurationException e) {
-                this.showErrorDialog(errorDialog, masterVerify, "Invalid signature file!",
-                        "Unable to parse that signature file.\nIt looks like the file is corrupted.");
-            } catch (SignatureException e) {
-                this.showErrorDialog(errorDialog, masterVerify, "Invalid signature!",
-                        "Is it the wright signature file ?");
-            } catch (NoSuchAlgorithmException|InvalidKeyException|NoSuchProviderException e) {
-                this.showErrorDialog(errorDialog, masterVerify, "Invalid key...",
-                        "Unable to validate the signature. Your file may be corrupted.");
-            } catch (CertificateException e) {
-                this.showErrorDialog(errorDialog, masterVerify, "Invalid certificate!",
-                        "Unable to validate your certificate.\nIs your signature file corrupted ?");
             }
+
+            // Display result
+            this.displayVerifyResult(pass, fail);
         }
     }
     /**
      * Signed files selection action
      */
     @FXML private void handleSelectSignFileButtonAction () {
-
+        this.fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Signed Files (SIGNED.ZIP)", "*.signed.zip"));
         List<File> files = this.fileChooser.showOpenMultipleDialog(this.stage);
+        this.fileChooser.getExtensionFilters().clear();
         if (files != null) {
             files.stream().filter(file -> !this.filesToVerify.contains(file)).forEach(file -> this.filesToVerify.add(file));
             this.filesToSignCount.textProperty().set(this.filesToVerify.size() +" file(s)");
@@ -235,5 +228,9 @@ public class VerifyController extends Controller {
     @FXML private void handleSelectAllAction () {
         for (Object item : this.filesListView.getItems())
             ((FileListItem) item).setFileSelected(this.selectAllCheckBox.isSelected());
+    }
+
+    public void handleCloseVerifyDialog() {
+        verifyResultDialog.close();
     }
 }

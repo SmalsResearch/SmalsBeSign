@@ -19,6 +19,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.*;
+import java.nio.file.Files;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 import java.util.List;
@@ -107,7 +108,7 @@ public class SigningService {
         for (File file: files) {
             this.createIndividualZipOutput(file, filePath, destinationDir);
         }
-
+        Files.deleteIfExists(new File(filePath).toPath());
     }
     private void createSignatureFile(SigningOutput signingOutput, String filePath) throws ParserConfigurationException, CertificateEncodingException, TransformerException {
         // XML - Create

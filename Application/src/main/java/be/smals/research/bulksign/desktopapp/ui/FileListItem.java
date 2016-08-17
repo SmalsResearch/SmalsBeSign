@@ -1,5 +1,6 @@
 package be.smals.research.bulksign.desktopapp.ui;
 
+import be.smals.research.bulksign.desktopapp.utilities.Utilities;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXCheckBox;
 import javafx.event.EventHandler;
@@ -25,7 +26,7 @@ public class FileListItem extends HBox {
         this.selectCheckBox.getStyleClass().add("checkbox");
         this.selectCheckBox.toFront();
 
-        this.fileExtension = this.retrieveFileExtension(this.file.getName());
+        this.fileExtension = Utilities.getInstance().getFileExtension(this.file.getName());
         this.viewButton = (this.fileExtension.equalsIgnoreCase("pdf")) ? new JFXButton("Preview") : new JFXButton("Open");
         this.viewButton.getStyleClass().add("button-s");
         this.nameLabel.setMaxWidth(Double.MAX_VALUE);
@@ -33,19 +34,6 @@ public class FileListItem extends HBox {
 
         this.getChildren().addAll(this.selectCheckBox, this.nameLabel, this.viewButton);
         this.setAlignment(Pos.CENTER);
-    }
-
-    private String retrieveFileExtension(String fileName) {
-        String extension = "";
-        int i = fileName.lastIndexOf('.');
-        // files without extension
-        int p = Math.max(fileName.lastIndexOf('/'), fileName.lastIndexOf('\\'));
-
-        if (i >= p) {
-            extension = fileName.substring(i+1);
-        }
-
-        return extension;
     }
 
     public boolean isFileSelected() {

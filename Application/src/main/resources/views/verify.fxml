@@ -15,6 +15,9 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.StackPane?>
 
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.FlowPane?>
 <StackPane fx:id="masterVerify" xmlns="http://javafx.com/javafx/8.0.101" xmlns:fx="http://javafx.com/fxml/1" fx:controller="be.smals.research.bulksign.desktopapp.controllers.VerifyController">
    <children>
       <GridPane fx:id="rootVerify" alignment="CENTER" stylesheets="@css/common.css">
@@ -24,9 +27,9 @@
          <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" percentWidth="65.0" />
         </columnConstraints>
         <rowConstraints>
-         <RowConstraints percentHeight="8.0" valignment="CENTER" vgrow="SOMETIMES" />
-            <RowConstraints percentHeight="7.0" valignment="CENTER" vgrow="SOMETIMES" />
-         <RowConstraints percentHeight="70.0" valignment="CENTER" vgrow="SOMETIMES" />
+         <RowConstraints percentHeight="10.0" valignment="CENTER" vgrow="SOMETIMES" />
+            <RowConstraints percentHeight="10.0" valignment="CENTER" vgrow="SOMETIMES" />
+         <RowConstraints percentHeight="65.0" valignment="CENTER" vgrow="SOMETIMES" />
             <RowConstraints percentHeight="15.0" valignment="CENTER" vgrow="SOMETIMES" />
         </rowConstraints>
         <children>
@@ -91,8 +94,12 @@
                         <Label id="verifyResultTitle" styleClass="color-info">Verify Result</Label>
                     </heading>
                     <body>
-                        <JFXListView id="verifyResultListView" styleClass="list-view" />
+                        <!--<Label id="verifyResultBody"></Label>-->
+                        <JFXListView id="verifyResultListView"/>
                     </body>
+                    <actions>
+                        <JFXButton onAction="#handleCloseVerifyDialog" minWidth="96" styleClass="button-s">CLOSE</JFXButton>
+                    </actions>
                 </JFXDialogLayout>
             </JFXDialog>
             <Separator orientation="VERTICAL" GridPane.columnIndex="1" GridPane.rowIndex="3" />
@@ -101,6 +108,7 @@
                   <Insets left="8.0" />
                </GridPane.margin>
             </JFXCheckBox>
+            <Separator orientation="VERTICAL" GridPane.columnIndex="1" GridPane.rowIndex="1" />
         </children>
           <padding>
               <Insets bottom="24.0" left="24.0" right="24.0" top="24.0" />
