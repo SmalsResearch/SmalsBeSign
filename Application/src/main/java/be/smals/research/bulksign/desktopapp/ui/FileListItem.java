@@ -3,6 +3,8 @@ package be.smals.research.bulksign.desktopapp.ui;
 import be.smals.research.bulksign.desktopapp.utilities.Utilities;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXCheckBox;
+import de.jensd.fx.glyphs.GlyphsDude;
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;

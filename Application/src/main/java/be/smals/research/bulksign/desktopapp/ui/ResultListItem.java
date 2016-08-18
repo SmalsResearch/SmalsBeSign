@@ -1,5 +1,7 @@
 package be.smals.research.bulksign.desktopapp.ui;
 
+import de.jensd.fx.glyphs.GlyphsDude;
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 
@@ -15,9 +17,11 @@ public class ResultListItem extends Label {
         if (passed) {
             value += fileName + " - PASSED";
             this.getStyleClass().add("color-success");
+            GlyphsDude.setIcon(this, FontAwesomeIcon.CHECK_CIRCLE, "3em");
         } else {
             value += fileName + " - FAILED";
             this.getStyleClass().add("color-danger");
+            GlyphsDude.setIcon(this, FontAwesomeIcon.TIMES_CIRCLE, "3em");
         }
         value +=  "\n- Signed by "+author+"\n- Signed on "+date;
 

@@ -3,6 +3,7 @@
 <?import com.jfoenix.controls.JFXButton?>
 <?import com.jfoenix.controls.JFXDialog?>
 <?import com.jfoenix.controls.JFXDialogLayout?>
+<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Separator?>
@@ -38,7 +39,7 @@
                           <Label fx:id="infoDialogBody" />
                       </body>
                       <actions>
-                          <JFXButton id="closeInfoDialogButton" styleClass="button-s" minWidth="96">CLOSE</JFXButton>
+                          <JFXButton id="closeInfoDialogButton" minWidth="96" styleClass="button-s">CLOSE</JFXButton>
                       </actions>
                   </JFXDialogLayout>
             </JFXDialog>
@@ -51,7 +52,7 @@
                           <Label id="errorDialogBody" fx:id="errorDialogBody" />
                       </body>
                       <actions>
-                          <JFXButton id="closeErrorDialogButton" styleClass="button-s-danger" minWidth="96">CLOSE</JFXButton>
+                          <JFXButton id="closeErrorDialogButton" minWidth="96" styleClass="button-s-danger">CLOSE</JFXButton>
                       </actions>
                   </JFXDialogLayout>
               </JFXDialog>
@@ -64,7 +65,7 @@
                           <Label id="successDialogBody" />
                       </body>
                       <actions>
-                          <JFXButton id="closeSuccessDialogButton" styleClass="button-s" minWidth="96">CLOSE</JFXButton>
+                          <JFXButton id="closeSuccessDialogButton" minWidth="96" styleClass="button-s">CLOSE</JFXButton>
                       </actions>
                   </JFXDialogLayout>
               </JFXDialog>
@@ -79,10 +80,14 @@
                      <VBox.margin>
                         <Insets bottom="4.0" />
                      </VBox.margin></JFXButton>
-                  <JFXButton mnemonicParsing="false" onAction="#handleExitButtonAction" styleClass="button-l-danger" text="EXIT">
-                     <VBox.margin>
+                  <JFXButton mnemonicParsing="false" onAction="#handleExitButtonAction" styleClass="button-l-danger" text="  EXIT">
+                      <VBox.margin>
                         <Insets top="24.0" />
-                     </VBox.margin></JFXButton>
+                     </VBox.margin>
+                     <graphic>
+                        <FontAwesomeIconView fill="WHITE" glyphName="TIMES_CIRCLE" size="1.6em" strokeType="OUTSIDE" strokeWidth="0.0" />
+                     </graphic>
+                  </JFXButton>
                </children>
             </VBox>
           </children>

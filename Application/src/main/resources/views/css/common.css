@@ -62,6 +62,7 @@
     -fx-button-type: FLAT;
     -fx-background-color:  #52BBFE;
     -fx-text-fill: WHITE;
+    -fx-fill: WHITE;
 }
 .button-s-success {
     -fx-font-size: 12px;
@@ -154,15 +155,26 @@
 .color {
     -fx-text-fill: #52BBFE;
 }
+.color > .glyph-icon {
+    -fx-text-fill: #52BBFE;
+}
 .color-white {
     -fx-text-fill: WHITE;
 }
 .color-success {
     -fx-text-fill: #5cb85c;
 }
+.color-success > .glyph-icon {
+    -fx-fill: #5cb85c;
+}
 .color-info {
     -fx-text-fill: #52BBFE;
 }
 .color-danger {
     -fx-text-fill: #d9534f;
+}.color-danger > .glyph-icon{
+    -fx-fill: #d9534f;
+}
+.glyph-icon {
+    -fx-padding: 4px 12px 4px 4px;
 }

@@ -5,6 +5,7 @@
 <?import com.jfoenix.controls.JFXDialog?>
 <?import com.jfoenix.controls.JFXDialogLayout?>
 <?import com.jfoenix.controls.JFXListView?>
+<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
@@ -15,9 +16,6 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.StackPane?>
 
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.layout.FlowPane?>
 <StackPane fx:id="masterVerify" xmlns="http://javafx.com/javafx/8.0.101" xmlns:fx="http://javafx.com/fxml/1" fx:controller="be.smals.research.bulksign.desktopapp.controllers.VerifyController">
    <children>
       <GridPane fx:id="rootVerify" alignment="CENTER" stylesheets="@css/common.css">
@@ -37,6 +35,9 @@
               <GridPane.margin>
                  <Insets />
               </GridPane.margin>
+               <graphic>
+                  <FontAwesomeIconView fill="WHITE" glyphName="PLUS_CIRCLE" size="1.2em" strokeType="OUTSIDE" strokeWidth="0.0" />
+               </graphic>
            </JFXButton>
            <Label fx:id="filesToSignCount" text="No file selected" GridPane.halignment="LEFT">
               <GridPane.margin>
@@ -95,10 +96,10 @@
                     </heading>
                     <body>
                         <!--<Label id="verifyResultBody"></Label>-->
-                        <JFXListView id="verifyResultListView"/>
+                        <JFXListView id="verifyResultListView" />
                     </body>
                     <actions>
-                        <JFXButton onAction="#handleCloseVerifyDialog" minWidth="96" styleClass="button-s">CLOSE</JFXButton>
+                        <JFXButton minWidth="96" onAction="#handleCloseVerifyDialog" styleClass="button-s">CLOSE</JFXButton>
                     </actions>
                 </JFXDialogLayout>
             </JFXDialog>
