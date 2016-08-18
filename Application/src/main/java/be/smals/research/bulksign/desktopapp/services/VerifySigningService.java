@@ -2,6 +2,8 @@ package be.smals.research.bulksign.desktopapp.services;
 
 import be.smals.research.bulksign.desktopapp.utilities.SigningOutput;
 import be.smals.research.bulksign.desktopapp.utilities.Utilities;
+import be.smals.research.bulksign.desktopapp.utilities.VerifySigningOutput;
+import org.bouncycastle.openssl.PEMReader;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
@@ -11,6 +13,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.*;
+import java.net.URL;
 import java.security.*;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
@@ -29,10 +32,11 @@ public class VerifySigningService {
     public VerifySigningService () {}
 
     /**
+     * Check if the signing is valid for the file
      *
      * @param file
      * @param signingOutput
-     * @return
+     * @return true if signing is valid
      * @throws NoSuchAlgorithmException
      * @throws IOException
      * @throws NoSuchProviderException
@@ -56,6 +60,46 @@ public class VerifySigningService {
         file.close();
         return signer.verify(signingOutput.signature);
     }
+
+    /**
+     *
+     * @param file
+     * @param signingOutput
+     * @return verify output
+     * @throws NoSuchAlgorithmException
+     * @throws IOException
+     * @throws NoSuchProviderException
+     * @throws InvalidKeyException
+     * @throws SignatureException
+     * @throws CertificateException
+     */
+    public VerifySigningOutput verifySigning (File file, SigningOutput signingOutput)
+            throws NoSuchAlgorithmException, IOException, NoSuchProviderException, InvalidKeyException,
+            SignatureException, CertificateException {
+        VerifySigningOutput verifySigningOutput = new VerifySigningOutput(file.getName(), signingOutput.author, signingOutput.createdAt);
+
+        String fileDigest = DigestService.getInstance().computeIndividualDigest(new FileInputStream(file));
+        if (!this.isIndividualDigestPartOfMasterDigest(signingOutput.masterDigest, fileDigest))
+            return verifySigningOutput;
+        verifySigningOutput.digestValid = true;
+
+        if (this.isCertificateChainValid(signingOutput.certificateChain))
+            verifySigningOutput.certChainValid = true;
+
+        if (Utilities.getInstance().isConnectedToInternet())
+            verifySigningOutput.rootCertChecked = true;
+        if (verifySigningOutput.rootCertChecked && this.isRootCertificateValid(signingOutput.certificateChain.get(0)))
+            verifySigningOutput.rootCertValid = true;
+
+        Signature signer = Signature.getInstance("SHA1withRSA", "BC");
+        signer.initVerify(signingOutput.certificateChain.get(2).getPublicKey()); // [2] is the user certificate
+        signer.update(signingOutput.masterDigest.getBytes());
+        if (signer.verify(signingOutput.signature))
+            verifySigningOutput.signatureValid = true;
+
+        return verifySigningOutput;
+    }
+
     /**
      * Used to check if the certificate chain is valid
      *
@@ -95,6 +139,21 @@ public class VerifySigningService {
         certificate.verify(authorityPubKey);
         return true;
     }
+    private boolean isRootCertificateValid (X509Certificate certificate) {
+        try {
+            URL beRootCA3CertificateURL = new URL ("http://certs.eid.belgium.be/belgiumrca3.crt");
+            BufferedReader input        = new BufferedReader(new InputStreamReader(beRootCA3CertificateURL.openStream()));
+
+            PEMReader pemReader             = new PEMReader(input);
+            X509Certificate beRootCA3Certificate = (X509Certificate) pemReader.readObject();
+            System.out.println(beRootCA3Certificate);
+
+            return certificate.equals(beRootCA3Certificate);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
     /**
      * Extracts and returns a SigningOutput from a signature file
      *
@@ -117,7 +176,7 @@ public class VerifySigningService {
         Element signingOutputElement    = (Element) document.getElementsByTagName("SigningOutput").item(0);
         String masterDigest             = signingOutputElement.getElementsByTagName("MasterDigest").item(0).getTextContent().toLowerCase();
         String signedBy                 = signingOutputElement.getElementsByTagName("SignedBy").item(0).getTextContent();
-        Date signedAt                   = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy").parse(signingOutputElement.getElementsByTagName("SignedAt").item(0).getTextContent());
+        Date signedAt                   = new SimpleDateFormat("yyyy-MM-dd 'at' HH:mm:ss").parse(signingOutputElement.getElementsByTagName("SignedAt").item(0).getTextContent());
         byte[] signature                = DatatypeConverter.parseHexBinary(signingOutputElement.getElementsByTagName("Signature").item(0).getTextContent());
         Element certificateElement      = (Element) signingOutputElement.getElementsByTagName("Certificate").item(0);
         byte[] rootEncodedCertificate   = DatatypeConverter.parseHexBinary(certificateElement.getElementsByTagName("Root").item(0).getTextContent());

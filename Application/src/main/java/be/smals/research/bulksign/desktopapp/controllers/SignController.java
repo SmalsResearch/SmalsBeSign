@@ -121,7 +121,7 @@ public class SignController extends Controller{
                 SigningOutput signingOutput = new SigningOutput(null, signature, certificateChain);
                 this.signingService.saveSigningOutput(files, signingOutput, dir.getPath()+File.separator+"SignatureFile.sig");
                 this.showSuccessDialog(successDialog, masterSign, "File saved!",
-                        "Signature successfully saved!\nThe signature file can be found at "+dir.getPath());
+                        "Signature successfully saved!\nSigned files can be found at "+dir.getPath());
             } catch (CertificateEncodingException e) {
                 e.printStackTrace();
             }

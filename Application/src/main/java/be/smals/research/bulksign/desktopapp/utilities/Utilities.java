@@ -5,6 +5,8 @@ import javafx.collections.ObservableList;
 import javafx.scene.control.ListView;
 
 import java.io.File;
+import java.io.IOException;
+import java.net.InetAddress;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
@@ -64,5 +66,16 @@ public class Utilities {
         ObservableList<FileListItem> items = listView.getItems();
         List<File> files = items.stream().map(FileListItem::getFile).collect(Collectors.toList());
         return files;
+    }
+
+    /**
+     * Pings Google and certs.eid.belgium.be
+     *
+     * @return true if both of them are reachable
+     * @throws IOException
+     */
+    public boolean isConnectedToInternet () throws IOException {
+        return InetAddress.getByName("www.google.com").isReachable(64)
+                && InetAddress.getByName("http://certs.eid.belgium.be/belgiumrca3.crt").isReachable(64);
     }
 }

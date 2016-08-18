@@ -15,7 +15,7 @@ public class ResultListItem extends Label {
 
         String value = "";
         if (passed) {
-            value += fileName + " - PASSED";
+            value += fileName + " - OK";
             this.getStyleClass().add("color-success");
             GlyphsDude.setIcon(this, FontAwesomeIcon.CHECK_CIRCLE, "3em");
         } else {
@@ -23,7 +23,7 @@ public class ResultListItem extends Label {
             this.getStyleClass().add("color-danger");
             GlyphsDude.setIcon(this, FontAwesomeIcon.TIMES_CIRCLE, "3em");
         }
-        value +=  "\n- Signed by "+author+"\n- Signed on "+date;
+        value +=  "\n Signed by "+author+"\n Signed at "+date;
 
         this.setWrapText(true);
         this.setText(value);

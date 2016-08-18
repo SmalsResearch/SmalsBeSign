@@ -22,6 +22,7 @@ import java.io.*;
 import java.nio.file.Files;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
+import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -134,7 +135,7 @@ public class SigningService {
         rootElement.appendChild(signedByDigestElement);
         // Signed at
         Element signedAtDigestElement = document.createElement("SignedAt");
-        signedAtDigestElement.appendChild(document.createTextNode(""+signingOutput.createdAt.toString()));
+        signedAtDigestElement.appendChild(document.createTextNode(new SimpleDateFormat("yyyy-MM-dd 'at' HH:mm:ss").format(signingOutput.createdAt)));
         rootElement.appendChild(signedAtDigestElement);
         // MasterDigest
         Element masterDigestElement = document.createElement("MasterDigest");

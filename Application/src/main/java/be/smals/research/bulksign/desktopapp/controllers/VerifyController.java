@@ -9,6 +9,7 @@ import be.smals.research.bulksign.desktopapp.utilities.VerifySigningOutput;
 import com.jfoenix.controls.JFXCheckBox;
 import com.jfoenix.controls.JFXDialog;
 import com.jfoenix.controls.JFXListView;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -27,9 +28,7 @@ import org.xml.sax.SAXException;
 import javax.xml.parsers.ParserConfigurationException;
 import java.awt.*;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
@@ -185,17 +184,21 @@ public class VerifyController extends Controller {
                 try {
                     Map<String, File> files = this.verifySigningService.getFiles(signedFile);
                     signingOutput = this.verifySigningService.getSigningOutput(files.get("SIGNATURE"));
-                    boolean isValid = this.verifySigningService.verifySigning(new FileInputStream(files.get("FILE")), signingOutput);
-                    if (isValid) {
-                        pass.add(new VerifySigningOutput(signedFile.getName(), signingOutput.author, signingOutput.createdAt));
-                    } else {
-                        fail.add(new VerifySigningOutput(signedFile.getName(), signingOutput.author, signingOutput.createdAt));
-                    }
-                    for (File file : files.values())
-                        Files.deleteIfExists(file.toPath());
+                    VerifySigningOutput verifySigningOutput = this.verifySigningService.verifySigning(files.get("FILE"), signingOutput);
+                    System.out.println(verifySigningOutput);
+                    System.exit(0);
+                    Platform.exit();
+//                    if (isValid) {
+//                        pass.add(new VerifySigningOutput(signedFile.getName(), signingOutput.author, signingOutput.createdAt));
+//                    } else {
+//                        fail.add(new VerifySigningOutput(signedFile.getName(), signingOutput.author, signingOutput.createdAt));
+//                    }
+//                    for (File file : files.values())
+//                        Files.deleteIfExists(file.toPath());
                 } catch (IOException|SAXException|ParserConfigurationException|CertificateException
                         |SignatureException|NoSuchAlgorithmException|InvalidKeyException|NoSuchProviderException e) {
-                    fail.add(new VerifySigningOutput(signedFile.getName(), signingOutput.author, signingOutput.createdAt));
+                    e.printStackTrace();
+//                    fail.add(new VerifySigningOutput(signedFile.getName(), signingOutput.author, signingOutput.createdAt));
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
