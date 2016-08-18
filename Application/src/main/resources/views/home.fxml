@@ -80,13 +80,10 @@
                      <VBox.margin>
                         <Insets bottom="4.0" />
                      </VBox.margin></JFXButton>
-                  <JFXButton mnemonicParsing="false" onAction="#handleExitButtonAction" styleClass="button-l-danger" text="  EXIT">
+                  <JFXButton mnemonicParsing="false" onAction="#handleExitButtonAction" styleClass="button-l-danger" text="EXIT">
                       <VBox.margin>
                         <Insets top="24.0" />
                      </VBox.margin>
-                     <graphic>
-                        <FontAwesomeIconView fill="WHITE" glyphName="TIMES_CIRCLE" size="1.6em" strokeType="OUTSIDE" strokeWidth="0.0" />
-                     </graphic>
                   </JFXButton>
                </children>
             </VBox>

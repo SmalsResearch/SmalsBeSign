@@ -15,14 +15,23 @@ import javafx.stage.Stage;
 
 import java.security.Security;
 
+/**
+ * Application starter class
+ */
 public class Main extends Application {
 
+    /**
+     * Application entry point
+     *
+     * @param args arguments
+     */
     public static void main(String[] args) {
         launch(args);
     }
-
-    @Override
-    public void start(Stage primaryStage) throws Exception {
+    /**
+     * {@inheritDoc}
+     */
+    @Override public void start(Stage primaryStage) throws Exception {
         Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
         FXMLLoader loader   = new FXMLLoader(getClass().getClassLoader().getResource("views/main.fxml"));
         StackPane masterPane       = loader.load();
@@ -99,8 +108,10 @@ public class Main extends Application {
     private void createCenter (MainController controller) {
         Platform.runLater( () -> controller.homeMenuItemAction ());
     }
-    @Override
-    public void stop() throws Exception {
+    /**
+     * {@inheritDoc}
+     */
+    @Override public void stop() throws Exception {
         super.stop();
         System.exit(0);
         Platform.exit();

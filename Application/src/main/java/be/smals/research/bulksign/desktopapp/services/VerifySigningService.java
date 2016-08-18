@@ -15,6 +15,8 @@ import java.security.*;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -105,7 +107,7 @@ public class VerifySigningService {
      * @throws NoSuchProviderException
      */
     public SigningOutput getSigningOutput (File signingOutputFile)
-            throws ParserConfigurationException, IOException, SAXException, CertificateException, NoSuchProviderException {
+            throws ParserConfigurationException, IOException, SAXException, CertificateException, NoSuchProviderException, ParseException {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = factory.newDocumentBuilder();
         Document document = builder.parse(signingOutputFile);
@@ -115,7 +117,7 @@ public class VerifySigningService {
         Element signingOutputElement    = (Element) document.getElementsByTagName("SigningOutput").item(0);
         String masterDigest             = signingOutputElement.getElementsByTagName("MasterDigest").item(0).getTextContent().toLowerCase();
         String signedBy                 = signingOutputElement.getElementsByTagName("SignedBy").item(0).getTextContent();
-        Date signedAt                   = new Date(new Long(signingOutputElement.getElementsByTagName("SignedAt").item(0).getTextContent()).longValue());
+        Date signedAt                   = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy").parse(signingOutputElement.getElementsByTagName("SignedAt").item(0).getTextContent());
         byte[] signature                = DatatypeConverter.parseHexBinary(signingOutputElement.getElementsByTagName("Signature").item(0).getTextContent());
         Element certificateElement      = (Element) signingOutputElement.getElementsByTagName("Certificate").item(0);
         byte[] rootEncodedCertificate   = DatatypeConverter.parseHexBinary(certificateElement.getElementsByTagName("Root").item(0).getTextContent());

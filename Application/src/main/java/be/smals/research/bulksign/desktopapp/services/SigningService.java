@@ -134,7 +134,7 @@ public class SigningService {
         rootElement.appendChild(signedByDigestElement);
         // Signed at
         Element signedAtDigestElement = document.createElement("SignedAt");
-        signedAtDigestElement.appendChild(document.createTextNode(""+signingOutput.createdAt.getTime()));
+        signedAtDigestElement.appendChild(document.createTextNode(""+signingOutput.createdAt.toString()));
         rootElement.appendChild(signedAtDigestElement);
         // MasterDigest
         Element masterDigestElement = document.createElement("MasterDigest");

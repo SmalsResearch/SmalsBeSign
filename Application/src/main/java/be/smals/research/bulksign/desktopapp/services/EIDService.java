@@ -1,7 +1,6 @@
 package be.smals.research.bulksign.desktopapp.services;
 
 import be.smals.research.bulksign.desktopapp.eid.EID;
-import be.smals.research.bulksign.desktopapp.abstracts.EIDServiceObserver;
 import be.smals.research.bulksign.desktopapp.eid.external.UserCancelledException;
 
 import javax.smartcardio.CardException;

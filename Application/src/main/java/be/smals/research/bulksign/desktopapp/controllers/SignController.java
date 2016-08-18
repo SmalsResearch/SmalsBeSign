@@ -1,6 +1,5 @@
 package be.smals.research.bulksign.desktopapp.controllers;
 
-import be.smals.research.bulksign.desktopapp.abstracts.Controller;
 import be.smals.research.bulksign.desktopapp.eid.external.UserCancelledException;
 import be.smals.research.bulksign.desktopapp.services.EIDService;
 import be.smals.research.bulksign.desktopapp.services.MockKeyService;
@@ -25,6 +24,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
+import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.jpedal.examples.viewer.Commands;
@@ -54,6 +54,7 @@ public class SignController extends Controller{
 
     private SigningService signingService;
     private FileChooser fileChooser;
+    private DirectoryChooser directoryChooser;
     private List<File> filesToSign;
     private OpenViewerFX viewerFx;
 
@@ -79,6 +80,8 @@ public class SignController extends Controller{
 
         this.fileChooser = new FileChooser();
         this.fileChooser.setTitle("Select a file");
+        this.directoryChooser = new DirectoryChooser();
+        this.directoryChooser.setTitle("Select a directory");
     }
     /**
      * {@inheritDoc}
@@ -111,16 +114,14 @@ public class SignController extends Controller{
      * @throws TransformerException
      */
     private void saveSigningOutput(List<File> files, byte[] signature, List<X509Certificate> certificateChain) throws IOException, ParserConfigurationException, TransformerException {
-        fileChooser.setTitle("Save the signature output");
-        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Signature files (SIG)", "*.sig"));
-        File fileToSave = fileChooser.showSaveDialog(this.stage);
-        fileChooser.getExtensionFilters().clear();
-        if (fileToSave != null) {
+        this.directoryChooser.setTitle("Save the signing output");
+        File dir = this.directoryChooser.showDialog(this.stage);
+        if (dir != null) {
             try {
                 SigningOutput signingOutput = new SigningOutput(null, signature, certificateChain);
-                this.signingService.saveSigningOutput(files, signingOutput, fileToSave.getPath());
+                this.signingService.saveSigningOutput(files, signingOutput, dir.getPath()+File.separator+"SignatureFile.sig");
                 this.showSuccessDialog(successDialog, masterSign, "File saved!",
-                        "Signature successfully saved!\nThe signature file can be found at "+fileToSave.getPath());
+                        "Signature successfully saved!\nThe signature file can be found at "+dir.getPath());
             } catch (CertificateEncodingException e) {
                 e.printStackTrace();
             }

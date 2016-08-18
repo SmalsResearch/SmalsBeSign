@@ -1,6 +1,5 @@
-package be.smals.research.bulksign.desktopapp.abstracts;
+package be.smals.research.bulksign.desktopapp.controllers;
 
-import be.smals.research.bulksign.desktopapp.controllers.MainController;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXDialog;
 import javafx.scene.control.Label;

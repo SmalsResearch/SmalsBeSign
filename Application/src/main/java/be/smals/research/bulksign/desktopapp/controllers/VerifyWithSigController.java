@@ -1,6 +1,5 @@
 package be.smals.research.bulksign.desktopapp.controllers;
 
-import be.smals.research.bulksign.desktopapp.abstracts.Controller;
 import be.smals.research.bulksign.desktopapp.services.VerifySigningService;
 import be.smals.research.bulksign.desktopapp.ui.FileListItem;
 import be.smals.research.bulksign.desktopapp.ui.ResultListItem;
@@ -34,6 +33,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.SignatureException;
 import java.security.cert.CertificateException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -216,6 +216,8 @@ public class VerifyWithSigController extends Controller {
             } catch (CertificateException e) {
                 this.showErrorDialog(errorDialog, masterVerify, "Invalid certificate!",
                         "Unable to validate your certificate.\nIs your signature file corrupted ?");
+            } catch (ParseException e) {
+                e.printStackTrace();
             }
         }
     }

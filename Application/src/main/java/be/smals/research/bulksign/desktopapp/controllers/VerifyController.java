@@ -1,6 +1,5 @@
 package be.smals.research.bulksign.desktopapp.controllers;
 
-import be.smals.research.bulksign.desktopapp.abstracts.Controller;
 import be.smals.research.bulksign.desktopapp.services.VerifySigningService;
 import be.smals.research.bulksign.desktopapp.ui.FileListItem;
 import be.smals.research.bulksign.desktopapp.ui.ResultListItem;
@@ -36,6 +35,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.SignatureException;
 import java.security.cert.CertificateException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -196,6 +196,8 @@ public class VerifyController extends Controller {
                 } catch (IOException|SAXException|ParserConfigurationException|CertificateException
                         |SignatureException|NoSuchAlgorithmException|InvalidKeyException|NoSuchProviderException e) {
                     fail.add(new VerifySigningOutput(signedFile.getName(), signingOutput.author, signingOutput.createdAt));
+                } catch (ParseException e) {
+                    e.printStackTrace();
                 }
             }
 

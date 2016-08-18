@@ -740,7 +740,7 @@ public class EID {
 		 */
 		System.out.println("PIN verification required...");
 
-//		verifyPin(directPinVerifyFeature, verifyPinStartFeature, ccidFeatures);
+//		this.isPinValid();
 
 		System.out.println("computing digital signature...");
 		responseApdu = cardChannel.transmit(computeDigitalSignatureApdu);

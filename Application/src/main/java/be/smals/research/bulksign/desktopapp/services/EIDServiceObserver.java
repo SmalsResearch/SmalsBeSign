@@ -1,4 +1,4 @@
-package be.smals.research.bulksign.desktopapp.abstracts;
+package be.smals.research.bulksign.desktopapp.services;
 
 /**
  * EIDService observer interface
