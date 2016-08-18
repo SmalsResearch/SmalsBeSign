@@ -137,6 +137,11 @@ public class EIDService {
         this.eID.close();
     }
 
+    /**
+     * Used to inform observers that an eID service has been used
+     *
+     * @param service the service
+     */
     private void notifyObservers (Services service) {
         switch (service) {
             case GET_PINCODE:
@@ -151,6 +156,12 @@ public class EIDService {
         }
 
     }
+
+    /**
+     * Used register observers that will be notified on service usage
+     *
+     * @param observer
+     */
     public void registerObserver (EIDServiceObserver observer){
         if (!this.observers.contains(observer))
             this.observers.add(observer);

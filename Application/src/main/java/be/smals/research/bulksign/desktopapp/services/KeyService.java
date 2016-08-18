@@ -5,6 +5,9 @@ import java.security.PublicKey;
 import java.security.cert.X509Certificate;
 import java.util.List;
 
+/**
+ * Super class for Key Services
+ */
 public abstract class KeyService {
 
     public KeyService() {}

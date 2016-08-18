@@ -46,7 +46,6 @@ public class SigningService {
     public void prepareSigning () throws CardException {
         EIDService.getInstance().prepareSigning (DigestService.getInstance().getAlgorithm());
     }
-
     /**
      * Computes the digest of given files and sign them
      *
@@ -74,7 +73,6 @@ public class SigningService {
             return (signErrorOutput);
         }
     }
-
     /**
      * Computes the digest of files sign them with an eID
      *
@@ -91,9 +89,8 @@ public class SigningService {
             return new byte[0];
         }
     }
-
     /**
-     * Turns a signing output to xml document and saves it
+     * Turns a signing output into a signed zip (.signed.zip)
      *
      * @param signingOutput the result of a signing process
      * @param filePath saving path
@@ -102,7 +99,8 @@ public class SigningService {
      * @throws TransformerException
      * @throws CertificateEncodingException
      */
-    public void saveSigningOutput(List<File> files, SigningOutput signingOutput, String filePath) throws IOException, ParserConfigurationException, TransformerException, CertificateEncodingException {
+    public void saveSigningOutput(List<File> files, SigningOutput signingOutput, String filePath)
+            throws IOException, ParserConfigurationException, TransformerException, CertificateEncodingException {
         this.createSignatureFile(signingOutput, filePath);
         String destinationDir = (new File(filePath)).getParent();
         for (File file: files) {
@@ -110,7 +108,17 @@ public class SigningService {
         }
         Files.deleteIfExists(new File(filePath).toPath());
     }
-    private void createSignatureFile(SigningOutput signingOutput, String filePath) throws ParserConfigurationException, CertificateEncodingException, TransformerException {
+    /**
+     * Creates the signature file (.sig) from signing output
+     *
+     * @param signingOutput data to be saved
+     * @param filePath .sig file path
+     * @throws ParserConfigurationException
+     * @throws CertificateEncodingException
+     * @throws TransformerException
+     */
+    private void createSignatureFile(SigningOutput signingOutput, String filePath)
+            throws ParserConfigurationException, CertificateEncodingException, TransformerException {
         // XML - Create
         DocumentBuilderFactory factory  = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder         =  factory.newDocumentBuilder();
@@ -144,6 +152,14 @@ public class SigningService {
         // XML - Write
         this.writeXMLDocument(filePath, document);
     }
+    /**
+     * Creates a signed file (.signed.zip) containing the original file, the signature file and a readme file
+     *
+     * @param originalFile original file
+     * @param sigFilePath signature file path
+     * @param dirPath where to save the signed file
+     * @throws IOException
+     */
     private void createIndividualZipOutput (File originalFile, String sigFilePath, String dirPath) throws IOException {
         FileOutputStream zipFOS = new FileOutputStream(dirPath +File.separator+ originalFile.getName() + ".signed.zip");
         ZipOutputStream outputStream = new ZipOutputStream(zipFOS);
@@ -157,7 +173,13 @@ public class SigningService {
         outputStream.closeEntry();
         outputStream.close();
     }
-
+    /**
+     * Adds a file to a ZIP archive
+     *
+     * @param file file to add
+     * @param zipOutputStream
+     * @throws IOException
+     */
     private void addFileToZIP(File file, ZipOutputStream zipOutputStream) throws IOException {
         byte[] buffer = new byte[1024];
 
@@ -171,7 +193,6 @@ public class SigningService {
         }
         in.close();
     }
-
     /**
      * Creates the "Certificate" and his children nodes
      *
@@ -180,7 +201,8 @@ public class SigningService {
      * @return the created element
      * @throws CertificateEncodingException when it's unable to get the encoded version of an X509Certificate
      */
-    private Element createCertificateXMLElement(List<X509Certificate> certificateChain, Document document) throws CertificateEncodingException {
+    private Element createCertificateXMLElement(List<X509Certificate> certificateChain, Document document)
+            throws CertificateEncodingException {
         Element certificateElement              = document.createElement("Certificate");
         Element rootCertificateElement          = document.createElement("Root");
         Element intermediateCertificateElement  = document.createElement("Intermediate");
@@ -199,7 +221,6 @@ public class SigningService {
         certificateElement.appendChild(userCertificateElement);
         return certificateElement;
     }
-
     /**
      * Writes the XML Document to file
      *

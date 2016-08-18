@@ -19,10 +19,25 @@ import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+/**
+ * Service used to verify a signed file
+ */
 public class VerifySigningService {
 
     public VerifySigningService () {}
 
+    /**
+     *
+     * @param file
+     * @param signingOutput
+     * @return
+     * @throws NoSuchAlgorithmException
+     * @throws IOException
+     * @throws NoSuchProviderException
+     * @throws InvalidKeyException
+     * @throws SignatureException
+     * @throws CertificateException
+     */
     public boolean verifySigning (FileInputStream file, SigningOutput signingOutput)
             throws NoSuchAlgorithmException, IOException, NoSuchProviderException, InvalidKeyException,
                     SignatureException, CertificateException {
@@ -39,8 +54,18 @@ public class VerifySigningService {
         file.close();
         return signer.verify(signingOutput.signature);
     }
-
-    public boolean isCertificateChainValid(List<X509Certificate> certificateChain)
+    /**
+     * Used to check if the certificate chain is valid
+     *
+     * @param certificateChain the collection of certificate
+     * @return true if the chain is valid
+     * @throws NoSuchAlgorithmException
+     * @throws CertificateException
+     * @throws NoSuchProviderException
+     * @throws InvalidKeyException
+     * @throws SignatureException
+     */
+    private boolean isCertificateChainValid(List<X509Certificate> certificateChain)
             throws NoSuchAlgorithmException, CertificateException, NoSuchProviderException, InvalidKeyException, SignatureException {
         X509Certificate rootCert    = certificateChain.get(0);
         X509Certificate intermCert  = certificateChain.get(1);
@@ -50,13 +75,37 @@ public class VerifySigningService {
         boolean rootCertValid       = this.isCertificateValid(rootCert, rootCert.getPublicKey());
         return userCertValid && intermCertValid && rootCertValid;
     }
+    /**
+     * Checks an individual certificate validity
+     *
+     * @param certificate the certificate to check
+     * @param authorityPubKey the authority who signed the certificate's Public Key
+     * @return true if the certificate is valid
+     * @throws CertificateException
+     * @throws NoSuchProviderException
+     * @throws NoSuchAlgorithmException
+     * @throws InvalidKeyException
+     * @throws SignatureException
+     */
     private boolean isCertificateValid (X509Certificate certificate, PublicKey authorityPubKey)
             throws CertificateException, NoSuchProviderException, NoSuchAlgorithmException, InvalidKeyException, SignatureException {
         certificate.checkValidity();
         certificate.verify(authorityPubKey);
         return true;
     }
-    public SigningOutput getSigningOutput (File signingOutputFile) throws ParserConfigurationException, IOException, SAXException, CertificateException, NoSuchProviderException {
+    /**
+     * Extracts and returns a SigningOutput from a signature file
+     *
+     * @param signingOutputFile signature file
+     * @return a SigningOutput object
+     * @throws ParserConfigurationException
+     * @throws IOException
+     * @throws SAXException
+     * @throws CertificateException
+     * @throws NoSuchProviderException
+     */
+    public SigningOutput getSigningOutput (File signingOutputFile)
+            throws ParserConfigurationException, IOException, SAXException, CertificateException, NoSuchProviderException {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = factory.newDocumentBuilder();
         Document document = builder.parse(signingOutputFile);
@@ -87,7 +136,6 @@ public class VerifySigningService {
 
         return new SigningOutput(masterDigest, signature, certificateChain, signedBy, signedAt);
     }
-
     /**
      * Returns true if the individualDigest is a part of the masterDigest
      *
@@ -115,12 +163,11 @@ public class VerifySigningService {
         }
         return found;
     }
-
     /**
      * Returns individual files from the Signed file (.signed.zip)
      *
      * @param signedFile
-     * @return
+     * @return a map matching files with they identity
      */
     public Map<String, File> getFiles(File signedFile) throws IOException {
         byte[] buffer = new byte[1024];
