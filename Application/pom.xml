@@ -11,7 +11,7 @@
 
     <properties>
         <mainClass>be.smals.research.bulksign.desktopapp.Main</mainClass>
-            <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
     <repositories>
@@ -109,7 +109,7 @@
                 <artifactId>javafx-maven-plugin</artifactId>
                 <version>8.5.0</version>
                 <configuration>
-                    <mainClass>${mainClass]</mainClass>
+                    <mainClass>be.smals.research.bulksign.desktopapp.Main</mainClass>
                     <vendor>Smals Research</vendor>
                     <verbose>true</verbose>
                     <allPermissions>true</allPermissions>
