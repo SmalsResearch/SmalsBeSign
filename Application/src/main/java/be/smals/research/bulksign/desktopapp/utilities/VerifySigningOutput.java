@@ -15,6 +15,19 @@ public class VerifySigningOutput {
     public boolean  rootCertValid;
     public boolean signatureValid;
 
+    private enum VerifyResult {
+        OK {
+            @Override public String toString() { return "OK"; }
+        },
+        FAILED {
+            @Override public String toString() { return "FAILED"; }
+        } ,
+        WARNING {
+            @Override public String toString() { return "WARNING"; }
+        };
+
+        public abstract String toString();
+    }
     public VerifySigningOutput () {}
     public VerifySigningOutput (String fileName, String signedBy, Date signedAt) {
         this.fileName       = fileName;
@@ -28,10 +41,24 @@ public class VerifySigningOutput {
         signatureValid      = false;
     }
 
+    public VerifyResult getOutputResult () {
+        // Digest
+        if (!this.digestValid)
+            return VerifyResult.FAILED;
+        // Certificate
+        if (!this.certChainValid)
+            return VerifyResult.FAILED;
+        else if (this.certChainValid && !this.rootCertChecked)
+            return VerifyResult.WARNING;
+        else if (this.certChainValid && this.rootCertChecked && !this.rootCertValid)
+            return VerifyResult.FAILED;
+
+        return VerifyResult.OK;
+    }
+
     @Override
     public String toString() {
-        String returnValue = this.fileName
-                + "\n- Signed by "+this.signedBy
+        String returnValue = "\n- Signed by "+this.signedBy
                 + "\n- Signed on "+this.signedAt
                 + "\n- Digest verification : "+(this.digestValid ? "OK" : "FAILED");
         if (this.certChainValid && this.rootCertChecked && this.rootCertValid)
@@ -45,6 +72,6 @@ public class VerifySigningOutput {
             returnValue += "\n- Chain certificate verification : FAILED";
         returnValue += "\n- Signature verification : " + (this.signatureValid ? "OK" : "FAILED");
 
-        return returnValue;
+        return fileName + " - " + this.getOutputResult() +returnValue;
     }
 }
