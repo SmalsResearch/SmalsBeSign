@@ -14,7 +14,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.StackPane?>
 
-<StackPane fx:id="masterVerify" xmlns="http://javafx.com/javafx/8.0.45" xmlns:fx="http://javafx.com/fxml/1" fx:controller="be.smals.research.bulksign.desktopapp.controllers.VerifyWithSigController">
+<StackPane fx:id="masterVerify" xmlns="http://javafx.com/javafx/8.0.101" xmlns:fx="http://javafx.com/fxml/1" fx:controller="be.smals.research.bulksign.desktopapp.controllers.VerifyWithSigController">
    <children>
       <GridPane fx:id="rootVerify" alignment="CENTER" stylesheets="@css/common.css">
         <columnConstraints>

@@ -9,7 +9,7 @@
 
 
 <StackPane fx:id="masterPane" stylesheets="@css/common.css"
-           xmlns="http://javafx.com/javafx/8.0.45" xmlns:fx="http://javafx.com/fxml/1"
+           xmlns="http://javafx.com/javafx/8.0.101" xmlns:fx="http://javafx.com/fxml/1"
            fx:controller="be.smals.research.bulksign.desktopapp.controllers.MainController">
    <children>
       <BorderPane fx:id="root">
