@@ -85,6 +85,21 @@
         </dependency>
     </dependencies>
 
+    <!--
+    todo make it executable
+    http://howtodoinjava.com/for-fun-only/create-windows-exe-file-for-java-application/
+
+    http://www.hascode.com/2012/08/creating-a-windows-executable-from-a-jar-using-maven/
+    http://stackoverflow.com/questions/30298273/need-help-configuring-maven-pom-to-build-exe-file
+
+    https://github.com/lukaszlenart/launch4j-maven-plugin
+    http://maven.apache.org/plugins/maven-shade-plugin/
+
+
+
+
+    -->
+
 
     <build>
         <plugins>
