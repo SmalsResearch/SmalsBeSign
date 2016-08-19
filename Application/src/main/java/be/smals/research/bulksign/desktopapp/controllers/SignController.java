@@ -2,15 +2,13 @@ package be.smals.research.bulksign.desktopapp.controllers;
 
 import be.smals.research.bulksign.desktopapp.eid.EIDObserver;
 import be.smals.research.bulksign.desktopapp.eid.external.UserCancelledException;
-import be.smals.research.bulksign.desktopapp.services.DigestService;
-import be.smals.research.bulksign.desktopapp.services.EIDService;
-import be.smals.research.bulksign.desktopapp.services.MockKeyService;
-import be.smals.research.bulksign.desktopapp.services.SigningService;
+import be.smals.research.bulksign.desktopapp.services.*;
 import be.smals.research.bulksign.desktopapp.ui.FileListItem;
 import be.smals.research.bulksign.desktopapp.utilities.Settings;
 import be.smals.research.bulksign.desktopapp.utilities.Settings.Signer;
 import be.smals.research.bulksign.desktopapp.utilities.SigningOutput;
 import be.smals.research.bulksign.desktopapp.utilities.Utilities;
+import be.smals.research.bulksign.desktopapp.utilities.VerifySigningOutput;
 import com.jfoenix.controls.JFXCheckBox;
 import com.jfoenix.controls.JFXDialog;
 import com.jfoenix.controls.JFXPasswordField;
@@ -40,8 +38,10 @@ import java.awt.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
+import java.security.SignatureException;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
@@ -57,6 +57,7 @@ import java.util.Optional;
 public class SignController extends Controller implements EIDObserver{
 
     private SigningService signingService;
+    private VerifySigningService verifySigningService;
     private FileChooser fileChooser;
     private DirectoryChooser directoryChooser;
     private List<File> filesToSign;
@@ -78,6 +79,7 @@ public class SignController extends Controller implements EIDObserver{
         this.filesToSign = new ArrayList<>();
         try {
             this.signingService         = new SigningService();
+            this.verifySigningService   = new VerifySigningService();
         } catch (IOException | PKCS11Exception e) {
             e.printStackTrace();
         }
@@ -320,14 +322,26 @@ public class SignController extends Controller implements EIDObserver{
                 e.printStackTrace();
             }
             this.signingService.prepareSigning();
-            byte[] signature = this.signingService.signWithEID(masterDigest);
-            for (FileInputStream file : inputFiles)
-                file.close();
-            if (signature != null) {
-                List<X509Certificate> certificateChain = EIDService.getInstance().getCertificateChain();
-                this.saveSigningOutput(selectedFiles, signature, certificateChain);
+            List<X509Certificate> certificateChain = EIDService.getInstance().getCertificateChain();
+            VerifySigningOutput verifySigningOutput = new VerifySigningOutput();
+            try {
+                verifySigningOutput = this.verifySigningService.verifyChainCertificate(certificateChain);
+            } catch (NoSuchAlgorithmException | InvalidKeyException | SignatureException | NoSuchProviderException e) {
+                // Could not verify certificateChain
+            }
+            if (!verifySigningOutput.getOutputResult().equals(VerifySigningOutput.VerifyResult.FAILED)) {
+
+                byte[] signature = this.signingService.signWithEID(masterDigest);
+                for (FileInputStream file : inputFiles)
+                    file.close();
+                if (signature != null) {
+                    this.saveSigningOutput(selectedFiles, signature, certificateChain);
+                } else {
+                    // Error during signing
+                }
             } else {
-                // Error during signing
+                this.showErrorDialog(errorDialog, masterSign, "Certificate Verification",
+                        "The verification of your certificate chain failed !");
             }
         }
     }

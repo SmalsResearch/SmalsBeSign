@@ -279,4 +279,19 @@ public class VerifySigningService {
 
         return files;
     }
+
+    public VerifySigningOutput verifyChainCertificate(List<X509Certificate> certificateChain) throws CertificateException, NoSuchAlgorithmException, InvalidKeyException, NoSuchProviderException, SignatureException, IOException {
+        VerifySigningOutput verifySigningOutput = new VerifySigningOutput();
+        verifySigningOutput.digestValid = true;
+        if (this.isCertificateChainValid(certificateChain))
+            verifySigningOutput.certChainValid = true;
+
+        if (Utilities.getInstance().isInternetReachable())
+            verifySigningOutput.rootCertChecked = true;
+
+        if (verifySigningOutput.rootCertChecked && this.isRootCertificateValid(certificateChain.get(2)))
+            verifySigningOutput.rootCertValid = true;
+
+        return verifySigningOutput;
+    }
 }
