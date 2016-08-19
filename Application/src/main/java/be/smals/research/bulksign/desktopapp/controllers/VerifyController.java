@@ -6,6 +6,7 @@ import be.smals.research.bulksign.desktopapp.ui.ResultListItem;
 import be.smals.research.bulksign.desktopapp.utilities.SigningOutput;
 import be.smals.research.bulksign.desktopapp.utilities.Utilities;
 import be.smals.research.bulksign.desktopapp.utilities.VerifySigningOutput;
+import be.smals.research.bulksign.desktopapp.utilities.VerifySigningOutput.FileWithAltName;
 import com.jfoenix.controls.JFXCheckBox;
 import com.jfoenix.controls.JFXDialog;
 import com.jfoenix.controls.JFXListView;
@@ -173,9 +174,10 @@ public class VerifyController extends Controller {
             List<VerifySigningOutput> results = new ArrayList<>();
             for (File signedFile : selectedFiles) {
                 try {
-                    Map<String, File> files = this.verifySigningService.getFiles(signedFile);
-                    signingOutput = this.verifySigningService.getSigningOutput(files.get("SIGNATURE"));
-                    VerifySigningOutput verifySigningOutput = this.verifySigningService.verifySigning(files.get("FILE"), signingOutput);
+                    Map<String, FileWithAltName> files = this.verifySigningService.getFiles(signedFile);
+                    signingOutput = this.verifySigningService.getSigningOutput(files.get("SIGNATURE").file);
+                    VerifySigningOutput verifySigningOutput = this.verifySigningService.verifySigning(files.get("FILE").file, signingOutput);
+                    verifySigningOutput.fileName = files.get("FILE").name;
                     results.add(verifySigningOutput);
                 } catch (SignatureException | SAXException | NoSuchAlgorithmException | ParseException | InvalidKeyException | CertificateException | IOException | ParserConfigurationException | NoSuchProviderException e) {
                     e.printStackTrace();

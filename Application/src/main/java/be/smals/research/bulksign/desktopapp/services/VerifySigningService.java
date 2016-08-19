@@ -3,6 +3,7 @@ package be.smals.research.bulksign.desktopapp.services;
 import be.smals.research.bulksign.desktopapp.utilities.SigningOutput;
 import be.smals.research.bulksign.desktopapp.utilities.Utilities;
 import be.smals.research.bulksign.desktopapp.utilities.VerifySigningOutput;
+import be.smals.research.bulksign.desktopapp.utilities.VerifySigningOutput.FileWithAltName;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
@@ -61,7 +62,6 @@ public class VerifySigningService {
         file.close();
         return signer.verify(signingOutput.signature);
     }
-
     /**
      *
      * @param file
@@ -101,7 +101,6 @@ public class VerifySigningService {
 
         return verifySigningOutput;
     }
-
     /**
      * Used to check if the certificate chain is valid
      *
@@ -247,9 +246,9 @@ public class VerifySigningService {
      * @param signedFile
      * @return a map matching files with they identity
      */
-    public Map<String, File> getFiles(File signedFile) throws IOException {
+    public Map<String, FileWithAltName> getFiles(File signedFile) throws IOException {
         byte[] buffer = new byte[1024];
-        Map<String, File> files = new HashMap<>();
+        Map<String, FileWithAltName> files = new HashMap<>();
         ZipInputStream zipInputStream   = new ZipInputStream(new FileInputStream(signedFile));
         ZipEntry zipEntry               = zipInputStream.getNextEntry();
 
@@ -257,7 +256,6 @@ public class VerifySigningService {
             String fileName         = zipEntry.getName();
             File newFile            = File.createTempFile(signedFile.getParent()+File.separator+fileName, "");
 //            new File(signedFile.getParent()+File.separator+fileName);
-
             FileOutputStream fos    = new FileOutputStream(newFile);
             int len;
             while ((len = zipInputStream.read(buffer)) > 0) {
@@ -265,12 +263,13 @@ public class VerifySigningService {
             }
             fos.close();
             String fileExt = Utilities.getInstance().getFileExtension(fileName);
+            FileWithAltName fileWithAltName = new FileWithAltName(fileName, newFile);
             if (fileExt.equalsIgnoreCase("sig")) {
-                files.put("SIGNATURE", newFile);
+                files.put("SIGNATURE", fileWithAltName);
             } else if (fileName.equals("README")) {
-                files.put("README", newFile);
+                files.put("README", fileWithAltName);
             } else {
-                files.put("FILE", newFile);
+                files.put("FILE", fileWithAltName);
             }
             zipEntry = zipInputStream.getNextEntry();
         }

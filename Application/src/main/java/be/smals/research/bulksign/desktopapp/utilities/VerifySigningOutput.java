@@ -1,5 +1,6 @@
 package be.smals.research.bulksign.desktopapp.utilities;
 
+import java.io.File;
 import java.util.Date;
 
 /**
@@ -27,6 +28,14 @@ public class VerifySigningOutput {
         };
 
         public abstract String toString();
+    }
+    public static class FileWithAltName {
+        public String name;
+        public File file;
+        public FileWithAltName (String name, File file) {
+            this.name = name;
+            this.file = file;
+        }
     }
     public VerifySigningOutput () {}
     public VerifySigningOutput (String fileName, String signedBy, Date signedAt) {
