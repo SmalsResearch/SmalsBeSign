@@ -46,7 +46,7 @@ public class Main extends Application {
 
         // ----- BOTTOM ------------------------------------------------------------------------------------------------
         StatusBar statusBar = new StatusBar();
-        EIDService.getInstance().registerObserver(statusBar);
+        EIDService.getInstance().registerAsEIDServiceObserver(statusBar);
         root.setBottom(statusBar);
 
         // ----- CENTER ------------------------------------------------------------------------------------------------

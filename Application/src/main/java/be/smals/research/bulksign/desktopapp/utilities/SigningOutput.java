@@ -44,7 +44,7 @@ public class SigningOutput {
         this.certificateChain   = certificate;
         final X509Principal principal;
         try {
-            principal = PrincipalUtil.getSubjectX509Principal(certificate.get(2));
+            principal = PrincipalUtil.getSubjectX509Principal(certificate.get(0));
             final Vector<?> values = principal.getValues(X509Name.CN);
             final String cn = (String) values.get(0);
             this.author             = cn.substring(0, cn.indexOf("(")-1);

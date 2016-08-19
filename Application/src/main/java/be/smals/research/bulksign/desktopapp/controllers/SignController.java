@@ -1,6 +1,8 @@
 package be.smals.research.bulksign.desktopapp.controllers;
 
+import be.smals.research.bulksign.desktopapp.eid.EIDObserver;
 import be.smals.research.bulksign.desktopapp.eid.external.UserCancelledException;
+import be.smals.research.bulksign.desktopapp.services.DigestService;
 import be.smals.research.bulksign.desktopapp.services.EIDService;
 import be.smals.research.bulksign.desktopapp.services.MockKeyService;
 import be.smals.research.bulksign.desktopapp.services.SigningService;
@@ -38,6 +40,8 @@ import java.awt.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
@@ -50,7 +54,7 @@ import java.util.Optional;
  *
  * Handles events from Sign view
  */
-public class SignController extends Controller{
+public class SignController extends Controller implements EIDObserver{
 
     private SigningService signingService;
     private FileChooser fileChooser;
@@ -89,6 +93,7 @@ public class SignController extends Controller{
     @Override
     public void initController(MainController mainController, Stage stage) {
         super.initController(mainController, stage);
+        EIDService.getInstance().registerAsEIDObserver(this);
 
         this.viewerFx = new OpenViewerFX(readerPane, getClass().getClassLoader().getResource("lib/OpenViewerFx/preferences/custom.xml").getPath());
         this.viewerFx.getRoot().prefWidthProperty().bind(readerPane.widthProperty());
@@ -290,17 +295,23 @@ public class SignController extends Controller{
             }
             // Sign
             this.signingService.prepareSigning();
+            String masterDigest = null;
+            try {
+                masterDigest = DigestService.getInstance().computeMasterDigest(inputFiles);
+            } catch (NoSuchAlgorithmException | NoSuchProviderException e) {
+                e.printStackTrace();
+            }
+
             if (this.askAndVerifyPin()) {
-                byte[] signature = this.signingService.signWithEID(inputFiles);
+                byte[] signature = this.signingService.signWithEID(masterDigest);
                 for (FileInputStream file : inputFiles)
                     file.close();
                 if (signature != null) {
                     List<X509Certificate> certificateChain = EIDService.getInstance().getCertificateChain();
                     this.saveSigningOutput(selectedFiles, signature, certificateChain);
                 } else {
-
+                    // Error during signing
                 }
-
             }
         }
     }
@@ -310,5 +321,11 @@ public class SignController extends Controller{
     @FXML public void handleSelectAllAction() {
         for (Object item : filesListView.getItems())
             ((FileListItem)item).setFileSelected(selectAllCheckBox.isSelected());
+    }
+
+    // ---------- Observable notifications
+    @Override
+    public void getPinCode() {
+        this.askAndVerifyPin();
     }
 }

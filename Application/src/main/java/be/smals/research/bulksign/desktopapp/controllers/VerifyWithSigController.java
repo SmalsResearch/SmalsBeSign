@@ -2,7 +2,6 @@ package be.smals.research.bulksign.desktopapp.controllers;
 
 import be.smals.research.bulksign.desktopapp.services.VerifySigningService;
 import be.smals.research.bulksign.desktopapp.ui.FileListItem;
-import be.smals.research.bulksign.desktopapp.ui.ResultListItem;
 import be.smals.research.bulksign.desktopapp.utilities.SigningOutput;
 import com.jfoenix.controls.JFXCheckBox;
 import com.jfoenix.controls.JFXDialog;
@@ -35,7 +34,6 @@ import java.security.SignatureException;
 import java.security.cert.CertificateException;
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -134,10 +132,10 @@ public class VerifyWithSigController extends Controller {
         }
 
         for (String passFile : pass) {
-            resultList.getItems().addAll(new ResultListItem(passFile, true, "John Doe", new Date()));
+//            resultList.getItems().addAll(new ResultListItem(passFile, true, "John Doe", new Date()));
         }
         for (String failFile : fail) {
-            resultList.getItems().addAll(new ResultListItem(failFile, false, "John Doe", new Date()));
+//            resultList.getItems().addAll(new ResultListItem(failFile, false, "John Doe", new Date()));
         }
     }
     /**

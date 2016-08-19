@@ -80,10 +80,9 @@ public class SigningService {
      * @param inputFiles files to sign
      * @return the signature
      */
-    public byte[] signWithEID(FileInputStream[] inputFiles) {
+    public byte[] signWithEID(String masterDigest) {
         try {
-            this.masterDigest = DigestService.getInstance().computeMasterDigest(inputFiles);
-            // SHA-1 digest
+            this.masterDigest = masterDigest;
             return EIDService.getInstance().sign(Utilities.getInstance().getSha1(this.masterDigest.getBytes()), "SHA-1");
         } catch (Exception e) {
             e.printStackTrace();
@@ -209,17 +208,18 @@ public class SigningService {
         Element intermediateCertificateElement  = document.createElement("Intermediate");
         Element userCertificateElement          = document.createElement("User");
         byte[] encodedCertificate               = certificateChain.get(0).getEncoded();
-        Text rootCertificateElementContent      = document.createTextNode(DatatypeConverter.printHexBinary(encodedCertificate));
-        rootCertificateElement.appendChild(rootCertificateElementContent);
+        Text userCertificateElementContent      = document.createTextNode(DatatypeConverter.printHexBinary(encodedCertificate));
+        userCertificateElement.appendChild(userCertificateElementContent);
         encodedCertificate                      = certificateChain.get(1).getEncoded();
         Text intermediateCertificateElementContent = document.createTextNode(DatatypeConverter.printHexBinary(encodedCertificate));
         intermediateCertificateElement.appendChild(intermediateCertificateElementContent);
         encodedCertificate                      = certificateChain.get(2).getEncoded();
-        Text userCertificateElementContent      = document.createTextNode(DatatypeConverter.printHexBinary(encodedCertificate));
-        userCertificateElement.appendChild(userCertificateElementContent);
-        certificateElement.appendChild(rootCertificateElement);
-        certificateElement.appendChild(intermediateCertificateElement);
+        Text rootCertificateElementContent      = document.createTextNode(DatatypeConverter.printHexBinary(encodedCertificate));
+        rootCertificateElement.appendChild(rootCertificateElementContent);
+
         certificateElement.appendChild(userCertificateElement);
+        certificateElement.appendChild(intermediateCertificateElement);
+        certificateElement.appendChild(rootCertificateElement);
         return certificateElement;
     }
     /**

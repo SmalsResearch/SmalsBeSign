@@ -89,11 +89,12 @@ public class VerifySigningService {
 
         if (Utilities.getInstance().isInternetReachable())
             verifySigningOutput.rootCertChecked = true;
-        if (verifySigningOutput.rootCertChecked && this.isRootCertificateValid(signingOutput.certificateChain.get(0)))
+
+        if (verifySigningOutput.rootCertChecked && this.isRootCertificateValid(signingOutput.certificateChain.get(2)))
             verifySigningOutput.rootCertValid = true;
 
         Signature signer = Signature.getInstance("SHA1withRSA", "BC");
-        signer.initVerify(signingOutput.certificateChain.get(2).getPublicKey()); // [2] is the user certificate
+        signer.initVerify(signingOutput.certificateChain.get(0).getPublicKey()); // [0] is the user certificate
         signer.update(signingOutput.masterDigest.getBytes());
         if (signer.verify(signingOutput.signature))
             verifySigningOutput.signatureValid = true;
@@ -114,9 +115,9 @@ public class VerifySigningService {
      */
     private boolean isCertificateChainValid(List<X509Certificate> certificateChain)
             throws NoSuchAlgorithmException, CertificateException, NoSuchProviderException, InvalidKeyException, SignatureException {
-        X509Certificate rootCert    = certificateChain.get(0);
+        X509Certificate rootCert    = certificateChain.get(2);
         X509Certificate intermCert  = certificateChain.get(1);
-        X509Certificate userCert    = certificateChain.get(2);
+        X509Certificate userCert    = certificateChain.get(0);
         boolean userCertValid       = this.isCertificateValid(userCert, intermCert.getPublicKey());
         boolean intermCertValid     = this.isCertificateValid(intermCert, rootCert.getPublicKey());
         boolean rootCertValid       = this.isCertificateValid(rootCert, rootCert.getPublicKey());
@@ -152,7 +153,7 @@ public class VerifySigningService {
                 outputStream.write(buffer, 0, len);
             }
             in.close();
-            File file = new File("belgiumrca3.crt");
+            File file = File.createTempFile("belgiumrca3", ".crt");
             FileOutputStream fos = new FileOutputStream(file);
             if (!file.exists()) file.createNewFile();
             fos.write(outputStream.toByteArray());
@@ -194,21 +195,22 @@ public class VerifySigningService {
         Date signedAt                   = new SimpleDateFormat("yyyy-MM-dd 'at' HH:mm:ss").parse(signingOutputElement.getElementsByTagName("SignedAt").item(0).getTextContent());
         byte[] signature                = DatatypeConverter.parseHexBinary(signingOutputElement.getElementsByTagName("Signature").item(0).getTextContent());
         Element certificateElement      = (Element) signingOutputElement.getElementsByTagName("Certificate").item(0);
-        byte[] rootEncodedCertificate   = DatatypeConverter.parseHexBinary(certificateElement.getElementsByTagName("Root").item(0).getTextContent());
-        byte[] intermEncodedCertificate = DatatypeConverter.parseHexBinary(certificateElement.getElementsByTagName("Intermediate").item(0).getTextContent());
         byte[] userEncodedCertificate   = DatatypeConverter.parseHexBinary(certificateElement.getElementsByTagName("User").item(0).getTextContent());
+        byte[] intermEncodedCertificate = DatatypeConverter.parseHexBinary(certificateElement.getElementsByTagName("Intermediate").item(0).getTextContent());
+        byte[] rootEncodedCertificate   = DatatypeConverter.parseHexBinary(certificateElement.getElementsByTagName("Root").item(0).getTextContent());
 
         CertificateFactory certFactory  = CertificateFactory.getInstance("X.509", "BC");
-        InputStream encodedStream       = new ByteArrayInputStream(rootEncodedCertificate);
-        X509Certificate rootCertificate = (X509Certificate) certFactory.generateCertificate(encodedStream);
+        InputStream encodedStream       = new ByteArrayInputStream(userEncodedCertificate);
+        X509Certificate userCertificate = (X509Certificate) certFactory.generateCertificate(encodedStream);
         encodedStream                   = new ByteArrayInputStream(intermEncodedCertificate);
         X509Certificate intermCertificate = (X509Certificate) certFactory.generateCertificate(encodedStream);
-        encodedStream                   = new ByteArrayInputStream(userEncodedCertificate);
-        X509Certificate userCertificate = (X509Certificate) certFactory.generateCertificate(encodedStream);
+        encodedStream                   = new ByteArrayInputStream(rootEncodedCertificate);
+        X509Certificate rootCertificate = (X509Certificate) certFactory.generateCertificate(encodedStream);
+
         List<X509Certificate> certificateChain = new ArrayList<>();
-        certificateChain.add(rootCertificate);
-        certificateChain.add(intermCertificate);
         certificateChain.add(userCertificate);
+        certificateChain.add(intermCertificate);
+        certificateChain.add(rootCertificate);
 
         return new SigningOutput(masterDigest, signature, certificateChain, signedBy, signedAt);
     }
@@ -253,13 +255,15 @@ public class VerifySigningService {
 
         while (zipEntry != null) {
             String fileName         = zipEntry.getName();
-            File newFile            = new File(signedFile.getParent()+File.separator+fileName);
+            File newFile            = File.createTempFile(signedFile.getParent()+File.separator+fileName, "");
+//            new File(signedFile.getParent()+File.separator+fileName);
+
             FileOutputStream fos    = new FileOutputStream(newFile);
             int len;
             while ((len = zipInputStream.read(buffer)) > 0) {
                 fos.write(buffer, 0, len);
             }
-
+            fos.close();
             String fileExt = Utilities.getInstance().getFileExtension(fileName);
             if (fileExt.equalsIgnoreCase("sig")) {
                 files.put("SIGNATURE", newFile);
@@ -268,7 +272,6 @@ public class VerifySigningService {
             } else {
                 files.put("FILE", newFile);
             }
-            fos.close();
             zipEntry = zipInputStream.getNextEntry();
         }
 

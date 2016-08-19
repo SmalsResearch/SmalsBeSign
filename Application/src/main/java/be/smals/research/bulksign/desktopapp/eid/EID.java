@@ -89,6 +89,8 @@ public class EID {
 	private Card card;
 	private Set<String> ppduNames = new HashSet<>();
 
+	private List<EIDObserver> observers;
+
 	private static class ListData {
 		private CardTerminal cardTerminal;
 		private BufferedImage photo;
@@ -166,12 +168,16 @@ public class EID {
 			}
 		}
 	}
+	private enum Services {
+		GET_PINCODE
+	}
 
 	/**
 	 * Constructor - Initializes the terminal factory
      */
 	public EID() {
-		this.terminalFactory = TerminalFactory.getDefault();
+		this.terminalFactory 	= TerminalFactory.getDefault();
+		this.observers 			= new ArrayList<>();
 	}
 
 	// ----- Basic operations ------------------------------------------------------------------------------------------
@@ -474,14 +480,13 @@ public class EID {
 		X509Certificate citizenCaCert = (X509Certificate) certificateFactory
 				.generateCertificate(new ByteArrayInputStream(citizenCaCertFile));
 
-//		this.view.addDetailMessage("reading Root CA certificate...");
 		byte[] rootCaCertFile = readFile(ROOT_CERT_FILE_ID);
 		X509Certificate rootCaCert = (X509Certificate) certificateFactory
 				.generateCertificate(new ByteArrayInputStream(rootCaCertFile));
 
-		signCertificateChain.add(rootCaCert);
-		signCertificateChain.add(citizenCaCert);
 		signCertificateChain.add(signCert);
+		signCertificateChain.add(citizenCaCert);
+		signCertificateChain.add(rootCaCert);
 
 		return signCertificateChain;
 	}
@@ -741,6 +746,7 @@ public class EID {
 		System.out.println("PIN verification required...");
 
 //		this.isPinValid();
+		this.notifyObservers(Services.GET_PINCODE);
 
 		System.out.println("computing digital signature...");
 		responseApdu = cardChannel.transmit(computeDigitalSignatureApdu);
@@ -821,5 +827,17 @@ public class EID {
 			return true;
 		}
 		return false;
+	}
+
+	private void notifyObservers (Services service) {
+		switch (service) {
+			case GET_PINCODE:
+				this.observers.forEach(EIDObserver::getPinCode);
+				break;
+		}
+	}
+	public void registerAsObserver(EIDObserver observer) {
+		if( !this.observers.contains(observer))
+			this.observers.add(observer);
 	}
 }

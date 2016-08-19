@@ -2,6 +2,7 @@ package be.smals.research.bulksign.desktopapp.controllers;
 
 import be.smals.research.bulksign.desktopapp.services.VerifySigningService;
 import be.smals.research.bulksign.desktopapp.ui.FileListItem;
+import be.smals.research.bulksign.desktopapp.ui.ResultListItem;
 import be.smals.research.bulksign.desktopapp.utilities.SigningOutput;
 import be.smals.research.bulksign.desktopapp.utilities.Utilities;
 import be.smals.research.bulksign.desktopapp.utilities.VerifySigningOutput;
@@ -142,25 +143,22 @@ public class VerifyController extends Controller {
         Label resultLabel       = (Label) this.stage.getScene().lookup("#verifyResultTitle");
         JFXListView resultList  = (JFXListView) this.stage.getScene().lookup("#verifyResultListView");
         resultList.getItems().clear();
-
+        int okCount = 0, warningCount = 0, failedCount = 0;
         for (VerifySigningOutput result : results) {
             System.out.println(result);
-//            resultList.getItems().add(new ResultListItem(passOutput.fileName, true, passOutput.signedBy, passOutput.signedAt));
-        }
-//        if (pass.isEmpty()) {
-//            resultLabel.getStyleClass().clear();
-//            resultLabel.getStyleClass().add("color-danger");
-//            resultLabel.setText("No file has passed the verification!");
-//        } else if (fail.isEmpty()) {
-//            resultLabel.getStyleClass().clear();
-//            resultLabel.getStyleClass().add("color-success");
-//            resultLabel.setText("All files are ok!");
-//        } else {
-//            resultLabel.getStyleClass().clear();
-//            resultLabel.getStyleClass().add("color-info");
-//            resultLabel.setText(pass.size() + " file(s) out of "+(pass.size()+fail.size())+ " passed");
-//        }
+            switch (result.getOutputResult()) {
+                case OK: okCount++;
+                    break;
+                case WARNING: warningCount++;
+                    break;
+                case FAILED: failedCount++;
+                    break;
+            }
 
+            resultList.getItems().add(new ResultListItem(result));
+        }
+
+        resultLabel.setText(failedCount+" - FAILED, "+warningCount+" - WARNINGS, "+okCount+ " - OK");
     }
     /**
      * Submits verification
@@ -179,11 +177,7 @@ public class VerifyController extends Controller {
                     signingOutput = this.verifySigningService.getSigningOutput(files.get("SIGNATURE"));
                     VerifySigningOutput verifySigningOutput = this.verifySigningService.verifySigning(files.get("FILE"), signingOutput);
                     results.add(verifySigningOutput);
-                    files.values().forEach(File::deleteOnExit);
-                } catch (IOException|SAXException|ParserConfigurationException|CertificateException
-                        |SignatureException|NoSuchAlgorithmException|InvalidKeyException|NoSuchProviderException e) {
-                    e.printStackTrace();
-                } catch (ParseException e) {
+                } catch (SignatureException | SAXException | NoSuchAlgorithmException | ParseException | InvalidKeyException | CertificateException | IOException | ParserConfigurationException | NoSuchProviderException e) {
                     e.printStackTrace();
                 }
             }

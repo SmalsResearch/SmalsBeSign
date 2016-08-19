@@ -175,6 +175,11 @@
 }.color-danger > .glyph-icon{
     -fx-fill: #d9534f;
 }
+.color-warning {
+    -fx-text-fill: #f0ad4e;
+}.color-warning > .glyph-icon{
+    -fx-fill: #f0ad4e;
+}
 .glyph-icon {
     -fx-padding: 4px 12px 4px 4px;
 }

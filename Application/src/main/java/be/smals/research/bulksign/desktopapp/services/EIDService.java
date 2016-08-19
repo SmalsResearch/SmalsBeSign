@@ -1,6 +1,7 @@
 package be.smals.research.bulksign.desktopapp.services;
 
 import be.smals.research.bulksign.desktopapp.eid.EID;
+import be.smals.research.bulksign.desktopapp.eid.EIDObserver;
 import be.smals.research.bulksign.desktopapp.eid.external.UserCancelledException;
 
 import javax.smartcardio.CardException;
@@ -161,8 +162,12 @@ public class EIDService {
      *
      * @param observer
      */
-    public void registerObserver (EIDServiceObserver observer){
+    public void registerAsEIDServiceObserver(EIDServiceObserver observer){
         if (!this.observers.contains(observer))
             this.observers.add(observer);
+    }
+
+    public void registerAsEIDObserver (EIDObserver observer) {
+        this.eID.registerAsObserver(observer);
     }
 }

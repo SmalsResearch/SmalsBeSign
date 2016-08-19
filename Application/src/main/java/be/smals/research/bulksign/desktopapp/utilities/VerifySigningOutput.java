@@ -15,7 +15,7 @@ public class VerifySigningOutput {
     public boolean  rootCertValid;
     public boolean signatureValid;
 
-    private enum VerifyResult {
+    public enum VerifyResult {
         OK {
             @Override public String toString() { return "OK"; }
         },
@@ -48,9 +48,12 @@ public class VerifySigningOutput {
         // Certificate
         if (!this.certChainValid)
             return VerifyResult.FAILED;
-        else if (this.certChainValid && !this.rootCertChecked)
+        else if (!this.rootCertChecked && this.signatureValid)
             return VerifyResult.WARNING;
-        else if (this.certChainValid && this.rootCertChecked && !this.rootCertValid)
+        else if (!this.rootCertValid)
+            return VerifyResult.FAILED;
+        // Signature
+        if (!this.signatureValid)
             return VerifyResult.FAILED;
 
         return VerifyResult.OK;
@@ -58,9 +61,14 @@ public class VerifySigningOutput {
 
     @Override
     public String toString() {
-        String returnValue = "\n- Signed by "+this.signedBy
-                + "\n- Signed on "+this.signedAt
-                + "\n- Digest verification : "+(this.digestValid ? "OK" : "FAILED");
+        String returnValue = "\n- Signed by "+this.signedBy + "\n- Signed on "+this.signedAt;
+        if (!this.digestValid) {
+            returnValue += "\n- Digest verification : FAILED"
+                            +"\n---- The file digest is not part of the MasterDigest";
+            return fileName + " - " + this.getOutputResult() + returnValue;
+        }
+        returnValue += "\n- Digest verification : OK";
+
         if (this.certChainValid && this.rootCertChecked && this.rootCertValid)
             returnValue += "\n- Chain certificate verification : OK";
         else if (this.certChainValid && this.rootCertChecked && !this.rootCertValid)
