@@ -6,7 +6,9 @@ import javafx.scene.control.ListView;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.HttpURLConnection;
 import java.net.InetAddress;
+import java.net.URL;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
@@ -62,7 +64,7 @@ public class Utilities {
      * @param listView
      * @return
      */
-    public List<File> getFileListFromFileListView(ListView listView) {
+    public List<File> getFileListFromFileListView (ListView listView) {
         ObservableList<FileListItem> items = listView.getItems();
         List<File> files = items.stream().map(FileListItem::getFile).collect(Collectors.toList());
         return files;
@@ -74,8 +76,19 @@ public class Utilities {
      * @return true if both of them are reachable
      * @throws IOException
      */
-    public boolean isConnectedToInternet () throws IOException {
-        return InetAddress.getByName("www.google.com").isReachable(64)
-                && InetAddress.getByName("http://certs.eid.belgium.be/belgiumrca3.crt").isReachable(64);
+    public boolean isInternetReachable () throws IOException {
+        try {
+            URL url = new URL("http://repository.eid.belgium.be");
+            HttpURLConnection urlConnect = (HttpURLConnection)url.openConnection();
+            urlConnect.setConnectTimeout(1000);
+
+            return InetAddress.getByName("www.google.com").isReachable(1000)
+                    && urlConnect.getContent()!=null;
+
+        } catch (java.io.IOException e) {
+            e.printStackTrace();
+        }
+
+        return false;
     }
 }

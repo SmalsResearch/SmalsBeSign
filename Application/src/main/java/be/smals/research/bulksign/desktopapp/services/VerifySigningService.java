@@ -86,7 +86,7 @@ public class VerifySigningService {
         if (this.isCertificateChainValid(signingOutput.certificateChain))
             verifySigningOutput.certChainValid = true;
 
-        if (Utilities.getInstance().isConnectedToInternet())
+        if (Utilities.getInstance().isInternetReachable())
             verifySigningOutput.rootCertChecked = true;
         if (verifySigningOutput.rootCertChecked && this.isRootCertificateValid(signingOutput.certificateChain.get(0)))
             verifySigningOutput.rootCertValid = true;
@@ -144,15 +144,25 @@ public class VerifySigningService {
             URL beRootCA3CertificateURL = new URL ("http://certs.eid.belgium.be/belgiumrca3.crt");
             BufferedReader input        = new BufferedReader(new InputStreamReader(beRootCA3CertificateURL.openStream()));
 
+            String fileAsString = new String();
+            String inputLine;
+            while ((inputLine = input.readLine()) != null) {
+                fileAsString += inputLine;
+            }
+//            try {
+//                PrintStream printStream = new PrintStream(this.getClass().getClassLoader().)
+//            }
+
+            input.close();
             PEMReader pemReader             = new PEMReader(input);
             X509Certificate beRootCA3Certificate = (X509Certificate) pemReader.readObject();
-            System.out.println(beRootCA3Certificate);
+            System.out.println("CERT : " + beRootCA3Certificate);
 
             return certificate.equals(beRootCA3Certificate);
         } catch (IOException e) {
             e.printStackTrace();
-            return false;
         }
+        return false;
     }
     /**
      * Extracts and returns a SigningOutput from a signature file
