@@ -112,7 +112,7 @@ public class VerifySigningService {
      * @throws InvalidKeyException
      * @throws SignatureException
      */
-    private boolean isCertificateChainValid(List<X509Certificate> certificateChain)
+    public boolean isCertificateChainValid(List<X509Certificate> certificateChain)
             throws NoSuchAlgorithmException, CertificateException, NoSuchProviderException, InvalidKeyException, SignatureException {
         X509Certificate rootCert    = certificateChain.get(2);
         X509Certificate intermCert  = certificateChain.get(1);
@@ -140,7 +140,7 @@ public class VerifySigningService {
         certificate.verify(authorityPubKey);
         return true;
     }
-    private boolean isRootCertificateValid (X509Certificate certificate) {
+    public boolean isRootCertificateValid (X509Certificate certificate) {
         try {
             URL beRootCA3CertificateURL = new URL (ROOTCA3_SELFSIGNED_URL);
             URLConnection connection    = beRootCA3CertificateURL.openConnection();

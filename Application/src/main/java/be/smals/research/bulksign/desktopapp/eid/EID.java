@@ -683,6 +683,8 @@ public class EID {
 		if (0x9000 != responseApdu.getSW()) {
 			throw new RuntimeException("SELECT error");
 		}
+		// Pin asked and verified here
+		this.notifyObservers(Services.GET_PINCODE);
 	}
 	public byte[] signAlt (byte[] digest, String digestAlgo) throws IOException, CardException {
 		ByteArrayOutputStream digestInfo = new ByteArrayOutputStream();

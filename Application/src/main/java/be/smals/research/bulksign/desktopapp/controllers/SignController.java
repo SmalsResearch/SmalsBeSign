@@ -245,6 +245,25 @@ public class SignController extends Controller implements EIDObserver{
 
         return false;
     }
+    private char[] askForPin() {
+        Dialog<String> pinDialog = new Dialog<>();
+        pinDialog.setTitle("PIN Code");
+        pinDialog.setHeaderText("Please, enter your Pin code");
+        JFXPasswordField passwordField = new JFXPasswordField();
+        passwordField.setFocusColor(Color.web("#52BBFE"));
+        passwordField.setPrefWidth(200);
+        ButtonType validateButtonType = new ButtonType("Ok", ButtonBar.ButtonData.OK_DONE);
+        pinDialog.getDialogPane().getButtonTypes().add(validateButtonType);
+        pinDialog.getDialogPane().setContent(passwordField);
+        Platform.runLater( () -> passwordField.requestFocus());
+
+        Optional<String> result = pinDialog.showAndWait();
+        if (result.isPresent()) {
+            return passwordField.getText().trim().toCharArray();
+        }
+
+        return new char[0];
+    }
 
     /**
      * Performs signing with mock process
@@ -294,24 +313,21 @@ public class SignController extends Controller implements EIDObserver{
                 inputFiles[i] = new FileInputStream(selectedFiles.get(i));
             }
             // Sign
-            this.signingService.prepareSigning();
             String masterDigest = null;
             try {
                 masterDigest = DigestService.getInstance().computeMasterDigest(inputFiles);
             } catch (NoSuchAlgorithmException | NoSuchProviderException e) {
                 e.printStackTrace();
             }
-
-            if (this.askAndVerifyPin()) {
-                byte[] signature = this.signingService.signWithEID(masterDigest);
-                for (FileInputStream file : inputFiles)
-                    file.close();
-                if (signature != null) {
-                    List<X509Certificate> certificateChain = EIDService.getInstance().getCertificateChain();
-                    this.saveSigningOutput(selectedFiles, signature, certificateChain);
-                } else {
-                    // Error during signing
-                }
+            this.signingService.prepareSigning();
+            byte[] signature = this.signingService.signWithEID(masterDigest);
+            for (FileInputStream file : inputFiles)
+                file.close();
+            if (signature != null) {
+                List<X509Certificate> certificateChain = EIDService.getInstance().getCertificateChain();
+                this.saveSigningOutput(selectedFiles, signature, certificateChain);
+            } else {
+                // Error during signing
             }
         }
     }

@@ -104,7 +104,6 @@ public class VerifyController extends Controller {
         }
         return selectedFiles;
     }
-
     /**
      * Populates the ListView with the files selected by the user
      */

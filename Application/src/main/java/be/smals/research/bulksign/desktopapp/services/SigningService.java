@@ -75,9 +75,8 @@ public class SigningService {
         }
     }
     /**
-     * Computes the digest of files sign them with an eID
+     * Sign the MasterDigest with an eID
      *
-     * @param inputFiles files to sign
      * @return the signature
      */
     public byte[] signWithEID(String masterDigest) {
