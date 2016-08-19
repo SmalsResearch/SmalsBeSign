@@ -37,7 +37,13 @@ public class VerifySigningOutput {
             this.file = file;
         }
     }
-    public VerifySigningOutput () {}
+    public VerifySigningOutput () {
+        digestValid         = false;
+        certChainValid      = false;
+        rootCertChecked     = false;
+        rootCertValid       = false;
+        signatureValid      = false;
+    }
     public VerifySigningOutput (String fileName, String signedBy, Date signedAt) {
         this.fileName       = fileName;
         this.signedBy       = signedBy;
