@@ -2,14 +2,12 @@ package be.smals.research.bulksign.desktopapp.controllers;
 
 import be.smals.research.bulksign.desktopapp.services.VerifySigningService;
 import be.smals.research.bulksign.desktopapp.ui.FileListItem;
-import be.smals.research.bulksign.desktopapp.ui.ResultListItem;
 import be.smals.research.bulksign.desktopapp.utilities.SigningOutput;
 import be.smals.research.bulksign.desktopapp.utilities.Utilities;
 import be.smals.research.bulksign.desktopapp.utilities.VerifySigningOutput;
 import com.jfoenix.controls.JFXCheckBox;
 import com.jfoenix.controls.JFXDialog;
 import com.jfoenix.controls.JFXListView;
-import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -106,39 +104,6 @@ public class VerifyController extends Controller {
     }
 
     /**
-     * Used to display verification results
-     *
-     * @param pass correct results
-     * @param fail incorrect results
-     */
-    private void displayVerifyResult(List<VerifySigningOutput> pass, List<VerifySigningOutput> fail) {
-        verifyResultDialog.show(masterVerify);
-        Label resultLabel       = (Label) this.stage.getScene().lookup("#verifyResultTitle");
-        JFXListView resultList  = (JFXListView) this.stage.getScene().lookup("#verifyResultListView");
-        resultList.getItems().clear();
-
-        if (pass.isEmpty()) {
-            resultLabel.getStyleClass().clear();
-            resultLabel.getStyleClass().add("color-danger");
-            resultLabel.setText("No file has passed the verification!");
-        } else if (fail.isEmpty()) {
-            resultLabel.getStyleClass().clear();
-            resultLabel.getStyleClass().add("color-success");
-            resultLabel.setText("All files are ok!");
-        } else {
-            resultLabel.getStyleClass().clear();
-            resultLabel.getStyleClass().add("color-info");
-            resultLabel.setText(pass.size() + " file(s) out of "+(pass.size()+fail.size())+ " passed");
-        }
-
-        for (VerifySigningOutput passOutput : pass) {
-            resultList.getItems().add(new ResultListItem(passOutput.fileName, true, passOutput.signedBy, passOutput.signedAt));
-        }
-        for (VerifySigningOutput failOutput : fail) {
-            resultList.getItems().add(new ResultListItem(failOutput.fileName, false, failOutput.signedBy, failOutput.signedAt));
-        }
-    }
-    /**
      * Populates the ListView with the files selected by the user
      */
     private void populateListView () {
@@ -167,7 +132,36 @@ public class VerifyController extends Controller {
         });
         this.filesListView.getItems().addAll(FXCollections.observableList(fileListItems));
     }
+    /**
+     * Used to display verification results
+     *
+     * @param results List of Verify outputs
+     */
+    private void displayVerifyResult(List<VerifySigningOutput> results) {
+        verifyResultDialog.show(masterVerify);
+        Label resultLabel       = (Label) this.stage.getScene().lookup("#verifyResultTitle");
+        JFXListView resultList  = (JFXListView) this.stage.getScene().lookup("#verifyResultListView");
+        resultList.getItems().clear();
 
+        for (VerifySigningOutput result : results) {
+            System.out.println(result);
+//            resultList.getItems().add(new ResultListItem(passOutput.fileName, true, passOutput.signedBy, passOutput.signedAt));
+        }
+//        if (pass.isEmpty()) {
+//            resultLabel.getStyleClass().clear();
+//            resultLabel.getStyleClass().add("color-danger");
+//            resultLabel.setText("No file has passed the verification!");
+//        } else if (fail.isEmpty()) {
+//            resultLabel.getStyleClass().clear();
+//            resultLabel.getStyleClass().add("color-success");
+//            resultLabel.setText("All files are ok!");
+//        } else {
+//            resultLabel.getStyleClass().clear();
+//            resultLabel.getStyleClass().add("color-info");
+//            resultLabel.setText(pass.size() + " file(s) out of "+(pass.size()+fail.size())+ " passed");
+//        }
+
+    }
     /**
      * Submits verification
      */
@@ -178,34 +172,23 @@ public class VerifyController extends Controller {
                     "Please, select the signature file and a least one signed file.");
         } else {
             SigningOutput signingOutput = null;
-            List<VerifySigningOutput> pass = new ArrayList<>();
-            List<VerifySigningOutput> fail = new ArrayList<>();
+            List<VerifySigningOutput> results = new ArrayList<>();
             for (File signedFile : selectedFiles) {
                 try {
                     Map<String, File> files = this.verifySigningService.getFiles(signedFile);
                     signingOutput = this.verifySigningService.getSigningOutput(files.get("SIGNATURE"));
                     VerifySigningOutput verifySigningOutput = this.verifySigningService.verifySigning(files.get("FILE"), signingOutput);
-                    System.out.println(verifySigningOutput);
-                    System.exit(0);
-                    Platform.exit();
-//                    if (isValid) {
-//                        pass.add(new VerifySigningOutput(signedFile.getName(), signingOutput.author, signingOutput.createdAt));
-//                    } else {
-//                        fail.add(new VerifySigningOutput(signedFile.getName(), signingOutput.author, signingOutput.createdAt));
-//                    }
-//                    for (File file : files.values())
-//                        Files.deleteIfExists(file.toPath());
+                    results.add(verifySigningOutput);
+                    files.values().forEach(File::deleteOnExit);
                 } catch (IOException|SAXException|ParserConfigurationException|CertificateException
                         |SignatureException|NoSuchAlgorithmException|InvalidKeyException|NoSuchProviderException e) {
                     e.printStackTrace();
-//                    fail.add(new VerifySigningOutput(signedFile.getName(), signingOutput.author, signingOutput.createdAt));
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
             }
 
-            // Display result
-            this.displayVerifyResult(pass, fail);
+            this.displayVerifyResult(results);
         }
     }
     /**

@@ -32,7 +32,7 @@ public class VerifySigningOutput {
     public String toString() {
         String returnValue = this.fileName
                 + "\n- Signed by "+this.signedBy
-                + "\n- Signed at "+this.signedAt
+                + "\n- Signed on "+this.signedAt
                 + "\n- Digest verification : "+(this.digestValid ? "OK" : "FAILED");
         if (this.certChainValid && this.rootCertChecked && this.rootCertValid)
             returnValue += "\n- Chain certificate verification : OK";

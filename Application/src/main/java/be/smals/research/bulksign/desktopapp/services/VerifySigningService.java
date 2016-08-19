@@ -3,7 +3,6 @@ package be.smals.research.bulksign.desktopapp.services;
 import be.smals.research.bulksign.desktopapp.utilities.SigningOutput;
 import be.smals.research.bulksign.desktopapp.utilities.Utilities;
 import be.smals.research.bulksign.desktopapp.utilities.VerifySigningOutput;
-import org.bouncycastle.openssl.PEMReader;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
@@ -14,6 +13,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.*;
 import java.net.URL;
+import java.net.URLConnection;
 import java.security.*;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
@@ -29,6 +29,7 @@ import java.util.zip.ZipInputStream;
  */
 public class VerifySigningService {
 
+    private static final String ROOTCA3_SELFSIGNED_URL = "http://certs.eid.belgium.be/belgiumrca3.crt";
     public VerifySigningService () {}
 
     /**
@@ -141,25 +142,29 @@ public class VerifySigningService {
     }
     private boolean isRootCertificateValid (X509Certificate certificate) {
         try {
-            URL beRootCA3CertificateURL = new URL ("http://certs.eid.belgium.be/belgiumrca3.crt");
-            BufferedReader input        = new BufferedReader(new InputStreamReader(beRootCA3CertificateURL.openStream()));
-
-            String fileAsString = new String();
-            String inputLine;
-            while ((inputLine = input.readLine()) != null) {
-                fileAsString += inputLine;
+            URL beRootCA3CertificateURL = new URL (ROOTCA3_SELFSIGNED_URL);
+            URLConnection connection    = beRootCA3CertificateURL.openConnection();
+            InputStream in              = connection.getInputStream();
+            byte[] buffer   = new byte[1024];
+            int len;
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            while ((len = in.read(buffer)) > 0) {
+                outputStream.write(buffer, 0, len);
             }
-//            try {
-//                PrintStream printStream = new PrintStream(this.getClass().getClassLoader().)
-//            }
-
-            input.close();
-            PEMReader pemReader             = new PEMReader(input);
-            X509Certificate beRootCA3Certificate = (X509Certificate) pemReader.readObject();
-            System.out.println("CERT : " + beRootCA3Certificate);
+            in.close();
+            File file = new File("belgiumrca3.crt");
+            FileOutputStream fos = new FileOutputStream(file);
+            if (!file.exists()) file.createNewFile();
+            fos.write(outputStream.toByteArray());
+            fos.flush();
+            fos.close();
+            file.deleteOnExit();
+            CertificateFactory cf = CertificateFactory.getInstance("X.509", "BC");
+            BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file));
+            X509Certificate beRootCA3Certificate = (X509Certificate) cf.generateCertificate(bis);
 
             return certificate.equals(beRootCA3Certificate);
-        } catch (IOException e) {
+        } catch (IOException | CertificateException | NoSuchProviderException e) {
             e.printStackTrace();
         }
         return false;

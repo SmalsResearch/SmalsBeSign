@@ -78,7 +78,7 @@ public class Utilities {
      */
     public boolean isInternetReachable () throws IOException {
         try {
-            URL url = new URL("http://repository.eid.belgium.be");
+            URL url = new URL("http://certs.eid.belgium.be");
             HttpURLConnection urlConnect = (HttpURLConnection)url.openConnection();
             urlConnect.setConnectTimeout(1000);
 
@@ -86,7 +86,7 @@ public class Utilities {
                     && urlConnect.getContent()!=null;
 
         } catch (java.io.IOException e) {
-            e.printStackTrace();
+            System.out.println("Unknown host - No internet connection!");
         }
 
         return false;
