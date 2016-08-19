@@ -32,6 +32,7 @@
             <artifactId>OpenViewerFX</artifactId>
             <version>7.2.30</version>
         </dependency>
+        <!-- todo get rid of the following dependency somehow; it cannot be trusted -->
         <dependency>
             <groupId>com.jfoenix</groupId>
             <artifactId>jfoenix</artifactId>
@@ -104,7 +105,7 @@
 
     <build>
         <plugins>
-            <plugin>
+            <!--<plugin>
                 <groupId>com.zenjava</groupId>
                 <artifactId>javafx-maven-plugin</artifactId>
                 <version>8.5.0</version>
@@ -114,7 +115,7 @@
                     <verbose>true</verbose>
                     <allPermissions>true</allPermissions>
                 </configuration>
-            </plugin>
+            </plugin>-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
