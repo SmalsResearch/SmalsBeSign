@@ -92,26 +92,18 @@ public class EIDService {
 
     // ----- Sign ------------------------------------------------------------------------------------------------------
     /**
-     * Prepares the eID card before a signing operation
-     *
-     * @param algotithm the algorithm to be used on the
-     * @throws CardException
-     */
-    public void prepareSigning (String algotithm) throws CardException {
-        this.eID.prepareSigning(algotithm,  EID.NON_REP_KEY_ID);
-    }
-
-    /**
      * Performs the signing operation
      *
      * @param masterDigest the digest to sign
      * @param algorithm the algorithm to use on digest before signing
+     * @param keyID
      * @return the signature as byte array
      * @throws IOException
      * @throws CardException
      */
-    public byte[] sign(byte[] masterDigest, String algorithm) throws IOException, CardException {
-        return this.eID.signAlt(masterDigest, algorithm);
+    public byte[] sign(byte[] masterDigest, String algorithm, byte keyID)
+            throws IOException, CardException {
+        return this.eID.sign(masterDigest, algorithm, keyID);
     }
 
     // ----- PIN -------------------------------------------------------------------------------------------------------

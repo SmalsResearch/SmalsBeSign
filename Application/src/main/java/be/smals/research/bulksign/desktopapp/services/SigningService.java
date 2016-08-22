@@ -7,7 +7,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Text;
 import sun.security.pkcs11.wrapper.PKCS11Exception;
 
-import javax.smartcardio.CardException;
 import javax.xml.bind.DatatypeConverter;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -40,14 +39,6 @@ public class SigningService {
     public SigningService() throws IOException, PKCS11Exception {}
 
     /**
-     * Prepares the eID card to sign
-     *
-     * @throws CardException
-     */
-    public void prepareSigning () throws CardException {
-        EIDService.getInstance().prepareSigning (DigestService.getInstance().getAlgorithm());
-    }
-    /**
      * Computes the digest of given files and sign them
      *
      * @param inputStreams files to sign
@@ -79,10 +70,10 @@ public class SigningService {
      *
      * @return the signature
      */
-    public byte[] signWithEID(String masterDigest) {
+    public byte[] signWithEID(String masterDigest, String algotithm, byte keyID) {
         try {
             this.masterDigest = masterDigest;
-            return EIDService.getInstance().sign(Utilities.getInstance().getSha1(this.masterDigest.getBytes()), "SHA-1");
+            return EIDService.getInstance().sign(Utilities.getInstance().getSha1(this.masterDigest.getBytes()), algotithm, keyID);
         } catch (Exception e) {
             e.printStackTrace();
             return new byte[0];

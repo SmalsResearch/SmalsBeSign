@@ -654,22 +654,22 @@ public class EID {
 	}
 
 	// ----- Sign ------------------------------------------------------------------------------------------------------
-	public void prepareSigning (String digestAlgo, byte keyId) throws CardException {
-//		Map<Byte, CCIDFeature> ccidFeatures = this.getCCIDFeatures();
-//
-//		CCIDFeature directPinVerifyFeature = ccidFeatures.get(FEATURE_VERIFY_PIN_DIRECT_TAG);
-//		CCIDFeature verifyPinStartFeature = ccidFeatures.get(FEATURE_VERIFY_PIN_START_TAG);
-//		CCIDFeature eIDPINPadReaderFeature = ccidFeatures.get(FEATURE_EID_PIN_PAD_READER_TAG);
-//
-//		if (null != eIDPINPadReaderFeature) {
-//			System.out.println("eID-aware secure PIN pad reader detected");
-//		}
+	public byte[] sign(byte[] digest, String algorithm, byte keyID) throws CardException, IOException {
+				Map<Byte, CCIDFeature> ccidFeatures = this.getCCIDFeatures();
+
+		CCIDFeature directPinVerifyFeature = ccidFeatures.get(FEATURE_VERIFY_PIN_DIRECT_TAG);
+		CCIDFeature verifyPinStartFeature = ccidFeatures.get(FEATURE_VERIFY_PIN_START_TAG);
+		CCIDFeature eIDPINPadReaderFeature = ccidFeatures.get(FEATURE_EID_PIN_PAD_READER_TAG);
+
+		if (null != eIDPINPadReaderFeature) {
+			System.out.println("eID-aware secure PIN pad reader detected");
+		}
 
 		// select the key
 		byte algoRef;
-		if ("SHA-1-PSS".equals(digestAlgo)) {
+		if ("SHA-1-PSS".equals(algorithm)) {
 			algoRef = 0x10;
-		} else if ("SHA-256-PSS".equals(digestAlgo)) {
+		} else if ("SHA-256-PSS".equals(algorithm)) {
 			algoRef = 0x20;
 		} else {
 			algoRef = 0x01; // PKCS#1
@@ -678,50 +678,48 @@ public class EID {
 				new byte[] { 0x04, // length of following data
 						(byte) 0x80, // algo ref
 						algoRef, (byte) 0x84, // tag for private key ref
-						keyId });
+						keyID });
 		ResponseAPDU responseApdu = transmit(setApdu);
 		if (0x9000 != responseApdu.getSW()) {
 			throw new RuntimeException("SELECT error");
 		}
 		// Pin asked and verified here
 		this.notifyObservers(Services.GET_PINCODE);
-	}
-	public byte[] signAlt (byte[] digest, String digestAlgo) throws IOException, CardException {
 		ByteArrayOutputStream digestInfo = new ByteArrayOutputStream();
-		if ("SHA-1".equals(digestAlgo) || "SHA1".equals(digestAlgo)) {
+		if ("SHA-1".equals(algorithm) || "SHA1".equals(algorithm)) {
 			digestInfo.write(Constants.SHA1_DIGEST_INFO_PREFIX);
-		} else if ("SHA-224".equals(digestAlgo)) {
+		} else if ("SHA-224".equals(algorithm)) {
 			digestInfo.write(Constants.SHA224_DIGEST_INFO_PREFIX);
-		} else if ("SHA-256".equals(digestAlgo)) {
+		} else if ("SHA-256".equals(algorithm)) {
 			digestInfo.write(Constants.SHA256_DIGEST_INFO_PREFIX);
-		} else if ("SHA-384".equals(digestAlgo)) {
+		} else if ("SHA-384".equals(algorithm)) {
 			digestInfo.write(Constants.SHA384_DIGEST_INFO_PREFIX);
-		} else if ("SHA-512".equals(digestAlgo)) {
+		} else if ("SHA-512".equals(algorithm)) {
 			digestInfo.write(Constants.SHA512_DIGEST_INFO_PREFIX);
-		} else if ("RIPEMD160".equals(digestAlgo)) {
+		} else if ("RIPEMD160".equals(algorithm)) {
 			digestInfo.write(Constants.RIPEMD160_DIGEST_INFO_PREFIX);
-		} else if ("RIPEMD128".equals(digestAlgo)) {
+		} else if ("RIPEMD128".equals(algorithm)) {
 			digestInfo.write(Constants.RIPEMD128_DIGEST_INFO_PREFIX);
-		} else if ("RIPEMD256".equals(digestAlgo)) {
+		} else if ("RIPEMD256".equals(algorithm)) {
 			digestInfo.write(Constants.RIPEMD256_DIGEST_INFO_PREFIX);
-		} else if (Constants.PLAIN_TEXT_DIGEST_ALGO_OID.equals(digestAlgo)) {
+		} else if (Constants.PLAIN_TEXT_DIGEST_ALGO_OID.equals(algorithm)) {
 			byte[] digestInfoPrefix = Arrays.copyOf(Constants.PLAIN_TEXT_DIGEST_INFO_PREFIX,
 					Constants.PLAIN_TEXT_DIGEST_INFO_PREFIX.length);
 			digestInfoPrefix[1] = (byte) (digest.length + 13);
 			digestInfoPrefix[14] = (byte) digest.length;
 			digestInfo.write(digestInfoPrefix);
-		} else if ("SHA-1-PSS".equals(digestAlgo)) {
+		} else if ("SHA-1-PSS".equals(algorithm)) {
 			// no prefix required
-		} else if ("SHA-256-PSS".equals(digestAlgo)) {
+		} else if ("SHA-256-PSS".equals(algorithm)) {
 			// no prefix required
 		} else {
-			throw new RuntimeException("Digest Algorithm not supported: " + digestAlgo);
+			throw new RuntimeException("Digest Algorithm not supported: " + algorithm);
 		}
 		digestInfo.write(digest);
 		CommandAPDU computeDigitalSignatureApdu = new CommandAPDU(0x00, 0x2A, 0x9E, 0x9A, digestInfo.toByteArray());
 		System.out.println("COMMAND: "+Arrays.toString(computeDigitalSignatureApdu.getBytes()));
 
-		ResponseAPDU responseApdu = transmit(computeDigitalSignatureApdu);
+		responseApdu = transmit(computeDigitalSignatureApdu);
 		System.out.println("DATA:");
 		System.out.println(Arrays.toString(responseApdu.getData()));
 		System.out.println("BYTES:");
@@ -734,8 +732,7 @@ public class EID {
 			 * Notice that the card PIN caching also works when first doing an
 			 * authentication after a non-repudiation signature.
 			 */
-			byte[] signatureValue = responseApdu.getData();
-			return signatureValue;
+			return responseApdu.getData();
 		}
 		if (0x6982 != responseApdu.getSW()) {
 			System.out.println("SW: " + Integer.toHexString(responseApdu.getSW()));
@@ -747,7 +744,6 @@ public class EID {
 		 */
 		System.out.println("PIN verification required...");
 
-//		this.isPinValid();
 		this.notifyObservers(Services.GET_PINCODE);
 
 		System.out.println("computing digital signature...");

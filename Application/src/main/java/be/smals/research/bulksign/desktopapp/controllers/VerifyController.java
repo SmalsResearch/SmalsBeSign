@@ -113,22 +113,44 @@ public class VerifyController extends Controller {
         this.filesToVerify.stream().filter(file -> !files.contains(file)).forEach(file -> {
             FileListItem listItem = new FileListItem(file);
             EventHandler event;
-            if (listItem.getFileExtension().equalsIgnoreCase("pdf")) {
-                event = event1 -> {
-                    Object[] args = {file};
-                    viewerFx.executeCommand(Commands.OPENFILE, args);
-                };
-            } else {
-                event = event1 -> {
-                    try {
-                        Desktop.getDesktop().open(file);
-                    } catch (IOException e) {
-                        this.showErrorDialog(errorDialog, masterVerify, "Unable to open the file...",
-                                "No application associated with the specified file.");
+
+//            if (listItem.getFileExtension().equalsIgnoreCase("pdf")) {
+//                event = event1 -> {
+//                    Object[] args = {file};
+//                    viewerFx.executeCommand(Commands.OPENFILE, args);
+//                };
+//            } else {
+//                event = event1 -> {
+//                    try {
+//                        Desktop.getDesktop().open(file);
+//                    } catch (IOException e) {
+//                        this.showErrorDialog(errorDialog, masterVerify, "Unable to open the file...",
+//                                "No application associated with the specified file.");
+//                    }
+//                };
+//            }
+            listItem.setViewButtonAction(event1 -> {
+                try {
+                    // Unzip .signed.zip file then get main file
+                    final Map<String, FileWithAltName> signedZipFiles = Utilities.getInstance().getFilesFromSignedFile(file);
+                    FileWithAltName signedFile = signedZipFiles.get("FILE");
+                    // Check extension to display in viewer or not
+                    if (Utilities.getInstance().getFileExtension(signedFile.name).equalsIgnoreCase("pdf")) {
+                        Object[] args = {signedFile.file};
+                        viewerFx.executeCommand(Commands.OPENFILE, args);
+                    } else {
+                        try {
+                            Desktop.getDesktop().open(file);
+                        } catch (IOException e) {
+                            this.showErrorDialog(errorDialog, masterVerify, "Unable to open the file...",
+                                    "No application associated with the specified file.");
+                        }
                     }
-                };
-            }
-            listItem.setViewButtonAction(event);
+                } catch (IOException e) {
+                    this.showErrorDialog(errorDialog, masterVerify, "Open SignedFile", "Unable to open the .signed.zip file.");
+                }
+
+            });
             fileListItems.add(listItem);
         });
         this.filesListView.getItems().addAll(FXCollections.observableList(fileListItems));
@@ -173,7 +195,7 @@ public class VerifyController extends Controller {
             List<VerifySigningOutput> results = new ArrayList<>();
             for (File signedFile : selectedFiles) {
                 try {
-                    Map<String, FileWithAltName> files = this.verifySigningService.getFiles(signedFile);
+                    Map<String, FileWithAltName> files = Utilities.getInstance().getFilesFromSignedFile(signedFile);
                     signingOutput = this.verifySigningService.getSigningOutput(files.get("SIGNATURE").file);
                     VerifySigningOutput verifySigningOutput = this.verifySigningService.verifySigning(files.get("FILE").file, signingOutput);
                     verifySigningOutput.fileName = files.get("FILE").name;

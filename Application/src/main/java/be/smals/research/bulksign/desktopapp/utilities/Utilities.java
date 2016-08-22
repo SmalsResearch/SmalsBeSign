@@ -5,14 +5,20 @@ import javafx.collections.ObservableList;
 import javafx.scene.control.ListView;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.InetAddress;
 import java.net.URL;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 /**
  * Random functions
@@ -90,5 +96,43 @@ public class Utilities {
         }
 
         return false;
+    }
+    /**
+     * Returns individual files from the Signed file (.signed.zip)
+     *
+     * @param signedFile
+     * @return a map matching files with they identity
+     */
+    public Map<String, VerifySigningOutput.FileWithAltName> getFilesFromSignedFile(File signedFile) throws IOException {
+        byte[] buffer = new byte[1024];
+        Map<String, VerifySigningOutput.FileWithAltName> files = new HashMap<>();
+        ZipInputStream zipInputStream   = new ZipInputStream(new FileInputStream(signedFile));
+        ZipEntry zipEntry               = zipInputStream.getNextEntry();
+
+        while (zipEntry != null) {
+            String fileName         = zipEntry.getName();
+            File newFile            = File.createTempFile(signedFile.getParent()+File.separator+fileName, "");
+            FileOutputStream fos    = new FileOutputStream(newFile);
+            int len;
+            while ((len = zipInputStream.read(buffer)) > 0) {
+                fos.write(buffer, 0, len);
+            }
+            fos.close();
+            String fileExt = Utilities.getInstance().getFileExtension(fileName);
+            VerifySigningOutput.FileWithAltName fileWithAltName = new VerifySigningOutput.FileWithAltName(fileName, newFile);
+            if (fileExt.equalsIgnoreCase("sig")) {
+                files.put("SIGNATURE", fileWithAltName);
+            } else if (fileName.equals("README")) {
+                files.put("README", fileWithAltName);
+            } else {
+                files.put("FILE", fileWithAltName);
+            }
+            zipEntry = zipInputStream.getNextEntry();
+        }
+
+        zipInputStream.closeEntry();
+        zipInputStream.close();
+
+        return files;
     }
 }

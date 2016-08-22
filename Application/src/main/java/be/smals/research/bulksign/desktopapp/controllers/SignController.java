@@ -1,5 +1,6 @@
 package be.smals.research.bulksign.desktopapp.controllers;
 
+import be.smals.research.bulksign.desktopapp.eid.EID;
 import be.smals.research.bulksign.desktopapp.eid.EIDObserver;
 import be.smals.research.bulksign.desktopapp.eid.external.UserCancelledException;
 import be.smals.research.bulksign.desktopapp.services.*;
@@ -287,12 +288,13 @@ public class SignController extends Controller implements EIDObserver{
         FileInputStream[] inputFiles = new FileInputStream[selectedFiles.size()];
         if (!Settings.getInstance().isEIDCardPresent()) {
             this.showInfoDialog(infoDialog, masterSign, "Missing eID card...",
-                    "You must insert your eID card inside the reader before you proceed");
+                    "You must insert your eID card inside the reader before you proceed.");
         } else {
             // Prepare files
             for (int i = 0; i < selectedFiles.size(); i++) {
                 inputFiles[i] = new FileInputStream(selectedFiles.get(i));
             }
+
             // Sign
             String masterDigest = null;
             try {
@@ -300,27 +302,26 @@ public class SignController extends Controller implements EIDObserver{
             } catch (NoSuchAlgorithmException | NoSuchProviderException e) {
                 e.printStackTrace();
             }
-            this.signingService.prepareSigning();
             List<X509Certificate> certificateChain = EIDService.getInstance().getCertificateChain();
             VerifySigningOutput verifySigningOutput = new VerifySigningOutput();
             try {
                 verifySigningOutput = this.verifySigningService.verifyChainCertificate(certificateChain);
-                verifySigningOutput.signatureValid = true;
             } catch (NoSuchAlgorithmException | InvalidKeyException | SignatureException | NoSuchProviderException e) {
                 // Could not verify certificateChain
             }
             if (!verifySigningOutput.getOutputResult().equals(VerifySigningOutput.VerifyResult.FAILED)) {
-                byte[] signature = this.signingService.signWithEID(masterDigest);
+                byte[] signature = this.signingService.signWithEID(masterDigest, "SHA-1", EID.NON_REP_KEY_ID);
                 for (FileInputStream file : inputFiles)
                     file.close();
                 if (signature != null) {
+//                    List<X509Certificate> certificateChain = EIDService.getInstance().getCertificateChain();
                     this.saveSigningOutput(selectedFiles, signature, certificateChain);
                 } else {
                     // Error during signing
                 }
             } else {
                 this.showErrorDialog(errorDialog, masterSign, "Certificate Verification",
-                        "The verification of the certificate on your eID card failed !");
+                        verifySigningOutput.outputCertificateResult());
             }
         }
     }

@@ -3,10 +3,10 @@ package be.smals.research.bulksign.desktopapp.services;
 import be.smals.research.bulksign.desktopapp.utilities.SigningOutput;
 import be.smals.research.bulksign.desktopapp.utilities.Utilities;
 import be.smals.research.bulksign.desktopapp.utilities.VerifySigningOutput;
-import be.smals.research.bulksign.desktopapp.utilities.VerifySigningOutput.FileWithAltName;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
+import sun.security.provider.certpath.OCSP;
 
 import javax.xml.bind.DatatypeConverter;
 import javax.xml.parsers.DocumentBuilder;
@@ -19,9 +19,9 @@ import java.security.*;
 import java.security.cert.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Service used to verify a signed file
@@ -88,6 +88,15 @@ public class VerifySigningService {
         if (this.isCertificateChainValid(sOut.certificateChain))
             vOut.certChainValid = true;
 
+        if (Utilities.getInstance().isInternetReachable()) {
+            vOut.userCertChecked = true;
+            try {
+                OCSP.RevocationStatus response = OCSP.check(sOut.certificateChain.get(0), sOut.certificateChain.get(1));
+                System.out.println(response.getCertStatus());
+            } catch (CertPathValidatorException e) {
+                e.printStackTrace();
+            }
+        }
         if (Utilities.getInstance().isInternetReachable())
             vOut.intermCertChecked = true;
         if (vOut.intermCertChecked && this.isIntermediateCertificateValid(sOut.certificateChain.get(1)))
@@ -365,58 +374,37 @@ public class VerifySigningService {
         }
         return found;
     }
-    /**
-     * Returns individual files from the Signed file (.signed.zip)
-     *
-     * @param signedFile
-     * @return a map matching files with they identity
-     */
-    public Map<String, FileWithAltName> getFiles(File signedFile) throws IOException {
-        byte[] buffer = new byte[1024];
-        Map<String, FileWithAltName> files = new HashMap<>();
-        ZipInputStream zipInputStream   = new ZipInputStream(new FileInputStream(signedFile));
-        ZipEntry zipEntry               = zipInputStream.getNextEntry();
-
-        while (zipEntry != null) {
-            String fileName         = zipEntry.getName();
-            File newFile            = File.createTempFile(signedFile.getParent()+File.separator+fileName, "");
-//            new File(signedFile.getParent()+File.separator+fileName);
-            FileOutputStream fos    = new FileOutputStream(newFile);
-            int len;
-            while ((len = zipInputStream.read(buffer)) > 0) {
-                fos.write(buffer, 0, len);
-            }
-            fos.close();
-            String fileExt = Utilities.getInstance().getFileExtension(fileName);
-            FileWithAltName fileWithAltName = new FileWithAltName(fileName, newFile);
-            if (fileExt.equalsIgnoreCase("sig")) {
-                files.put("SIGNATURE", fileWithAltName);
-            } else if (fileName.equals("README")) {
-                files.put("README", fileWithAltName);
-            } else {
-                files.put("FILE", fileWithAltName);
-            }
-            zipEntry = zipInputStream.getNextEntry();
-        }
-
-        zipInputStream.closeEntry();
-        zipInputStream.close();
-
-        return files;
-    }
 
     public VerifySigningOutput verifyChainCertificate(List<X509Certificate> certificateChain) throws CertificateException, NoSuchAlgorithmException, InvalidKeyException, NoSuchProviderException, SignatureException, IOException {
-        VerifySigningOutput verifySigningOutput = new VerifySigningOutput();
-        verifySigningOutput.digestValid = true;
+        VerifySigningOutput vOut = new VerifySigningOutput();
+        vOut.digestValid = true;
+        vOut.signatureValid = true;
         if (this.isCertificateChainValid(certificateChain))
-            verifySigningOutput.certChainValid = true;
+            vOut.certChainValid = true;
+
+        if (Utilities.getInstance().isInternetReachable()) {
+            vOut.userCertChecked = true;
+            try {
+                OCSP.RevocationStatus response = OCSP.check(certificateChain.get(0), certificateChain.get(1));
+                System.out.println(response.getCertStatus());
+            } catch (CertPathValidatorException e) {
+                e.printStackTrace();
+            }
+        }
+        if (Utilities.getInstance().isInternetReachable())
+            vOut.intermCertChecked = true;
+        if (vOut.intermCertChecked && this.isIntermediateCertificateValid(certificateChain.get(1)))
+            vOut.intermCertValid = true;
+        if (vOut.intermCertChecked && !vOut.intermCertValid)
+            vOut.intermCertInCRL = this.isIntermediateCertificateInCRL(certificateChain.get(1));
 
         if (Utilities.getInstance().isInternetReachable())
-            verifySigningOutput.rootCertChecked = true;
+            vOut.rootCertChecked = true;
+        if (vOut.rootCertChecked && this.isRootCertificateValid(certificateChain.get(2)))
+            vOut.rootCertValid = true;
+        if (vOut.rootCertChecked && !vOut.rootCertValid)
+            vOut.rootCertInCRL = this.isRootCertificateInCRL(certificateChain.get(2));
 
-        if (verifySigningOutput.rootCertChecked && this.isRootCertificateValid(certificateChain.get(2)))
-            verifySigningOutput.rootCertValid = true;
-
-        return verifySigningOutput;
+        return vOut;
     }
 }
