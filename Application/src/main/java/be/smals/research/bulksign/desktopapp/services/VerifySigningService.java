@@ -30,7 +30,8 @@ import java.util.zip.ZipInputStream;
  */
 public class VerifySigningService {
 
-    private static final String ROOTCA3_SELFSIGNED_URL = "http://certs.eid.belgium.be/belgiumrca3.crt";
+    private static final String VERIFICATION_URL = "http://certs.eid.belgium.be/";
+    private static final String ROOTCA3_SELFSIGNED_URL = VERIFICATION_URL +"belgiumrca3.crt";
     public VerifySigningService () {}
 
     /**
@@ -65,7 +66,7 @@ public class VerifySigningService {
     /**
      *
      * @param file
-     * @param signingOutput
+     * @param sOut
      * @return verify output
      * @throws NoSuchAlgorithmException
      * @throws IOException
@@ -74,32 +75,36 @@ public class VerifySigningService {
      * @throws SignatureException
      * @throws CertificateException
      */
-    public VerifySigningOutput verifySigning (File file, SigningOutput signingOutput)
+    public VerifySigningOutput verifySigning (File file, SigningOutput sOut)
             throws NoSuchAlgorithmException, IOException, NoSuchProviderException, InvalidKeyException,
             SignatureException, CertificateException {
-        VerifySigningOutput verifySigningOutput = new VerifySigningOutput(file.getName(), signingOutput.author, signingOutput.createdAt);
+        VerifySigningOutput vOut = new VerifySigningOutput(file.getName(), sOut.author, sOut.createdAt);
 
         String fileDigest = DigestService.getInstance().computeIndividualDigest(new FileInputStream(file));
-        if (!this.isIndividualDigestPartOfMasterDigest(signingOutput.masterDigest, fileDigest))
-            return verifySigningOutput;
-        verifySigningOutput.digestValid = true;
+        if (!this.isIndividualDigestPartOfMasterDigest(sOut.masterDigest, fileDigest))
+            return vOut;
+        vOut.digestValid = true;
 
-        if (this.isCertificateChainValid(signingOutput.certificateChain))
-            verifySigningOutput.certChainValid = true;
+        if (this.isCertificateChainValid(sOut.certificateChain))
+            vOut.certChainValid = true;
 
         if (Utilities.getInstance().isInternetReachable())
-            verifySigningOutput.rootCertChecked = true;
+            vOut.intermCertChecked = true;
+        if (vOut.intermCertChecked && this.isIntermediateCertificateValid(sOut.certificateChain.get(1)))
+            vOut.intermCertValid = true;
 
-        if (verifySigningOutput.rootCertChecked && this.isRootCertificateValid(signingOutput.certificateChain.get(2)))
-            verifySigningOutput.rootCertValid = true;
+        if (Utilities.getInstance().isInternetReachable())
+            vOut.rootCertChecked = true;
+        if (vOut.rootCertChecked && this.isRootCertificateValid(sOut.certificateChain.get(2)))
+            vOut.rootCertValid = true;
 
         Signature signer = Signature.getInstance("SHA1withRSA", "BC");
-        signer.initVerify(signingOutput.certificateChain.get(0).getPublicKey()); // [0] is the user certificate
-        signer.update(signingOutput.masterDigest.getBytes());
-        if (signer.verify(signingOutput.signature))
-            verifySigningOutput.signatureValid = true;
+        signer.initVerify(sOut.certificateChain.get(0).getPublicKey()); // [0] is the user certificate
+        signer.update(sOut.masterDigest.getBytes());
+        if (signer.verify(sOut.signature))
+            vOut.signatureValid = true;
 
-        return verifySigningOutput;
+        return vOut;
     }
     /**
      * Used to check if the certificate chain is valid
@@ -112,7 +117,7 @@ public class VerifySigningService {
      * @throws InvalidKeyException
      * @throws SignatureException
      */
-    public boolean isCertificateChainValid(List<X509Certificate> certificateChain)
+    private boolean isCertificateChainValid(List<X509Certificate> certificateChain)
             throws NoSuchAlgorithmException, CertificateException, NoSuchProviderException, InvalidKeyException, SignatureException {
         X509Certificate rootCert    = certificateChain.get(2);
         X509Certificate intermCert  = certificateChain.get(1);
@@ -140,28 +145,15 @@ public class VerifySigningService {
         certificate.verify(authorityPubKey);
         return true;
     }
-    public boolean isRootCertificateValid (X509Certificate certificate) {
+    /**
+     * Checks root certificate validity on the internet
+     *
+     * @param certificate
+     * @return
+     */
+    private boolean isRootCertificateValid(X509Certificate certificate) {
         try {
-            URL beRootCA3CertificateURL = new URL (ROOTCA3_SELFSIGNED_URL);
-            URLConnection connection    = beRootCA3CertificateURL.openConnection();
-            InputStream in              = connection.getInputStream();
-            byte[] buffer   = new byte[1024];
-            int len;
-            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            while ((len = in.read(buffer)) > 0) {
-                outputStream.write(buffer, 0, len);
-            }
-            in.close();
-            File file = File.createTempFile("belgiumrca3", ".crt");
-            FileOutputStream fos = new FileOutputStream(file);
-            if (!file.exists()) file.createNewFile();
-            fos.write(outputStream.toByteArray());
-            fos.flush();
-            fos.close();
-            file.deleteOnExit();
-            CertificateFactory cf = CertificateFactory.getInstance("X.509", "BC");
-            BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file));
-            X509Certificate beRootCA3Certificate = (X509Certificate) cf.generateCertificate(bis);
+            X509Certificate beRootCA3Certificate = this.getX509CertificateFromUrl(ROOTCA3_SELFSIGNED_URL);
 
             return certificate.equals(beRootCA3Certificate);
         } catch (IOException | CertificateException | NoSuchProviderException e) {
@@ -169,6 +161,62 @@ public class VerifySigningService {
         }
         return false;
     }
+    /**
+     * Checks intermediate certificate validity on the internet
+     *
+     * @param certificate
+     * @return
+     */
+    private boolean isIntermediateCertificateValid(X509Certificate certificate) {
+        // Prepare URL - Issuer format : C=BE,CN={Foreigner, Citizen} CA,SERIALNUMBER=YYYYMM
+        String subjectName      = (((certificate.getSubjectDN().getName().split("CN="))[1]).split(" "))[0];
+        String subjectSerial    = ((certificate.getSubjectDN().getName().split("SERIALNUMBER="))[1]).trim();
+        String fullUrl = VERIFICATION_URL+subjectName+subjectSerial+".crt";
+        try {
+            X509Certificate beIntermCA3Certificate = getX509CertificateFromUrl(fullUrl);
+            return certificate.equals(beIntermCA3Certificate);
+        } catch (IOException | CertificateException | NoSuchProviderException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    /**
+     * Retrieve a X509 certificate from the url passed in param
+     *
+     * @param fileURL internet url
+     * @return X509Certificate
+     * @throws IOException
+     * @throws CertificateException
+     * @throws NoSuchProviderException
+     */
+    private X509Certificate getX509CertificateFromUrl(String fileURL)
+            throws IOException, CertificateException, NoSuchProviderException {
+        // Download
+        URL beCertURL = new URL (fileURL);
+        URLConnection connection    = beCertURL.openConnection();
+        InputStream in              = connection.getInputStream();
+        byte[] buffer   = new byte[1024];
+        int len;
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        while ((len = in.read(buffer)) > 0) {
+            outputStream.write(buffer, 0, len);
+        }
+        in.close();
+        // Write to file
+        File file = File.createTempFile("belgiumCert", ".crt");
+        FileOutputStream fos = new FileOutputStream(file);
+        if (!file.exists()) file.createNewFile();
+        fos.write(outputStream.toByteArray());
+        fos.flush();
+        fos.close();
+        file.deleteOnExit();
+        // Convert to X509Certificate
+        CertificateFactory cf = CertificateFactory.getInstance("X.509", "BC");
+        BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file));
+        return (X509Certificate) cf.generateCertificate(bis);
+    }
+
     /**
      * Extracts and returns a SigningOutput from a signature file
      *

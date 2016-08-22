@@ -326,11 +326,11 @@ public class SignController extends Controller implements EIDObserver{
             VerifySigningOutput verifySigningOutput = new VerifySigningOutput();
             try {
                 verifySigningOutput = this.verifySigningService.verifyChainCertificate(certificateChain);
+                verifySigningOutput.signatureValid = true;
             } catch (NoSuchAlgorithmException | InvalidKeyException | SignatureException | NoSuchProviderException e) {
                 // Could not verify certificateChain
             }
             if (!verifySigningOutput.getOutputResult().equals(VerifySigningOutput.VerifyResult.FAILED)) {
-
                 byte[] signature = this.signingService.signWithEID(masterDigest);
                 for (FileInputStream file : inputFiles)
                     file.close();
@@ -341,7 +341,7 @@ public class SignController extends Controller implements EIDObserver{
                 }
             } else {
                 this.showErrorDialog(errorDialog, masterSign, "Certificate Verification",
-                        "The verification of your certificate chain failed !");
+                        "The verification of the certificate on your eID card failed !");
             }
         }
     }
