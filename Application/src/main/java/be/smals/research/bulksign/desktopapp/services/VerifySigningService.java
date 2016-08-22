@@ -92,13 +92,15 @@ public class VerifySigningService {
             vOut.intermCertChecked = true;
         if (vOut.intermCertChecked && this.isIntermediateCertificateValid(sOut.certificateChain.get(1)))
             vOut.intermCertValid = true;
-        if (vOut.intermCertValid && !vOut.intermCertValid)
+        if (vOut.intermCertChecked && !vOut.intermCertValid)
             vOut.intermCertInCRL = this.isIntermediateCertificateInCRL(sOut.certificateChain.get(1));
 
         if (Utilities.getInstance().isInternetReachable())
             vOut.rootCertChecked = true;
         if (vOut.rootCertChecked && this.isRootCertificateValid(sOut.certificateChain.get(2)))
             vOut.rootCertValid = true;
+        if (vOut.rootCertChecked && !vOut.rootCertValid)
+            vOut.rootCertInCRL = this.isRootCertificateInCRL(sOut.certificateChain.get(2));
 
         Signature signer = Signature.getInstance("SHA1withRSA", "BC");
         signer.initVerify(sOut.certificateChain.get(0).getPublicKey()); // [0] is the user certificate
