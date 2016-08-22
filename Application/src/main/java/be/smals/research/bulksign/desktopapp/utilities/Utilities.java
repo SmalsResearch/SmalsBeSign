@@ -80,9 +80,9 @@ public class Utilities {
         try {
             URL url = new URL("http://certs.eid.belgium.be");
             HttpURLConnection urlConnect = (HttpURLConnection)url.openConnection();
-            urlConnect.setConnectTimeout(1000);
+            urlConnect.setConnectTimeout(250);
 
-            return InetAddress.getByName("www.google.com").isReachable(1000)
+            return InetAddress.getByName("www.google.com").isReachable(250)
                     && urlConnect.getContent()!=null;
 
         } catch (java.io.IOException e) {

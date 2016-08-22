@@ -92,7 +92,7 @@ public class VerifySigningService {
             vOut.intermCertChecked = true;
         if (vOut.intermCertChecked && this.isIntermediateCertificateValid(sOut.certificateChain.get(1)))
             vOut.intermCertValid = true;
-//        if (!vOut.intermCertValid)
+        if (vOut.intermCertValid && !vOut.intermCertValid)
             vOut.intermCertInCRL = this.isIntermediateCertificateInCRL(sOut.certificateChain.get(1));
 
         if (Utilities.getInstance().isInternetReachable())
@@ -174,6 +174,15 @@ public class VerifySigningService {
         }
         return false;
     }
+    private boolean isRootCertificateInCRL (X509Certificate certificate) {
+        try {
+            X509CRL intermCRL       = this.getX509CRLFromUrl(CRL_ROOT_URL);
+            return intermCRL.isRevoked(certificate);
+        } catch (IOException | CertificateException | CRLException | NoSuchProviderException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
     /**
      * Checks intermediate certificate validity on the internet
      *
@@ -199,12 +208,18 @@ public class VerifySigningService {
      * @param certificate
      * @return true is the certificate serial is in the Revocation list
      */
-    private boolean isIntermediateCertificateInCRL (X509Certificate certificate) {
+    private boolean isIntermediateCertificateInCRL (X509Certificate certificate){
         // Prepare URL - Issuer format : C=BE,CN={Foreigner, Citizen} CA,SERIALNUMBER=YYYYMM
         String subjectName      = (((certificate.getSubjectDN().getName().split("CN="))[1]).split(" "))[0];
         String subjectSerial    = ((certificate.getSubjectDN().getName().split("SERIALNUMBER="))[1]).trim();
         String fullUrl = CRL_VERIFICATION_URL +"eid"+(subjectName.toLowerCase()).charAt(0)+subjectSerial+".crl";
         System.out.println(fullUrl);
+        try {
+            X509CRL intermCRL       = this.getX509CRLFromUrl(fullUrl);
+            return intermCRL.isRevoked(certificate);
+        } catch (IOException | CertificateException | CRLException | NoSuchProviderException e) {
+            e.printStackTrace();
+        }
         return false;
     }
     /**
