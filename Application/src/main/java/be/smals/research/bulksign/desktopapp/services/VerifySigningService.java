@@ -16,9 +16,7 @@ import java.io.*;
 import java.net.URL;
 import java.net.URLConnection;
 import java.security.*;
-import java.security.cert.CertificateException;
-import java.security.cert.CertificateFactory;
-import java.security.cert.X509Certificate;
+import java.security.cert.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -30,8 +28,10 @@ import java.util.zip.ZipInputStream;
  */
 public class VerifySigningService {
 
-    private static final String VERIFICATION_URL = "http://certs.eid.belgium.be/";
-    private static final String ROOTCA3_SELFSIGNED_URL = VERIFICATION_URL +"belgiumrca3.crt";
+    private static final String CERT_VERIFICATION_URL = "http://certs.eid.belgium.be/";
+    private static final String CRL_VERIFICATION_URL = "http://crl.eid.belgium.be/";
+    private static final String CERT_ROOT_URL = CERT_VERIFICATION_URL +"belgiumrca3.crt";
+    private static final String CRL_ROOT_URL = CERT_VERIFICATION_URL +"belgium3.crt";
     public VerifySigningService () {}
 
     /**
@@ -92,6 +92,8 @@ public class VerifySigningService {
             vOut.intermCertChecked = true;
         if (vOut.intermCertChecked && this.isIntermediateCertificateValid(sOut.certificateChain.get(1)))
             vOut.intermCertValid = true;
+//        if (!vOut.intermCertValid)
+            vOut.intermCertInCRL = this.isIntermediateCertificateInCRL(sOut.certificateChain.get(1));
 
         if (Utilities.getInstance().isInternetReachable())
             vOut.rootCertChecked = true;
@@ -103,6 +105,17 @@ public class VerifySigningService {
         signer.update(sOut.masterDigest.getBytes());
         if (signer.verify(sOut.signature))
             vOut.signatureValid = true;
+
+        // /!\ Only for test purpose
+//        vOut.digestValid         = true;
+//        vOut.certChainValid      = true;
+//        vOut.intermCertChecked   = true;
+////        vOut.intermCertInCRL     = false;
+//        vOut.intermCertValid     = false;
+//        vOut.rootCertChecked     = false;
+////        vOut.rootCertInCRL       = false;
+//        vOut.rootCertValid       = false;
+//        vOut.signatureValid      = false;
 
         return vOut;
     }
@@ -153,7 +166,7 @@ public class VerifySigningService {
      */
     private boolean isRootCertificateValid(X509Certificate certificate) {
         try {
-            X509Certificate beRootCA3Certificate = this.getX509CertificateFromUrl(ROOTCA3_SELFSIGNED_URL);
+            X509Certificate beRootCA3Certificate = this.getX509CertificateFromUrl(CERT_ROOT_URL);
 
             return certificate.equals(beRootCA3Certificate);
         } catch (IOException | CertificateException | NoSuchProviderException e) {
@@ -171,7 +184,7 @@ public class VerifySigningService {
         // Prepare URL - Issuer format : C=BE,CN={Foreigner, Citizen} CA,SERIALNUMBER=YYYYMM
         String subjectName      = (((certificate.getSubjectDN().getName().split("CN="))[1]).split(" "))[0];
         String subjectSerial    = ((certificate.getSubjectDN().getName().split("SERIALNUMBER="))[1]).trim();
-        String fullUrl = VERIFICATION_URL+subjectName+subjectSerial+".crt";
+        String fullUrl = CERT_VERIFICATION_URL +subjectName.toLowerCase()+subjectSerial+".crt";
         try {
             X509Certificate beIntermCA3Certificate = getX509CertificateFromUrl(fullUrl);
             return certificate.equals(beIntermCA3Certificate);
@@ -181,6 +194,19 @@ public class VerifySigningService {
         return false;
     }
 
+    /**
+     *
+     * @param certificate
+     * @return true is the certificate serial is in the Revocation list
+     */
+    private boolean isIntermediateCertificateInCRL (X509Certificate certificate) {
+        // Prepare URL - Issuer format : C=BE,CN={Foreigner, Citizen} CA,SERIALNUMBER=YYYYMM
+        String subjectName      = (((certificate.getSubjectDN().getName().split("CN="))[1]).split(" "))[0];
+        String subjectSerial    = ((certificate.getSubjectDN().getName().split("SERIALNUMBER="))[1]).trim();
+        String fullUrl = CRL_VERIFICATION_URL +"eid"+(subjectName.toLowerCase()).charAt(0)+subjectSerial+".crl";
+        System.out.println(fullUrl);
+        return false;
+    }
     /**
      * Retrieve a X509 certificate from the url passed in param
      *
@@ -216,7 +242,41 @@ public class VerifySigningService {
         BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file));
         return (X509Certificate) cf.generateCertificate(bis);
     }
-
+    /**
+     * Retrieve a X509 certificate revocation list from the url passed in param
+     *
+     * @param fileURL internet url
+     * @return X509CRl
+     * @throws IOException
+     * @throws CertificateException
+     * @throws NoSuchProviderException
+     */
+    private X509CRL getX509CRLFromUrl(String fileURL)
+            throws IOException, CertificateException, NoSuchProviderException, CRLException {
+        // Download
+        URL beCertURL = new URL (fileURL);
+        URLConnection connection    = beCertURL.openConnection();
+        InputStream in              = connection.getInputStream();
+        byte[] buffer   = new byte[1024];
+        int len;
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        while ((len = in.read(buffer)) > 0) {
+            outputStream.write(buffer, 0, len);
+        }
+        in.close();
+        // Write to file
+        File file = File.createTempFile("belgiumCert", ".crt");
+        FileOutputStream fos = new FileOutputStream(file);
+        if (!file.exists()) file.createNewFile();
+        fos.write(outputStream.toByteArray());
+        fos.flush();
+        fos.close();
+        file.deleteOnExit();
+        // Convert to X509CRL
+        CertificateFactory cf = CertificateFactory.getInstance("X.509", "BC");
+        BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file));
+        return (X509CRL) cf.generateCRL(bis);
+    }
     /**
      * Extracts and returns a SigningOutput from a signature file
      *

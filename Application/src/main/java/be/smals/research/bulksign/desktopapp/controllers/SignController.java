@@ -217,7 +217,6 @@ public class SignController extends Controller implements EIDObserver{
     }
 
     // ---------- ------------------------------------------------------------------------------------------------------
-
     /**
      * Validates the user pin code
      *
@@ -247,26 +246,6 @@ public class SignController extends Controller implements EIDObserver{
 
         return false;
     }
-    private char[] askForPin() {
-        Dialog<String> pinDialog = new Dialog<>();
-        pinDialog.setTitle("PIN Code");
-        pinDialog.setHeaderText("Please, enter your Pin code");
-        JFXPasswordField passwordField = new JFXPasswordField();
-        passwordField.setFocusColor(Color.web("#52BBFE"));
-        passwordField.setPrefWidth(200);
-        ButtonType validateButtonType = new ButtonType("Ok", ButtonBar.ButtonData.OK_DONE);
-        pinDialog.getDialogPane().getButtonTypes().add(validateButtonType);
-        pinDialog.getDialogPane().setContent(passwordField);
-        Platform.runLater( () -> passwordField.requestFocus());
-
-        Optional<String> result = pinDialog.showAndWait();
-        if (result.isPresent()) {
-            return passwordField.getText().trim().toCharArray();
-        }
-
-        return new char[0];
-    }
-
     /**
      * Performs signing with mock process
      *

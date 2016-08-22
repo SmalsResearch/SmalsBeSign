@@ -44,7 +44,11 @@ public class VerifySigningOutput {
     public VerifySigningOutput () {
         digestValid         = false;
         certChainValid      = false;
+        intermCertChecked   = false;
+        intermCertInCRL     = false;
+        intermCertValid     = false;
         rootCertChecked     = false;
+        rootCertInCRL       = false;
         rootCertValid       = false;
         signatureValid      = false;
     }
@@ -96,7 +100,7 @@ public class VerifySigningOutput {
             return returnValue;
         } else if (this.certChainValid && !this.intermCertChecked) {
             returnValue += "\n- Chain certificate verification : WARNING"
-                    + "\n--- Could not verify the Intermediate Certificate on the internet.";
+                    + "\n--- Could not verify the Intermediate Certificate";
         } else if (this.certChainValid && this.intermCertChecked && !this.intermCertValid) {
             returnValue += "\n- Chain certificate verification : FAILED";
             return returnValue;
