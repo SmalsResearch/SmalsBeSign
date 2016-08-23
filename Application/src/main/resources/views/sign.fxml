@@ -1,20 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import com.jfoenix.controls.JFXButton?>
-<?import com.jfoenix.controls.JFXCheckBox?>
-<?import com.jfoenix.controls.JFXDialog?>
-<?import com.jfoenix.controls.JFXDialogLayout?>
+<?import com.jfoenix.controls.*?>
 <?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ListView?>
-<?import javafx.scene.control.Separator?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.Pane?>
-<?import javafx.scene.layout.RowConstraints?>
-<?import javafx.scene.layout.StackPane?>
-
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 <StackPane fx:id="masterSign" xmlns="http://javafx.com/javafx/8.0.101" xmlns:fx="http://javafx.com/fxml/1" fx:controller="be.smals.research.bulksign.desktopapp.controllers.SignController">
    <children>
       <GridPane fx:id="rootSign" stylesheets="@css/common.css">
@@ -49,47 +39,56 @@
               <Separator orientation="VERTICAL" GridPane.columnIndex="1" GridPane.rowIndex="2" />
               <Separator orientation="VERTICAL" GridPane.columnIndex="1" GridPane.rowIndex="3" />
               <Pane fx:id="readerPane" GridPane.columnIndex="2" GridPane.rowSpan="2147483647" />
-              <!-- Dialogs -->
-              <JFXDialog fx:id="infoDialog">
-                  <JFXDialogLayout>
-                      <heading>
-                          <Label id="infoDialogTitle" styleClass="color-info" />
-                      </heading>
-                      <body>
-                          <Label id="infoDialogBody" />
-                      </body>
-                      <actions>
-                          <JFXButton id="closeInfoDialogButton" styleClass="button-s">CLOSE</JFXButton>
-                      </actions>
-                  </JFXDialogLayout>
-            </JFXDialog>
-              <JFXDialog fx:id="errorDialog">
-                  <JFXDialogLayout>
-                      <heading>
-                          <Label id="errorDialogTitle" fx:id="errorDialogTitle" styleClass="color-danger" />
-                      </heading>
-                      <body>
-                          <Label id="errorDialogBody" fx:id="errorDialogBody" />
-                      </body>
-                      <actions>
-                          <JFXButton id="closeErrorDialogButton" styleClass="button-s">CLOSE</JFXButton>
-                      </actions>
-                  </JFXDialogLayout>
-              </JFXDialog>
-              <JFXDialog fx:id="successDialog">
-                  <JFXDialogLayout>
-                      <heading>
-                          <Label id="successDialogTitle" styleClass="color-success" />
-                      </heading>
-                      <body>
-                          <Label id="successDialogBody" />
-                      </body>
-                      <actions>
-                          <JFXButton id="closeSuccessDialogButton" styleClass="button-s">CLOSE</JFXButton>
-                      </actions>
-                  </JFXDialogLayout>
-              </JFXDialog>
-            <JFXCheckBox fx:id="selectAllCheckBox" checkedColor="#52bbfe" mnemonicParsing="false" onAction="#handleSelectAllAction" text="Select all" GridPane.halignment="LEFT" GridPane.rowIndex="1">
+
+                <!-- Dialogs -->
+                <JFXDialog fx:id="waitingDialog">
+                    <JFXDialogLayout>
+                        <body>
+                            <JFXSpinner radius="48" />
+                            <Label id="waitingDialogMessage" styleClass="color-success" alignment="CENTER" />
+                        </body>
+                    </JFXDialogLayout>
+                </JFXDialog>
+                <JFXDialog fx:id="infoDialog">
+                <JFXDialogLayout>
+                <heading>
+                <Label id="infoDialogTitle" styleClass="color-info" />
+                </heading>
+                <body>
+                <Label id="infoDialogBody" />
+                </body>
+                <actions>
+                <JFXButton id="closeInfoDialogButton" styleClass="button-s">CLOSE</JFXButton>
+                </actions>
+                </JFXDialogLayout>
+                </JFXDialog>
+                <JFXDialog fx:id="errorDialog">
+                <JFXDialogLayout>
+                <heading>
+                <Label id="errorDialogTitle" fx:id="errorDialogTitle" styleClass="color-danger" />
+                </heading>
+                <body>
+                <Label id="errorDialogBody" fx:id="errorDialogBody" />
+                </body>
+                <actions>
+                <JFXButton id="closeErrorDialogButton" styleClass="button-s">CLOSE</JFXButton>
+                </actions>
+                </JFXDialogLayout>
+                </JFXDialog>
+                <JFXDialog fx:id="successDialog">
+                <JFXDialogLayout>
+                <heading>
+                <Label id="successDialogTitle" styleClass="color-success" />
+                </heading>
+                <body>
+                <Label id="successDialogBody" />
+                </body>
+                <actions>
+                <JFXButton id="closeSuccessDialogButton" styleClass="button-s">CLOSE</JFXButton>
+                </actions>
+                </JFXDialogLayout>
+                </JFXDialog>
+                <JFXCheckBox fx:id="selectAllCheckBox" checkedColor="#52bbfe" mnemonicParsing="false" onAction="#handleSelectAllAction" text="Select all" GridPane.halignment="LEFT" GridPane.rowIndex="1">
                <GridPane.margin>
                   <Insets left="8.0" />
                </GridPane.margin></JFXCheckBox>

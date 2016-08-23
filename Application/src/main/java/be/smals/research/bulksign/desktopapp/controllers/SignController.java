@@ -3,7 +3,10 @@ package be.smals.research.bulksign.desktopapp.controllers;
 import be.smals.research.bulksign.desktopapp.eid.EID;
 import be.smals.research.bulksign.desktopapp.eid.EIDObserver;
 import be.smals.research.bulksign.desktopapp.eid.external.UserCancelledException;
-import be.smals.research.bulksign.desktopapp.services.*;
+import be.smals.research.bulksign.desktopapp.services.DigestService;
+import be.smals.research.bulksign.desktopapp.services.EIDService;
+import be.smals.research.bulksign.desktopapp.services.SigningService;
+import be.smals.research.bulksign.desktopapp.services.VerifySigningService;
 import be.smals.research.bulksign.desktopapp.ui.FileListItem;
 import be.smals.research.bulksign.desktopapp.utilities.Settings;
 import be.smals.research.bulksign.desktopapp.utilities.SigningOutput;
@@ -70,6 +73,7 @@ public class SignController extends Controller implements EIDObserver{
     @FXML private JFXDialog infoDialog;
     @FXML private JFXDialog errorDialog;
     @FXML private JFXDialog successDialog;
+    @FXML private JFXDialog waitingDialog;
     @FXML private JFXCheckBox selectAllCheckBox;
 
     /**
@@ -259,17 +263,40 @@ public class SignController extends Controller implements EIDObserver{
                     "You must insert your eID card inside the reader before you proceed.");
         } else {
             // Prepare files
+//            showWaitingDialog(waitingDialog, masterSign, "Preparing...");
+//            Task<String> prepareTask = new Task<String>() {
+//                @Override
+//                protected String call() throws Exception {
+//                    for (int i = 0; i < selectedFiles.size(); i++) {
+//                        inputFiles[i] = new FileInputStream(selectedFiles.get(i));
+//                    }
+//                    String masterDigest = null;
+//                    try {
+//                        masterDigest = DigestService.getInstance().computeMasterDigest(inputFiles);
+//                    } catch (NoSuchAlgorithmException | NoSuchProviderException e) {
+//                        e.printStackTrace();
+//                    }
+//                    return masterDigest;
+//                }
+//            };
+//            prepareTask.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+//                @Override
+//                public void handle(WorkerStateEvent event) {
+//                    waitingDialog.close();
+//                }
+//            });
+//            new Thread(prepareTask).start();
+
             for (int i = 0; i < selectedFiles.size(); i++) {
                 inputFiles[i] = new FileInputStream(selectedFiles.get(i));
             }
-
-            // Sign
             String masterDigest = null;
             try {
                 masterDigest = DigestService.getInstance().computeMasterDigest(inputFiles);
             } catch (NoSuchAlgorithmException | NoSuchProviderException e) {
                 e.printStackTrace();
             }
+
             List<X509Certificate> certificateChain = EIDService.getInstance().getCertificateChain();
             VerifySigningOutput verifySigningOutput = new VerifySigningOutput();
             try {
@@ -277,6 +304,7 @@ public class SignController extends Controller implements EIDObserver{
             } catch (NoSuchAlgorithmException | InvalidKeyException | SignatureException | NoSuchProviderException e) {
                 // Could not verify certificateChain
             }
+            // Sign
             if (!verifySigningOutput.getOutputResult().equals(VerifySigningOutput.VerifyResult.FAILED)) {
                 byte[] signature = this.signingService.signWithEID(masterDigest, "SHA-1", EID.NON_REP_KEY_ID);
                 for (FileInputStream file : inputFiles)

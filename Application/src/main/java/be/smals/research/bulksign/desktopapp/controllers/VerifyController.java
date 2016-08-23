@@ -178,7 +178,6 @@ public class VerifyController extends Controller {
                     "Please, select the signature file and a least one signed file.");
         } else {
             showWaitingDialog(waitingDialog, masterVerify, "");
-            // >> Waiting screen
 
             List<VerifySigningOutput> results = new ArrayList<>();
             Task<Void> verifyTask = new Task<Void>() {
@@ -188,7 +187,7 @@ public class VerifyController extends Controller {
                     float nbFiles = selectedFiles.size();
                     for (File signedFile : selectedFiles) {
                         int percent = (int)((ind/nbFiles)*100);
-                        Platform.runLater(() -> updateDialogMessage(percent + "% done..."));
+                        Platform.runLater(() -> updateWaitingDialogMessage(percent + "% done..."));
                         try {
                             Map<String, FileWithAltName> files = Utilities.getInstance().getFilesFromSignedFile(signedFile);
                             SigningOutput signingOutput = verifySigningService.getSigningOutput(files.get("SIGNATURE").file);

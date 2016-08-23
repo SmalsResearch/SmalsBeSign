@@ -40,11 +40,7 @@
                   <FontAwesomeIconView fill="WHITE" glyphName="PLUS_CIRCLE" size="1.2em" strokeType="OUTSIDE" strokeWidth="0.0" />
                </graphic>
            </JFXButton>
-           <Label fx:id="filesToSignCount" text="No file selected" GridPane.halignment="LEFT">
-              <GridPane.margin>
-                 <Insets />
-              </GridPane.margin>
-           </Label>
+           <Label fx:id="filesToSignCount" text="No file selected" GridPane.halignment="LEFT"/>
            <JFXButton fx:id="verifyFileButton" layoutX="422.0" layoutY="13.0" mnemonicParsing="false" onAction="#handleVerifyFilesButtonAction" styleClass="button-raised" text="Verify signed files" GridPane.rowIndex="3" />
             <Separator orientation="VERTICAL" GridPane.columnIndex="1" />
             <Separator orientation="VERTICAL" GridPane.columnIndex="1" GridPane.rowIndex="2" />
@@ -53,13 +49,10 @@
 
             <JFXDialog fx:id="waitingDialog">
                 <JFXDialogLayout>
-                    <heading>
-                        <Label styleClass="color-info" id="waitingDialogTitle" />
-                    </heading>
                     <body>
                         <JFXSpinner radius="48" />
+                        <Label id="waitingDialogMessage" styleClass="color-info" alignment="CENTER" />
                     </body>
-                    <actions></actions>
                 </JFXDialogLayout>
             </JFXDialog>
             <JFXDialog fx:id="successDialog">

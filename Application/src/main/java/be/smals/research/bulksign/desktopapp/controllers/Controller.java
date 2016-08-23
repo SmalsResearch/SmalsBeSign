@@ -90,11 +90,11 @@ public abstract class Controller {
      */
     public void showWaitingDialog (JFXDialog dialog, StackPane masterPane, String message) {
         dialog.show(masterPane);
-        Label messageLabel         = (Label) this.stage.getScene().lookup("#waitingDialogTitle");
+        Label messageLabel         = (Label) this.stage.getScene().lookup("#waitingDialogMessage");
         messageLabel.setText(message);
     }
-    public void updateDialogMessage (String message) {
-        Label messageLabel         = (Label) this.stage.getScene().lookup("#waitingDialogTitle");
+    public void updateWaitingDialogMessage(String message) {
+        Label messageLabel         = (Label) this.stage.getScene().lookup("#waitingDialogMessage");
         messageLabel.setText(message);
     }
 }
