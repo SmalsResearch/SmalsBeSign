@@ -190,4 +190,17 @@ public class VerifySigningOutput {
 
         return returnValue;
     }
+
+    public void consoleOutput() {
+        System.out.println("\nDigest Valid: "+digestValid
+        +"\nCertChainValid: "+certChainValid
+        +"\nUserCertValid: "+userCertValid
+        +"\nIntermCertChecked: "+intermCertChecked
+        +"\nIntermCertInCRL: "+intermCertInCRL
+        +"\nIntermValid: "+intermCertValid
+        +"\nRootCertChecked: "+rootCertChecked
+        +"\nRootCertInCRL: "+rootCertChecked
+        +"\nRootCertValid: "+rootCertValid
+        +"\nSignature: "+signatureValid);
+    }
 }

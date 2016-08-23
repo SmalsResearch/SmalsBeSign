@@ -179,8 +179,9 @@ public class VerifySigningService {
     private boolean isIntermediateCertificateValid(X509Certificate certificate) {
         // Prepare URL - Issuer format : C=BE,CN={Foreigner, Citizen} CA,SERIALNUMBER=YYYYMM
         String subjectName      = (((certificate.getSubjectDN().getName().split("CN="))[1]).split(" "))[0];
-        String subjectSerial    = ((certificate.getSubjectDN().getName().split("SERIALNUMBER="))[1]).trim();
+        String subjectSerial    = ((certificate.getSubjectDN().getName().split("SERIALNUMBER="))[1]).split(",")[0].trim();
         String fullUrl = CERT_VERIFICATION_URL +subjectName.toLowerCase()+subjectSerial+".crt";
+        System.out.println(fullUrl);
         try {
             X509Certificate beIntermCA3Certificate = getX509CertificateFromUrl(fullUrl);
             return certificate.equals(beIntermCA3Certificate);

@@ -11,11 +11,13 @@ import be.smals.research.bulksign.desktopapp.ui.FileListItem;
 import be.smals.research.bulksign.desktopapp.utilities.Settings;
 import be.smals.research.bulksign.desktopapp.utilities.SigningOutput;
 import be.smals.research.bulksign.desktopapp.utilities.Utilities;
+import be.smals.research.bulksign.desktopapp.utilities.VerifySigningOutput;
 import com.jfoenix.controls.JFXCheckBox;
 import com.jfoenix.controls.JFXDialog;
 import com.jfoenix.controls.JFXPasswordField;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
+import javafx.concurrent.Task;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -40,8 +42,10 @@ import java.awt.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
+import java.security.SignatureException;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
@@ -260,58 +264,101 @@ public class SignController extends Controller implements EIDObserver{
                     "You must insert your eID card inside the reader before you proceed.");
         } else {
             // Prepare files
-//            showWaitingDialog(waitingDialog, masterSign, "Preparing...");
-//            Task<String> prepareTask = new Task<String>() {
-//                @Override
-//                protected String call() throws Exception {
-//                    for (int i = 0; i < selectedFiles.size(); i++) {
-//                        inputFiles[i] = new FileInputStream(selectedFiles.get(i));
-//                    }
-//                    String masterDigest = null;
-//                    try {
-//                        masterDigest = DigestService.getInstance().computeMasterDigest(inputFiles);
-//                    } catch (NoSuchAlgorithmException | NoSuchProviderException e) {
-//                        e.printStackTrace();
-//                    }
-//                    return masterDigest;
-//                }
-//            };
-//            prepareTask.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
-//                @Override
-//                public void handle(WorkerStateEvent event) {
-//                    waitingDialog.close();
-//                }
-//            });
-//            new Thread(prepareTask).start();
+            showWaitingDialog(waitingDialog, masterSign, "Preparing...");
+            Task<String> prepareTask = new Task<String>() {
+                @Override
+                protected String call() throws Exception {
+                    // Compute Master Digest
+                    for (int i = 0; i < selectedFiles.size(); i++) {
+                        inputFiles[i] = new FileInputStream(selectedFiles.get(i));
+                    }
+                    String masterDigest = DigestService.getInstance().computeMasterDigest(inputFiles);
 
-            for (int i = 0; i < selectedFiles.size(); i++) {
-                inputFiles[i] = new FileInputStream(selectedFiles.get(i));
-            }
-            String masterDigest = null;
-            try {
-                masterDigest = DigestService.getInstance().computeMasterDigest(inputFiles);
-            } catch (NoSuchAlgorithmException | NoSuchProviderException e) {
-                e.printStackTrace();
-            }
+                    return masterDigest;
+                }
+            };
+            prepareTask.setOnSucceeded(event -> {
+                waitingDialog.close();
+                String masterDigest = prepareTask.getValue();
 
+                List<X509Certificate> certificateChain = null;
+                try {
+                    certificateChain = EIDService.getInstance().getCertificateChain();
+                } catch (CertificateException | IOException | CardException e) {
+                    e.printStackTrace();
+                }
+                VerifySigningOutput verifySigningOutput = new VerifySigningOutput();
+                try {
+                    verifySigningOutput = this.verifySigningService.verifyChainCertificate(certificateChain);
+                    verifySigningOutput.consoleOutput();
+                } catch (NoSuchAlgorithmException | InvalidKeyException | SignatureException | NoSuchProviderException | CertificateException | IOException e) {
+                    // Could not verify certificateChain
+                }
+                // Sign
+                if (!verifySigningOutput.getOutputResult().equals(VerifySigningOutput.VerifyResult.FAILED)) {
+                    byte[] signature = this.signingService.signWithEID(masterDigest, "SHA-1", EID.NON_REP_KEY_ID);
+                    for (FileInputStream file : inputFiles)
+                        try {
+                            file.close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    if (signature != null) {
+//                        showWaitingDialog(waitingDialog, masterSign, "Saving...");
+//                        Task<Void> saveTask = new Task<Void>() {
+//                            @Override
+//                            protected Void call() throws Exception {
+//                                return null;
+//                            }
+//                        };
+//                        saveTask.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+//                            @Override
+//                            public void handle(WorkerStateEvent event) {
+//
+//                            }
+//                        });
+                        try {
+                            this.saveSigningOutput(selectedFiles, signature, certificateChain);
+                        } catch (IOException | ParserConfigurationException | TransformerException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                } else {
+                    this.showErrorDialog(errorDialog, masterSign, "Certificate Verification",
+                            verifySigningOutput.outputCertificateResult());
+                }
+                // Start a new Task to sign ?
+            });
+            new Thread(prepareTask).start();
+            // ----- / ----------
+//            for (int i = 0; i < selectedFiles.size(); i++) {
+//                inputFiles[i] = new FileInputStream(selectedFiles.get(i));
+//            }
+//            String masterDigest = null;
+//            try {
+//                masterDigest = DigestService.getInstance().computeMasterDigest(inputFiles);
+//            } catch (NoSuchAlgorithmException | NoSuchProviderException e) {
+//                e.printStackTrace();
+//            }
+//
 //            List<X509Certificate> certificateChain = EIDService.getInstance().getCertificateChain();
 //            VerifySigningOutput verifySigningOutput = new VerifySigningOutput();
 //            try {
 //                verifySigningOutput = this.verifySigningService.verifyChainCertificate(certificateChain);
+//                verifySigningOutput.consoleOutput();
 //            } catch (NoSuchAlgorithmException | InvalidKeyException | SignatureException | NoSuchProviderException e) {
 //                // Could not verify certificateChain
 //            }
-            // Sign
+//            // Sign
 //            if (!verifySigningOutput.getOutputResult().equals(VerifySigningOutput.VerifyResult.FAILED)) {
-                byte[] signature = this.signingService.signWithEID(masterDigest, "SHA-1", EID.NON_REP_KEY_ID);
-                for (FileInputStream file : inputFiles)
-                    file.close();
-                if (signature != null) {
-                    List<X509Certificate> certificateChain = EIDService.getInstance().getCertificateChain();
-                    this.saveSigningOutput(selectedFiles, signature, certificateChain);
-                } else {
-                    // Error during signing
-                }
+//                byte[] signature = this.signingService.signWithEID(masterDigest, "SHA-1", EID.NON_REP_KEY_ID);
+//                for (FileInputStream file : inputFiles)
+//                    file.close();
+//                if (signature != null) {
+//                    this.saveSigningOutput(selectedFiles, signature, certificateChain);
+//                } else {
+//                    // Error during signing
+//                }
 //            } else {
 //                this.showErrorDialog(errorDialog, masterSign, "Certificate Verification",
 //                        verifySigningOutput.outputCertificateResult());
