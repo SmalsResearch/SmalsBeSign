@@ -198,9 +198,8 @@ public class VerifySigningService {
     private boolean isIntermediateCertificateInCRL (X509Certificate certificate){
         // Prepare URL - Issuer format : C=BE,CN={Foreigner, Citizen} CA,SERIALNUMBER=YYYYMM
         String subjectName      = (((certificate.getSubjectDN().getName().split("CN="))[1]).split(" "))[0];
-        String subjectSerial    = ((certificate.getSubjectDN().getName().split("SERIALNUMBER="))[1]).trim();
+        String subjectSerial    = ((certificate.getSubjectDN().getName().split("SERIALNUMBER="))[1]).split(",")[0].trim();
         String fullUrl = CRL_VERIFICATION_URL +"eid"+(subjectName.toLowerCase()).charAt(0)+subjectSerial+".crl";
-        System.out.println(fullUrl);
         try {
             X509CRL intermCRL       = this.getX509CRLFromUrl(fullUrl);
             return intermCRL.isRevoked(certificate);
@@ -350,36 +349,38 @@ public class VerifySigningService {
         }
         return found;
     }
-
     public VerifySigningOutput verifyChainCertificate(List<X509Certificate> certificateChain) throws CertificateException, NoSuchAlgorithmException, InvalidKeyException, NoSuchProviderException, SignatureException, IOException {
         VerifySigningOutput vOut = new VerifySigningOutput();
         vOut.digestValid = true;
         vOut.signatureValid = true;
+
         if (this.isCertificateChainValid(certificateChain))
             vOut.certChainValid = true;
-
         if (Utilities.getInstance().isInternetReachable()) {
             vOut.userCertChecked = true;
             try {
                 OCSP.RevocationStatus response = OCSP.check(certificateChain.get(0), certificateChain.get(1));
-                System.out.println(response.getCertStatus());
+                if (response.getCertStatus().equals(OCSP.RevocationStatus.CertStatus.GOOD))
+                    vOut.userCertValid = true;
             } catch (CertPathValidatorException e) {
                 e.printStackTrace();
             }
         }
-        if (Utilities.getInstance().isInternetReachable())
+        if (Utilities.getInstance().isInternetReachable()) {
             vOut.intermCertChecked = true;
-        if (vOut.intermCertChecked && this.isIntermediateCertificateValid(certificateChain.get(1)))
-            vOut.intermCertValid = true;
-        if (vOut.intermCertChecked && !vOut.intermCertValid)
-            vOut.intermCertInCRL = this.isIntermediateCertificateInCRL(certificateChain.get(1));
+            if (this.isIntermediateCertificateValid(certificateChain.get(1)))
+                vOut.intermCertValid = true;
+            if (!vOut.intermCertValid)
+                vOut.intermCertInCRL = this.isIntermediateCertificateInCRL(certificateChain.get(1));
+        }
 
-        if (Utilities.getInstance().isInternetReachable())
+        if (Utilities.getInstance().isInternetReachable()) {
             vOut.rootCertChecked = true;
-        if (vOut.rootCertChecked && this.isRootCertificateValid(certificateChain.get(2)))
-            vOut.rootCertValid = true;
-        if (vOut.rootCertChecked && !vOut.rootCertValid)
-            vOut.rootCertInCRL = this.isRootCertificateInCRL(certificateChain.get(2));
+            if (this.isRootCertificateValid(certificateChain.get(2)))
+                vOut.rootCertValid = true;
+            if (!vOut.rootCertValid)
+                vOut.rootCertInCRL = this.isRootCertificateInCRL(certificateChain.get(2));
+        }
 
         return vOut;
     }

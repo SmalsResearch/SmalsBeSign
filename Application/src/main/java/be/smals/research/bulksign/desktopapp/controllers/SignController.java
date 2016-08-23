@@ -11,7 +11,6 @@ import be.smals.research.bulksign.desktopapp.ui.FileListItem;
 import be.smals.research.bulksign.desktopapp.utilities.Settings;
 import be.smals.research.bulksign.desktopapp.utilities.SigningOutput;
 import be.smals.research.bulksign.desktopapp.utilities.Utilities;
-import be.smals.research.bulksign.desktopapp.utilities.VerifySigningOutput;
 import com.jfoenix.controls.JFXCheckBox;
 import com.jfoenix.controls.JFXDialog;
 import com.jfoenix.controls.JFXPasswordField;
@@ -41,10 +40,8 @@ import java.awt.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
-import java.security.SignatureException;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
@@ -297,27 +294,28 @@ public class SignController extends Controller implements EIDObserver{
                 e.printStackTrace();
             }
 
-            List<X509Certificate> certificateChain = EIDService.getInstance().getCertificateChain();
-            VerifySigningOutput verifySigningOutput = new VerifySigningOutput();
-            try {
-                verifySigningOutput = this.verifySigningService.verifyChainCertificate(certificateChain);
-            } catch (NoSuchAlgorithmException | InvalidKeyException | SignatureException | NoSuchProviderException e) {
-                // Could not verify certificateChain
-            }
+//            List<X509Certificate> certificateChain = EIDService.getInstance().getCertificateChain();
+//            VerifySigningOutput verifySigningOutput = new VerifySigningOutput();
+//            try {
+//                verifySigningOutput = this.verifySigningService.verifyChainCertificate(certificateChain);
+//            } catch (NoSuchAlgorithmException | InvalidKeyException | SignatureException | NoSuchProviderException e) {
+//                // Could not verify certificateChain
+//            }
             // Sign
-            if (!verifySigningOutput.getOutputResult().equals(VerifySigningOutput.VerifyResult.FAILED)) {
+//            if (!verifySigningOutput.getOutputResult().equals(VerifySigningOutput.VerifyResult.FAILED)) {
                 byte[] signature = this.signingService.signWithEID(masterDigest, "SHA-1", EID.NON_REP_KEY_ID);
                 for (FileInputStream file : inputFiles)
                     file.close();
                 if (signature != null) {
+                    List<X509Certificate> certificateChain = EIDService.getInstance().getCertificateChain();
                     this.saveSigningOutput(selectedFiles, signature, certificateChain);
                 } else {
                     // Error during signing
                 }
-            } else {
-                this.showErrorDialog(errorDialog, masterSign, "Certificate Verification",
-                        verifySigningOutput.outputCertificateResult());
-            }
+//            } else {
+//                this.showErrorDialog(errorDialog, masterSign, "Certificate Verification",
+//                        verifySigningOutput.outputCertificateResult());
+//            }
         }
     }
     /**
