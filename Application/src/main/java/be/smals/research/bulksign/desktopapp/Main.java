@@ -65,27 +65,18 @@ public class Main extends Application {
         MenuBar menuBar         = new MenuBar();
         Menu fileMenu           = new Menu("File");
         Menu taskMenu           = new Menu("Task");
-        Menu signerMenu         = new Menu("Signer");
         Menu helpMenu           = new Menu("Help");
-        menuBar.getMenus().addAll(fileMenu, taskMenu, signerMenu, helpMenu);
+        menuBar.getMenus().addAll(fileMenu, taskMenu, helpMenu);
         MenuItem homeMenuItem   = new MenuItem("Home");
         MenuItem exitMenuItem   = new MenuItem("Exit...");
         MenuItem signMenuItem   = new MenuItem("Sign");
         MenuItem verifyMenuItem = new MenuItem("Verify");
         MenuItem aboutMenuItem  = new MenuItem("About");
         exitMenuItem.setId("exitMenuItem");
-        final ToggleGroup signerGroup   = new ToggleGroup();
-        RadioMenuItem eidMenuItem       = new RadioMenuItem("eID");
-        RadioMenuItem mockMenuItem      = new RadioMenuItem("Mock");
-        eidMenuItem.setUserData(Settings.Signer.EID);
-        mockMenuItem.setUserData(Settings.Signer.MOCK);
-        eidMenuItem.setToggleGroup(signerGroup);
-        mockMenuItem.setToggleGroup(signerGroup);
-        signerGroup.selectToggle(eidMenuItem);
+
         Settings.getInstance().setSigner(Settings.Signer.EID);
         fileMenu.getItems().addAll(homeMenuItem, exitMenuItem);
         taskMenu.getItems().addAll(signMenuItem, verifyMenuItem);
-        signerMenu.getItems().addAll(mockMenuItem, eidMenuItem);
         helpMenu.getItems().addAll(aboutMenuItem);
         root.setTop(menuBar);
 
@@ -94,12 +85,6 @@ public class Main extends Application {
         signMenuItem.setOnAction( event -> controller.signMenuItemAction ());
         verifyMenuItem.setOnAction( event -> controller.verifyMenuItemAction ());
         homeMenuItem.setOnAction( event -> controller.homeMenuItemAction());
-        signerGroup.selectedToggleProperty().addListener((ov, old_toggle, new_toggle) -> {
-            if (signerGroup.getSelectedToggle() != null) {
-                Settings.Signer signer = (Settings.Signer) signerGroup.getSelectedToggle().getUserData();
-                Settings.getInstance().setSigner(signer);
-            }
-        });
     }
     /**
      *  Creates home screen

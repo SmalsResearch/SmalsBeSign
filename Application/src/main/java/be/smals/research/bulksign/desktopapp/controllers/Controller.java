@@ -80,4 +80,21 @@ public abstract class Controller {
         titleLabel.setText(title);
         bodyLabel.setText(message);
     }
+
+    /**
+     * Displays a waiting dialog
+     *
+     * @param dialog
+     * @param masterPane
+     * @param message
+     */
+    public void showWaitingDialog (JFXDialog dialog, StackPane masterPane, String message) {
+        dialog.show(masterPane);
+        Label messageLabel         = (Label) this.stage.getScene().lookup("#waitingDialogMessage");
+        messageLabel.setText(message);
+    }
+    public void updateDialogMessage (String message) {
+        Label messageLabel         = (Label) this.stage.getScene().lookup("#waitingDialogMessage");
+        messageLabel.setText(message);
+    }
 }

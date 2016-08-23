@@ -33,7 +33,6 @@ public class FileListItem extends HBox {
         this.nameLabel = new Label(file.getName());
         this.selectCheckBox = new JFXCheckBox();
         this.selectCheckBox.getStyleClass().add("checkbox");
-        this.selectCheckBox.toFront();
 
         this.fileExtension = Utilities.getInstance().getFileExtension(this.file.getName());
         this.viewButton = (this.fileExtension.equalsIgnoreCase("pdf")) ? new JFXButton("Preview") : new JFXButton("Open");

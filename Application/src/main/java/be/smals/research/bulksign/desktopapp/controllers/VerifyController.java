@@ -11,7 +11,6 @@ import com.jfoenix.controls.JFXCheckBox;
 import com.jfoenix.controls.JFXDialog;
 import com.jfoenix.controls.JFXListView;
 import javafx.collections.FXCollections;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
@@ -56,6 +55,7 @@ public class VerifyController extends Controller {
     @FXML private Pane readerPane;
     @FXML private JFXDialog infoDialog;
     @FXML private JFXDialog errorDialog;
+    @FXML private JFXDialog waitingDialog;
     @FXML private JFXDialog verifyResultDialog;
     @FXML private JFXCheckBox selectAllCheckBox;
 
@@ -87,6 +87,7 @@ public class VerifyController extends Controller {
         // Setup dialogs
         this.infoDialog.setTransitionType(JFXDialog.DialogTransition.TOP);
         this.errorDialog.setTransitionType(JFXDialog.DialogTransition.TOP);
+        this.waitingDialog.setTransitionType(JFXDialog.DialogTransition.TOP);
         this.verifyResultDialog.setTransitionType(JFXDialog.DialogTransition.TOP);
 
     }
@@ -112,23 +113,6 @@ public class VerifyController extends Controller {
         List<FileListItem> fileListItems = new ArrayList<>();
         this.filesToVerify.stream().filter(file -> !files.contains(file)).forEach(file -> {
             FileListItem listItem = new FileListItem(file);
-            EventHandler event;
-
-//            if (listItem.getFileExtension().equalsIgnoreCase("pdf")) {
-//                event = event1 -> {
-//                    Object[] args = {file};
-//                    viewerFx.executeCommand(Commands.OPENFILE, args);
-//                };
-//            } else {
-//                event = event1 -> {
-//                    try {
-//                        Desktop.getDesktop().open(file);
-//                    } catch (IOException e) {
-//                        this.showErrorDialog(errorDialog, masterVerify, "Unable to open the file...",
-//                                "No application associated with the specified file.");
-//                    }
-//                };
-//            }
             listItem.setViewButtonAction(event1 -> {
                 try {
                     // Unzip .signed.zip file then get main file
@@ -191,6 +175,7 @@ public class VerifyController extends Controller {
             this.showInfoDialog(infoDialog, masterVerify, "No file selected",
                     "Please, select the signature file and a least one signed file.");
         } else {
+            // >> Waiting screen
             SigningOutput signingOutput = null;
             List<VerifySigningOutput> results = new ArrayList<>();
             for (File signedFile : selectedFiles) {
@@ -204,7 +189,7 @@ public class VerifyController extends Controller {
                     e.printStackTrace();
                 }
             }
-
+            // >> End Waiting screen
             this.displayVerifyResult(results);
         }
     }

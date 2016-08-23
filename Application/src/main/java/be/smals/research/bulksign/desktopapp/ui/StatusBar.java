@@ -44,7 +44,6 @@ public class StatusBar extends HBox implements EIDServiceObserver{
                     protected String call() throws Exception {
                         try {
                             while (true) {
-                                Settings.getInstance().setEIDCardPresent(false);
                                 EIDService.getInstance().waitForReader();
                                 EIDService.getInstance().waitForCard();
                                 Settings.getInstance().setEIDCardPresent(true);
@@ -92,6 +91,12 @@ public class StatusBar extends HBox implements EIDServiceObserver{
     // ----- Implements ------------------------------------------------------------------------------------------------
     @Override
     public void getPinCode() {}
+
+    @Override
+    public void getCertificates() {
+
+    }
+
     @Override
     public void cardReaderNeeded() {
         Platform.runLater(() -> {

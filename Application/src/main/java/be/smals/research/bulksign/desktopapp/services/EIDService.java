@@ -21,7 +21,8 @@ public class EIDService {
 
     private enum Services {
         GET_PINCODE,
-        WAITINGFOR_CARDREADER, WAITINGFOR_CARD
+        WAITINGFOR_CARDREADER, WAITINGFOR_CARD,
+        GET_CERTIFICATES
     }
 
     private EIDService () {
@@ -87,6 +88,7 @@ public class EIDService {
      * @throws CardException
      */
     public List<X509Certificate> getCertificateChain () throws CertificateException, IOException, CardException {
+        this.notifyObservers(Services.WAITINGFOR_CARDREADER);
         return this.eID.getSignCertificateChain();
     }
 
@@ -139,6 +141,9 @@ public class EIDService {
             case GET_PINCODE:
                 observers.forEach(EIDServiceObserver::getPinCode);
                 break;
+            case GET_CERTIFICATES:
+                observers.forEach(EIDServiceObserver::getCertificates);
+            // -- Wait for...
             case WAITINGFOR_CARDREADER:
                 observers.forEach(EIDServiceObserver::cardReaderNeeded);
                 break;

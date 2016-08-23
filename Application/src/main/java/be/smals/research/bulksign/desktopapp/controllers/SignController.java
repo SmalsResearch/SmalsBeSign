@@ -6,7 +6,6 @@ import be.smals.research.bulksign.desktopapp.eid.external.UserCancelledException
 import be.smals.research.bulksign.desktopapp.services.*;
 import be.smals.research.bulksign.desktopapp.ui.FileListItem;
 import be.smals.research.bulksign.desktopapp.utilities.Settings;
-import be.smals.research.bulksign.desktopapp.utilities.Settings.Signer;
 import be.smals.research.bulksign.desktopapp.utilities.SigningOutput;
 import be.smals.research.bulksign.desktopapp.utilities.Utilities;
 import be.smals.research.bulksign.desktopapp.utilities.VerifySigningOutput;
@@ -193,14 +192,8 @@ public class SignController extends Controller implements EIDObserver{
         } else {
             // Sign Process
             try {
-                if (Settings.getInstance().getSigner().equals(Signer.EID))
-                    this.signWithEID(selectedFiles);
-                else
-                    this.signWithMock(selectedFiles);
-
-            } catch (IOException | ParserConfigurationException | TransformerException e) {
-                e.printStackTrace();
-            } catch (CardException|CertificateException e) {
+                this.signWithEID(selectedFiles);
+            } catch (IOException | ParserConfigurationException | TransformerException | CardException | CertificateException e) {
                 e.printStackTrace();
             }
         }
@@ -248,31 +241,6 @@ public class SignController extends Controller implements EIDObserver{
         return false;
     }
     /**
-     * Performs signing with mock process
-     *
-     * @param selectedFiles
-     * @throws IOException
-     * @throws ParserConfigurationException
-     * @throws TransformerException
-     */
-    private void signWithMock(List<File> selectedFiles)
-            throws IOException, ParserConfigurationException, TransformerException {
-
-        FileInputStream[] inputFiles = new FileInputStream[selectedFiles.size()];
-        // Prepare files
-        for (int i = 0; i < selectedFiles.size(); i++) {
-            inputFiles[i] = new FileInputStream(selectedFiles.get(i));
-        }
-        // Sign
-        byte[] signature = this.signingService.signWithMock(inputFiles);
-
-        List<X509Certificate> certificateChain = MockKeyService.getInstance().getCertificateChain();
-        this.saveSigningOutput(selectedFiles, signature, certificateChain);
-
-        for (FileInputStream file : inputFiles)
-            file.close();
-    }
-    /**
      * Performs signing with eID card process
      *
      * @param selectedFiles files to sign
@@ -314,7 +282,6 @@ public class SignController extends Controller implements EIDObserver{
                 for (FileInputStream file : inputFiles)
                     file.close();
                 if (signature != null) {
-//                    List<X509Certificate> certificateChain = EIDService.getInstance().getCertificateChain();
                     this.saveSigningOutput(selectedFiles, signature, certificateChain);
                 } else {
                     // Error during signing

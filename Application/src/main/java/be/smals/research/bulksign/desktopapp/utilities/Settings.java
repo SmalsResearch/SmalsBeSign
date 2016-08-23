@@ -1,8 +1,5 @@
 package be.smals.research.bulksign.desktopapp.utilities;
 
-/**
- * Created by cea on 05/08/2016.
- */
 public class Settings {
     private static Settings instance = new Settings();
 
@@ -14,7 +11,7 @@ public class Settings {
     }
 
     private Settings () {
-        this.signer = Signer.MOCK;
+        this.signer = Signer.EID;
     }
 
     public static Settings getInstance () {

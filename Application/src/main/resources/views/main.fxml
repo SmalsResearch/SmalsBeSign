@@ -39,7 +39,7 @@
                           <Label>... to be added</Label>
                       </body>
                       <actions>
-                          <JFXButton onAction="#handleCloseAboutDialogButtonAction" styleClass="button-s" minWidth="96">CLOSE</JFXButton>
+                          <JFXButton onAction="#handleCloseAboutDialogButtonAction" styleClass="button-s">CLOSE</JFXButton>
                       </actions>
                   </JFXDialogLayout>
               </JFXDialog>

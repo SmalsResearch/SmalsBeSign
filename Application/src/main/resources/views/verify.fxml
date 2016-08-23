@@ -16,6 +16,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.StackPane?>
 
+<?import com.jfoenix.controls.JFXSpinner?>
 <StackPane fx:id="masterVerify" xmlns="http://javafx.com/javafx/8.0.101" xmlns:fx="http://javafx.com/fxml/1" fx:controller="be.smals.research.bulksign.desktopapp.controllers.VerifyController">
    <children>
       <GridPane fx:id="rootVerify" alignment="CENTER" stylesheets="@css/common.css">
@@ -50,6 +51,16 @@
             <ListView fx:id="filesListView" GridPane.rowIndex="2" />
             <Pane fx:id="readerPane" GridPane.columnIndex="2" GridPane.columnSpan="2147483647" GridPane.rowSpan="2147483647" />
 
+            <JFXDialog fx:id="waitingDialog">
+                <JFXDialogLayout>
+                    <heading></heading>
+                    <body>
+                        <JFXSpinner radius="48" />
+                        <Label id="waitingDialogMessage" />
+                    </body>
+                    <actions></actions>
+                </JFXDialogLayout>
+            </JFXDialog>
             <JFXDialog fx:id="successDialog">
                 <JFXDialogLayout>
                     <heading>
@@ -59,7 +70,7 @@
                         <Label id="infoDialogBody" fx:id="successDialogBody" />
                     </body>
                     <actions>
-                        <JFXButton id="closeSuccessDialogButton" minWidth="96" styleClass="button-s">CLOSE</JFXButton>
+                        <JFXButton id="closeSuccessDialogButton" styleClass="button-s">CLOSE</JFXButton>
                     </actions>
                 </JFXDialogLayout>
             </JFXDialog>
@@ -72,7 +83,7 @@
                         <Label id="infoDialogBody" fx:id="infoDialogBody" />
                     </body>
                     <actions>
-                        <JFXButton id="closeInfoDialogButton" minWidth="96" styleClass="button-s">CLOSE</JFXButton>
+                        <JFXButton id="closeInfoDialogButton" styleClass="button-s">CLOSE</JFXButton>
                     </actions>
                 </JFXDialogLayout>
             </JFXDialog>
@@ -85,7 +96,7 @@
                         <Label id="errorDialogBody" fx:id="errorDialogBody" />
                     </body>
                     <actions>
-                        <JFXButton id="closeErrorDialogButton" minWidth="96" styleClass="button-s">CLOSE</JFXButton>
+                        <JFXButton id="closeErrorDialogButton" styleClass="button-s">CLOSE</JFXButton>
                     </actions>
                 </JFXDialogLayout>
             </JFXDialog>
@@ -95,11 +106,10 @@
                         <Label id="verifyResultTitle" styleClass="color-info">Verify Result</Label>
                     </heading>
                     <body>
-                        <!--<Label id="verifyResultBody"></Label>-->
                         <JFXListView id="verifyResultListView" />
                     </body>
                     <actions>
-                        <JFXButton minWidth="96" onAction="#handleCloseVerifyDialog" styleClass="button-s">CLOSE</JFXButton>
+                        <JFXButton onAction="#handleCloseVerifyDialog" styleClass="button-s">CLOSE</JFXButton>
                     </actions>
                 </JFXDialogLayout>
             </JFXDialog>

@@ -35,35 +35,6 @@ public class VerifySigningService {
     public VerifySigningService () {}
 
     /**
-     * Check if the signing is valid for the file
-     *
-     * @param file
-     * @param signingOutput
-     * @return true if signing is valid
-     * @throws NoSuchAlgorithmException
-     * @throws IOException
-     * @throws NoSuchProviderException
-     * @throws InvalidKeyException
-     * @throws SignatureException
-     * @throws CertificateException
-     */
-    public boolean verifySigning (FileInputStream file, SigningOutput signingOutput)
-            throws NoSuchAlgorithmException, IOException, NoSuchProviderException, InvalidKeyException,
-                    SignatureException, CertificateException {
-        String fileDigest = DigestService.getInstance().computeIndividualDigest(file);
-        if (!this.isIndividualDigestPartOfMasterDigest(signingOutput.masterDigest, fileDigest))
-            return false;
-        if (!this.isCertificateChainValid(signingOutput.certificateChain))
-            return false;
-
-        Signature signer = Signature.getInstance("SHA1withRSA", "BC");
-        signer.initVerify(signingOutput.certificateChain.get(2).getPublicKey()); // [2] is the user certificate
-        signer.update(signingOutput.masterDigest.getBytes());
-
-        file.close();
-        return signer.verify(signingOutput.signature);
-    }
-    /**
      *
      * @param file
      * @param sOut
