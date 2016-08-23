@@ -53,10 +53,11 @@
 
             <JFXDialog fx:id="waitingDialog">
                 <JFXDialogLayout>
-                    <heading></heading>
+                    <heading>
+                        <Label styleClass="color-info" id="waitingDialogTitle" />
+                    </heading>
                     <body>
                         <JFXSpinner radius="48" />
-                        <Label id="waitingDialogMessage" />
                     </body>
                     <actions></actions>
                 </JFXDialogLayout>

@@ -9,7 +9,6 @@ public interface EIDServiceObserver {
      * Called when the eID controller needs the user's pincode
      */
     void getPinCode();
-    void getCertificates();
 
     /**
      * Alerts the Observer that an operation was called requiring a card reader, but no reader was detected.

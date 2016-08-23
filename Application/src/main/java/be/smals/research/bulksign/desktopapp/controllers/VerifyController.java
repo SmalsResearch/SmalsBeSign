@@ -10,7 +10,9 @@ import be.smals.research.bulksign.desktopapp.utilities.VerifySigningOutput.FileW
 import com.jfoenix.controls.JFXCheckBox;
 import com.jfoenix.controls.JFXDialog;
 import com.jfoenix.controls.JFXListView;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
@@ -175,22 +177,37 @@ public class VerifyController extends Controller {
             this.showInfoDialog(infoDialog, masterVerify, "No file selected",
                     "Please, select the signature file and a least one signed file.");
         } else {
+            showWaitingDialog(waitingDialog, masterVerify, "");
             // >> Waiting screen
-            SigningOutput signingOutput = null;
+
             List<VerifySigningOutput> results = new ArrayList<>();
-            for (File signedFile : selectedFiles) {
-                try {
-                    Map<String, FileWithAltName> files = Utilities.getInstance().getFilesFromSignedFile(signedFile);
-                    signingOutput = this.verifySigningService.getSigningOutput(files.get("SIGNATURE").file);
-                    VerifySigningOutput verifySigningOutput = this.verifySigningService.verifySigning(files.get("FILE").file, signingOutput);
-                    verifySigningOutput.fileName = files.get("FILE").name;
-                    results.add(verifySigningOutput);
-                } catch (SignatureException | SAXException | NoSuchAlgorithmException | ParseException | InvalidKeyException | CertificateException | IOException | ParserConfigurationException | NoSuchProviderException e) {
-                    e.printStackTrace();
+            Task<Void> verifyTask = new Task<Void>() {
+                @Override
+                protected Void call() throws Exception {
+                    float ind = 1.0f;
+                    float nbFiles = selectedFiles.size();
+                    for (File signedFile : selectedFiles) {
+                        int percent = (int)((ind/nbFiles)*100);
+                        Platform.runLater(() -> updateDialogMessage(percent + "% done..."));
+                        try {
+                            Map<String, FileWithAltName> files = Utilities.getInstance().getFilesFromSignedFile(signedFile);
+                            SigningOutput signingOutput = verifySigningService.getSigningOutput(files.get("SIGNATURE").file);
+                            VerifySigningOutput verifySigningOutput = verifySigningService.verifySigning(files.get("FILE").file, signingOutput);
+                            verifySigningOutput.fileName = files.get("FILE").name;
+                            results.add(verifySigningOutput);
+                        } catch (SignatureException | SAXException | NoSuchAlgorithmException | ParseException | InvalidKeyException | CertificateException | IOException | ParserConfigurationException | NoSuchProviderException e) {
+                            e.printStackTrace();
+                        }
+                        ind++;
+                    }
+                    return null;
                 }
-            }
-            // >> End Waiting screen
-            this.displayVerifyResult(results);
+            };
+            verifyTask.setOnSucceeded(event -> {
+                waitingDialog.close();
+                displayVerifyResult(results);
+            });
+            new Thread(verifyTask).start();
         }
     }
     /**

@@ -93,22 +93,15 @@ public class StatusBar extends HBox implements EIDServiceObserver{
     public void getPinCode() {}
 
     @Override
-    public void getCertificates() {
-
-    }
-
-    @Override
     public void cardReaderNeeded() {
-        Platform.runLater(() -> {
-            if (!this.getChildren().contains(spinner))
-                getChildren(). add(spinner);
-            setMessage(MessageType.DEFAULT, "Waiting for an eID card reader...");
-        });
+        if (!this.getChildren().contains(spinner))
+            getChildren(). add(spinner);
+        Platform.runLater(() -> setMessage(MessageType.DEFAULT, "Waiting for an eID card reader..."));
     }
     @Override
     public void cardNeeded() {
         if (!this.getChildren().contains(spinner))
-            getChildren(). add(spinner);
+            getChildren().add(spinner);
         Platform.runLater(() -> setMessage(MessageType.DEFAULT, "Waiting for an eID card..."));
     }
 }

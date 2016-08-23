@@ -22,7 +22,21 @@ public class EIDService {
     private enum Services {
         GET_PINCODE,
         WAITINGFOR_CARDREADER, WAITINGFOR_CARD,
-        GET_CERTIFICATES
+        GET_CERTIFICATES,
+        MESSAGE {
+            String message;
+            @Override
+            public String getMessage () {
+                return this.message;
+            }
+            @Override public void setMessage (String message) {
+                this.message = message;
+            }
+        };
+        public String getMessage () {
+            return "Hello";
+        }
+        public void setMessage (String message) {}
     }
 
     private EIDService () {
@@ -141,8 +155,6 @@ public class EIDService {
             case GET_PINCODE:
                 observers.forEach(EIDServiceObserver::getPinCode);
                 break;
-            case GET_CERTIFICATES:
-                observers.forEach(EIDServiceObserver::getCertificates);
             // -- Wait for...
             case WAITINGFOR_CARDREADER:
                 observers.forEach(EIDServiceObserver::cardReaderNeeded);
