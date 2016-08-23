@@ -63,24 +63,27 @@ public class VerifySigningService {
             vOut.userCertChecked = true;
             try {
                 OCSP.RevocationStatus response = OCSP.check(sOut.certificateChain.get(0), sOut.certificateChain.get(1));
-                System.out.println(response.getCertStatus());
+                if (response.getCertStatus().equals(OCSP.RevocationStatus.CertStatus.GOOD))
+                    vOut.userCertValid = true;
             } catch (CertPathValidatorException e) {
                 e.printStackTrace();
             }
         }
-        if (Utilities.getInstance().isInternetReachable())
+        if (Utilities.getInstance().isInternetReachable()) {
             vOut.intermCertChecked = true;
-        if (vOut.intermCertChecked && this.isIntermediateCertificateValid(sOut.certificateChain.get(1)))
-            vOut.intermCertValid = true;
-        if (vOut.intermCertChecked && !vOut.intermCertValid)
-            vOut.intermCertInCRL = this.isIntermediateCertificateInCRL(sOut.certificateChain.get(1));
+            if (this.isIntermediateCertificateValid(sOut.certificateChain.get(1)))
+                vOut.intermCertValid = true;
+            if (!vOut.intermCertValid)
+                vOut.intermCertInCRL = this.isIntermediateCertificateInCRL(sOut.certificateChain.get(1));
+        }
 
-        if (Utilities.getInstance().isInternetReachable())
+        if (Utilities.getInstance().isInternetReachable()) {
             vOut.rootCertChecked = true;
-        if (vOut.rootCertChecked && this.isRootCertificateValid(sOut.certificateChain.get(2)))
-            vOut.rootCertValid = true;
-        if (vOut.rootCertChecked && !vOut.rootCertValid)
-            vOut.rootCertInCRL = this.isRootCertificateInCRL(sOut.certificateChain.get(2));
+            if (this.isRootCertificateValid(sOut.certificateChain.get(2)))
+                vOut.rootCertValid = true;
+            if (!vOut.rootCertValid)
+                vOut.rootCertInCRL = this.isRootCertificateInCRL(sOut.certificateChain.get(2));
+        }
 
         Signature signer = Signature.getInstance("SHA1withRSA", "BC");
         signer.initVerify(sOut.certificateChain.get(0).getPublicKey()); // [0] is the user certificate
@@ -91,13 +94,15 @@ public class VerifySigningService {
         // /!\ Only for test purpose
 //        vOut.digestValid         = true;
 //        vOut.certChainValid      = true;
+//        vOut.userCertChecked     = true;
+//        vOut.userCertValid       = true;
 //        vOut.intermCertChecked   = true;
-////        vOut.intermCertInCRL     = false;
-//        vOut.intermCertValid     = false;
-//        vOut.rootCertChecked     = false;
-////        vOut.rootCertInCRL       = false;
-//        vOut.rootCertValid       = false;
-//        vOut.signatureValid      = false;
+//        vOut.intermCertInCRL     = true;
+//        vOut.intermCertValid     = true;
+//        vOut.rootCertChecked     = true;
+//        vOut.rootCertInCRL       = true;
+//        vOut.rootCertValid       = true;
+//        vOut.signatureValid      = true;
 
         return vOut;
     }

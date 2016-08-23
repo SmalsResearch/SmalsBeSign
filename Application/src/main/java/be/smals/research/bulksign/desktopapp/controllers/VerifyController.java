@@ -166,7 +166,7 @@ public class VerifyController extends Controller {
             resultList.getItems().add(new ResultListItem(result));
         }
 
-        resultLabel.setText(failedCount+" - FAILED, "+warningCount+" - WARNINGS, "+okCount+ " - OK");
+        resultLabel.setText(failedCount+" - FAILED | "+warningCount+" - WARNINGS | "+okCount+ " - OK");
     }
     /**
      * Submits verification

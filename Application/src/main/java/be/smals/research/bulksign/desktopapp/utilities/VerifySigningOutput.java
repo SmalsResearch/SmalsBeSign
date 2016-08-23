@@ -81,11 +81,16 @@ public class VerifySigningOutput {
         // Certificate
         if (!this.certChainValid)
             return VerifyResult.FAILED;
-        else if (!this.intermCertChecked || !this.rootCertChecked
+        else if (this.userCertChecked && !this.userCertValid)
+            return VerifyResult.FAILED;
+        else if (this.intermCertChecked && !this.intermCertValid && !this.intermCertInCRL)
+            return VerifyResult.FAILED;
+        else if (this.rootCertChecked && !this.rootCertValid && !this.rootCertInCRL)
+            return VerifyResult.FAILED;
+        else if (!this.userCertChecked || !this.intermCertChecked || !this.rootCertChecked
                 || this.intermCertInCRL || this.rootCertInCRL)
             return VerifyResult.WARNING;
-        else if (!this.intermCertValid || !this.rootCertValid)
-            return VerifyResult.FAILED;
+
         // Digest:ok / Signature:ok / CertChain:ok // CertInternet:ok
         return VerifyResult.OK;
     }
@@ -104,23 +109,36 @@ public class VerifySigningOutput {
         if (!this.certChainValid) {
             returnValue += "\n- Chain certificate verification : FAILED";
             return returnValue;
-        } else if (!this.intermCertChecked) {
+        }else if (!this.userCertChecked) {
             returnValue += "\n- Chain certificate verification : WARNING"
-                    + "\n--- Could not verify the Intermediate on the Internet";
+                    + "\n--- Could not verify the User certificate";
+        } else if (!this.userCertValid) {
+            returnValue += "\n- Chain certificate verification : FAILED"
+                    +"\n--- User certificate verification failed!";
+            return returnValue;
+        }
+        // (2) Chain certificate (offline) : OK
+        // (2.1) User Cert: could not be verified(WARNING) || is verified and succeed(OK)
+
+        if (!this.userCertChecked && !this.intermCertChecked) {
+            returnValue += "\n--- Could not verify the Intermediate certificate";
+        }else if (!this.intermCertChecked) {
+            returnValue += "\n- Chain certificate verification : WARNING"
+                    + "\n--- Could not verify the Intermediate certificate";
         } else if (!this.intermCertValid && this.intermCertInCRL) {
             returnValue += "\n- Chain certificate verification : WARNING"
-                    + "\n--- Your intermediate certificate is revoked!";
+                    + "\n--- Your Intermediate certificate is revoked!";
         } else if (!this.intermCertValid) {
             returnValue += "\n- Chain certificate verification : FAILED";
             return returnValue;
         }
-        // (2) Chain certificate (offline) : OK
-        // (2.1) Intermediate Cert:  could not be verified(WARNING) || is verified and succeed(OK) || is verified and is in CRL(WARNING)
+        // (2.2) Intermediate Cert:  could not be verified(WARNING) || is verified and succeed(OK) || is verified and is in CRL(WARNING)
 
         if (this.rootCertChecked && this.rootCertValid)
             returnValue += "\n- Chain certificate verification : OK";
-        else if (!this.intermCertChecked && !this.rootCertChecked)
-            returnValue += "\n--- Could not verify the Root on the Internet.";
+        else if ((!this.userCertChecked && !this.intermCertChecked && !this.rootCertChecked)
+                || (!this.intermCertChecked && !this.rootCertChecked))
+            returnValue += "\n--- Could not verify the Root certificate";
         else if (!this.rootCertChecked)
             returnValue += "\n- Chain certificate verification : WARNING"
                     + "\n--- Could not verify the Root on the Internet.";
@@ -129,7 +147,7 @@ public class VerifySigningOutput {
                     + "\n--- Your Root certificate is revoked!";
         else
             returnValue += "\n- Chain certificate verification : FAILED";
-        // (2.2) Root cert: could not be verified(WARNING) || is verified and succeed(OK) || is verified and is in CRL(WARNING)
+        // (2.3) Root cert: could not be verified(WARNING) || is verified and succeed(OK) || is verified and is in CRL(WARNING)
 
         returnValue += "\n- Signature verification : " + (this.signatureValid ? "OK" : "FAILED");
         // (3) Signature: OK/FAILED
