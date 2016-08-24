@@ -6,41 +6,36 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.StackPane?>
 <StackPane fx:id="masterPane" stylesheets="@css/common.css"
-           xmlns="http://javafx.com/javafx/8.0.45" xmlns:fx="http://javafx.com/fxml/1"
+           xmlns="http://javafx.com/javafx/8.0.101" xmlns:fx="http://javafx.com/fxml/1"
            fx:controller="be.smals.research.bulksign.desktopapp.controllers.MainController">
    <children>
-      <BorderPane fx:id="root">
-          <center>
-          </center>
-          <bottom>
-              <JFXDialog fx:id="exitDialog">
-                  <JFXDialogLayout>
-                      <heading>
-                          <Label styleClass="color">Are you sure ?</Label>
-                      </heading>
-                      <body>
-                          <Label>You are about to leave the application...</Label>
-                      </body>
-                      <actions>
-                          <JFXButton fx:id="yesButton" onAction="#handleExitAppButtonAction" styleClass="button-s" minWidth="64">Yes</JFXButton>
-                          <JFXButton fx:id="cancelDialogButton" onAction="#handleCancelDialogButtonAction" styleClass="button-s-danger" minWidth="96">CANCEL</JFXButton>
-                      </actions>
-                  </JFXDialogLayout>
-              </JFXDialog>
-              <JFXDialog fx:id="aboutDialog">
-                  <JFXDialogLayout>
-                      <heading>
-                          <Label styleClass="color">About BulkSign Desktop</Label>
-                      </heading>
-                      <body>
-                          <Label>... to be added</Label>
-                      </body>
-                      <actions>
-                          <JFXButton onAction="#handleCloseAboutDialogButtonAction" styleClass="button-s">CLOSE</JFXButton>
-                      </actions>
-                  </JFXDialogLayout>
-              </JFXDialog>
-          </bottom>
-      </BorderPane>
+      <BorderPane fx:id="root"/>
+       <JFXDialog fx:id="exitDialog">
+           <JFXDialogLayout>
+               <heading>
+                   <Label styleClass="color">Are you sure ?</Label>
+               </heading>
+               <body>
+                   <Label>You are about to leave the application...</Label>
+               </body>
+               <actions>
+                   <JFXButton fx:id="yesButton" onAction="#handleExitAppButtonAction" styleClass="button-s" minWidth="64">Yes</JFXButton>
+                   <JFXButton fx:id="cancelDialogButton" onAction="#handleCancelDialogButtonAction" styleClass="button-s-danger" minWidth="96">CANCEL</JFXButton>
+               </actions>
+           </JFXDialogLayout>
+       </JFXDialog>
+       <JFXDialog fx:id="aboutDialog">
+           <JFXDialogLayout>
+               <heading>
+                   <Label styleClass="color">About BulkSign Desktop</Label>
+               </heading>
+               <body>
+                   <Label>... to be added</Label>
+               </body>
+               <actions>
+                   <JFXButton onAction="#handleCloseAboutDialogButtonAction" styleClass="button-s">CLOSE</JFXButton>
+               </actions>
+           </JFXDialogLayout>
+       </JFXDialog>
    </children>
 </StackPane>

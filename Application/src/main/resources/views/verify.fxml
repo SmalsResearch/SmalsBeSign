@@ -5,6 +5,7 @@
 <?import com.jfoenix.controls.JFXDialog?>
 <?import com.jfoenix.controls.JFXDialogLayout?>
 <?import com.jfoenix.controls.JFXListView?>
+<?import com.jfoenix.controls.JFXSpinner?>
 <?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
@@ -16,17 +17,16 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.StackPane?>
 
-<?import com.jfoenix.controls.JFXSpinner?>
 <StackPane fx:id="masterVerify" xmlns="http://javafx.com/javafx/8.0.101" xmlns:fx="http://javafx.com/fxml/1" fx:controller="be.smals.research.bulksign.desktopapp.controllers.VerifyController">
    <children>
       <GridPane fx:id="rootVerify" alignment="CENTER" stylesheets="@css/common.css">
         <columnConstraints>
-         <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" percentWidth="30.0" />
+         <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" percentWidth="40.0" />
             <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" percentWidth="5.0" />
-         <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" percentWidth="65.0" />
+         <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" percentWidth="55.0" />
         </columnConstraints>
         <rowConstraints>
-         <RowConstraints percentHeight="10.0" valignment="CENTER" vgrow="SOMETIMES" />
+         <RowConstraints percentHeight="10.0" valignment="CENTER" vgrow="ALWAYS" />
             <RowConstraints percentHeight="10.0" valignment="CENTER" vgrow="SOMETIMES" />
          <RowConstraints percentHeight="65.0" valignment="CENTER" vgrow="SOMETIMES" />
             <RowConstraints percentHeight="15.0" valignment="CENTER" vgrow="SOMETIMES" />
@@ -40,73 +40,12 @@
                   <FontAwesomeIconView fill="WHITE" glyphName="PLUS_CIRCLE" size="1.2em" strokeType="OUTSIDE" strokeWidth="0.0" />
                </graphic>
            </JFXButton>
-           <Label fx:id="filesToSignCount" text="No file selected" GridPane.halignment="LEFT"/>
+           <Label fx:id="filesToSignCount" text="No file selected" GridPane.halignment="LEFT" />
            <JFXButton fx:id="verifyFileButton" layoutX="422.0" layoutY="13.0" mnemonicParsing="false" onAction="#handleVerifyFilesButtonAction" styleClass="button-raised" text="Verify signed files" GridPane.rowIndex="3" />
             <Separator orientation="VERTICAL" GridPane.columnIndex="1" />
             <Separator orientation="VERTICAL" GridPane.columnIndex="1" GridPane.rowIndex="2" />
             <ListView fx:id="filesListView" GridPane.rowIndex="2" />
             <Pane fx:id="readerPane" GridPane.columnIndex="2" GridPane.columnSpan="2147483647" GridPane.rowSpan="2147483647" />
-
-            <JFXDialog fx:id="waitingDialog">
-                <JFXDialogLayout>
-                    <body>
-                        <JFXSpinner radius="48" />
-                        <Label id="waitingDialogMessage" styleClass="color-info" alignment="CENTER" />
-                    </body>
-                </JFXDialogLayout>
-            </JFXDialog>
-            <JFXDialog fx:id="successDialog">
-                <JFXDialogLayout>
-                    <heading>
-                        <Label id="infoDialogTitle" fx:id="successDialogTile" styleClass="color-info" />
-                    </heading>
-                    <body>
-                        <Label id="infoDialogBody" fx:id="successDialogBody" />
-                    </body>
-                    <actions>
-                        <JFXButton id="closeSuccessDialogButton" styleClass="button-s">CLOSE</JFXButton>
-                    </actions>
-                </JFXDialogLayout>
-            </JFXDialog>
-            <JFXDialog fx:id="infoDialog">
-                <JFXDialogLayout>
-                    <heading>
-                        <Label id="infoDialogTitle" fx:id="infoDialogTile" styleClass="color-info" />
-                    </heading>
-                    <body>
-                        <Label id="infoDialogBody" fx:id="infoDialogBody" />
-                    </body>
-                    <actions>
-                        <JFXButton id="closeInfoDialogButton" styleClass="button-s">CLOSE</JFXButton>
-                    </actions>
-                </JFXDialogLayout>
-            </JFXDialog>
-            <JFXDialog fx:id="errorDialog">
-                <JFXDialogLayout>
-                    <heading>
-                        <Label id="errorDialogTitle" fx:id="errorDialogTitle" styleClass="color-danger" />
-                    </heading>
-                    <body>
-                        <Label id="errorDialogBody" fx:id="errorDialogBody" />
-                    </body>
-                    <actions>
-                        <JFXButton id="closeErrorDialogButton" styleClass="button-s">CLOSE</JFXButton>
-                    </actions>
-                </JFXDialogLayout>
-            </JFXDialog>
-            <JFXDialog fx:id="verifyResultDialog">
-                <JFXDialogLayout>
-                    <heading>
-                        <Label id="verifyResultTitle" styleClass="color-info">Verify Result</Label>
-                    </heading>
-                    <body>
-                        <JFXListView id="verifyResultListView" />
-                    </body>
-                    <actions>
-                        <JFXButton onAction="#handleCloseVerifyDialog" styleClass="button-s">CLOSE</JFXButton>
-                    </actions>
-                </JFXDialogLayout>
-            </JFXDialog>
             <Separator orientation="VERTICAL" GridPane.columnIndex="1" GridPane.rowIndex="3" />
             <JFXCheckBox fx:id="selectAllCheckBox" checkedColor="#52bbfe" mnemonicParsing="false" onAction="#handleSelectAllAction" text="Select all" GridPane.halignment="LEFT" GridPane.rowIndex="1">
                <GridPane.margin>
@@ -119,5 +58,66 @@
               <Insets bottom="24.0" left="24.0" right="24.0" top="24.0" />
           </padding>
       </GridPane>
+
+      <JFXDialog fx:id="waitingDialog">
+          <JFXDialogLayout>
+              <body>
+                  <JFXSpinner radius="48" />
+                  <Label id="waitingDialogMessage" alignment="CENTER" styleClass="color-info" />
+              </body>
+          </JFXDialogLayout>
+      </JFXDialog>
+      <JFXDialog fx:id="successDialog">
+          <JFXDialogLayout>
+              <heading>
+                  <Label id="infoDialogTitle" fx:id="successDialogTile" styleClass="color-info" />
+              </heading>
+              <body>
+                  <Label id="infoDialogBody" fx:id="successDialogBody" />
+              </body>
+              <actions>
+                  <JFXButton id="closeSuccessDialogButton" styleClass="button-s">CLOSE</JFXButton>
+              </actions>
+          </JFXDialogLayout>
+      </JFXDialog>
+      <JFXDialog fx:id="infoDialog">
+          <JFXDialogLayout>
+              <heading>
+                  <Label id="infoDialogTitle" fx:id="infoDialogTile" styleClass="color-info" />
+              </heading>
+              <body>
+                  <Label id="infoDialogBody" fx:id="infoDialogBody" />
+              </body>
+              <actions>
+                  <JFXButton id="closeInfoDialogButton" styleClass="button-s">CLOSE</JFXButton>
+              </actions>
+          </JFXDialogLayout>
+      </JFXDialog>
+      <JFXDialog fx:id="errorDialog">
+          <JFXDialogLayout>
+              <heading>
+                  <Label id="errorDialogTitle" fx:id="errorDialogTitle" styleClass="color-danger" />
+              </heading>
+              <body>
+                  <Label id="errorDialogBody" fx:id="errorDialogBody" />
+              </body>
+              <actions>
+                  <JFXButton id="closeErrorDialogButton" styleClass="button-s">CLOSE</JFXButton>
+              </actions>
+          </JFXDialogLayout>
+      </JFXDialog>
+      <JFXDialog fx:id="verifyResultDialog">
+          <JFXDialogLayout>
+              <heading>
+                  <Label id="verifyResultTitle" styleClass="color-info">Verify Result</Label>
+              </heading>
+              <body>
+                  <JFXListView id="verifyResultListView" />
+              </body>
+              <actions>
+                  <JFXButton onAction="#handleCloseVerifyDialog" styleClass="button-s">CLOSE</JFXButton>
+              </actions>
+          </JFXDialogLayout>
+      </JFXDialog>
    </children>
 </StackPane>
