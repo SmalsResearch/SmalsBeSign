@@ -19,11 +19,11 @@
 
 <StackPane fx:id="masterVerify" xmlns="http://javafx.com/javafx/8.0.101" xmlns:fx="http://javafx.com/fxml/1" fx:controller="be.smals.research.bulksign.desktopapp.controllers.VerifyController">
    <children>
-      <GridPane fx:id="rootVerify" alignment="CENTER" stylesheets="@css/common.css">
+      <GridPane fx:id="rootVerify" alignment="CENTER">
         <columnConstraints>
-         <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" percentWidth="40.0" />
+         <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" percentWidth="30.0" />
             <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" percentWidth="5.0" />
-         <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" percentWidth="55.0" />
+         <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" percentWidth="65.0" />
         </columnConstraints>
         <rowConstraints>
          <RowConstraints percentHeight="10.0" valignment="CENTER" vgrow="ALWAYS" />
@@ -42,8 +42,7 @@
            </JFXButton>
            <Label fx:id="filesToSignCount" text="No file selected" GridPane.halignment="LEFT" />
            <JFXButton fx:id="verifyFileButton" layoutX="422.0" layoutY="13.0" mnemonicParsing="false" onAction="#handleVerifyFilesButtonAction" styleClass="button-raised" text="Verify signed files" GridPane.rowIndex="3" />
-            <Separator orientation="VERTICAL" GridPane.columnIndex="1" />
-            <Separator orientation="VERTICAL" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <Separator orientation="VERTICAL" GridPane.columnIndex="1" GridPane.rowSpan="2147483647" />
             <ListView fx:id="filesListView" GridPane.rowIndex="2" />
             <Pane fx:id="readerPane" GridPane.columnIndex="2" GridPane.columnSpan="2147483647" GridPane.rowSpan="2147483647" />
             <Separator orientation="VERTICAL" GridPane.columnIndex="1" GridPane.rowIndex="3" />
@@ -52,7 +51,6 @@
                   <Insets left="8.0" />
                </GridPane.margin>
             </JFXCheckBox>
-            <Separator orientation="VERTICAL" GridPane.columnIndex="1" GridPane.rowIndex="1" />
         </children>
           <padding>
               <Insets bottom="24.0" left="24.0" right="24.0" top="24.0" />
