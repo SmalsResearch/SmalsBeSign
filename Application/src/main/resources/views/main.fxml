@@ -10,6 +10,14 @@
            fx:controller="be.smals.research.bulksign.desktopapp.controllers.MainController">
    <children>
       <BorderPane fx:id="root"/>
+       <JFXDialog fx:id="waitingDialog">
+           <JFXDialogLayout>
+               <body>
+                   <JFXSpinner radius="48" />
+                   <Label id="waitingDialogMessage" alignment="CENTER" styleClass="color-success" />
+               </body>
+           </JFXDialogLayout>
+       </JFXDialog>
        <JFXDialog fx:id="exitDialog">
            <JFXDialogLayout>
                <heading>

@@ -22,6 +22,7 @@ public class MainController extends Controller{
     @FXML private BorderPane root;
     @FXML private JFXDialog exitDialog;
     @FXML private JFXDialog aboutDialog;
+    @FXML private JFXDialog waitingDialog;
 
     /**
      * Constructor
@@ -55,7 +56,6 @@ public class MainController extends Controller{
         exitDialog.setTransitionType(JFXDialog.DialogTransition.TOP);
         exitDialog.show(masterPane);
     }
-
     /**
      * Sign MenuItem action - Leads to Sign screen
      */
@@ -71,7 +71,6 @@ public class MainController extends Controller{
             e1.printStackTrace();
         }
     }
-
     /**
      * Verify MenuItem - Leads to Verify screen
      */
@@ -87,7 +86,6 @@ public class MainController extends Controller{
             e1.printStackTrace();
         }
     }
-
     /**
      * Home MenuItem - Leads back to home screen
      */
@@ -103,7 +101,6 @@ public class MainController extends Controller{
             e1.printStackTrace();
         }
     }
-
     /**
      * About MenuItem - Displays About dialog
      */
@@ -112,14 +109,12 @@ public class MainController extends Controller{
     }
 
     // ----- Dialog actions --------------------------------------------------------------------------------------------
-
     /**
      * Exit application dialog action - Cancels the exit request
      */
     @FXML private void handleCancelDialogButtonAction() {
         this.exitDialog.close();
     }
-
     /**
      * Exit application dialog action - Exit for real
      */
@@ -127,7 +122,6 @@ public class MainController extends Controller{
         System.exit(0);
         Platform.exit();
     }
-
     /**
      * Closes About dialog
      */

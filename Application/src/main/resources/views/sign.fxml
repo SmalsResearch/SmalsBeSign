@@ -10,12 +10,12 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.SplitPane?>
-<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.text.Font?>
 
 <StackPane fx:id="masterSign" stylesheets="@css/common.css" xmlns="http://javafx.com/javafx/8.0.101" xmlns:fx="http://javafx.com/fxml/1" fx:controller="be.smals.research.bulksign.desktopapp.controllers.SignController">
     <children>
@@ -70,50 +70,59 @@
 
         <SplitPane dividerPositions="0.29797979797979796" StackPane.alignment="CENTER">
             <items>
-                <AnchorPane>
-                    <children>
-                        <GridPane>
-                            <columnConstraints>
-                                <ColumnConstraints hgrow="SOMETIMES" percentWidth="100.0" />
-                            </columnConstraints>
-                            <rowConstraints>
-                                <RowConstraints percentHeight="10.0" vgrow="SOMETIMES" />
-                                <RowConstraints percentHeight="10.0" vgrow="SOMETIMES" />
-                                <RowConstraints percentHeight="65.0" vgrow="SOMETIMES" />
-                                <RowConstraints percentHeight="15.0" vgrow="SOMETIMES" />
-                            </rowConstraints>
-                            <children>
-                                <JFXButton fx:id="selectSignFileButton" mnemonicParsing="false" onAction="#handleSelectFilesToSignButtonAction" styleClass="button-s" text=" Add files..." textAlignment="CENTER" textFill="WHITE" GridPane.halignment="RIGHT" GridPane.valignment="CENTER">
-                                <graphic>
-                                <FontAwesomeIconView fill="WHITE" glyphName="PLUS_CIRCLE" size="1.2em" strokeType="OUTSIDE" strokeWidth="0.0" />
-                                </graphic>
-                                </JFXButton>
+                  <GridPane>
+                      <columnConstraints>
+                          <ColumnConstraints hgrow="SOMETIMES" percentWidth="100.0" />
+                      </columnConstraints>
+                      <rowConstraints>
+                          <RowConstraints percentHeight="10.0" vgrow="SOMETIMES" />
+                          <RowConstraints percentHeight="10.0" vgrow="SOMETIMES" />
+                          <RowConstraints percentHeight="65.0" vgrow="SOMETIMES" />
+                          <RowConstraints percentHeight="15.0" vgrow="SOMETIMES" />
+                      </rowConstraints>
+                      <children>
+                          <JFXButton fx:id="selectSignFileButton" mnemonicParsing="false" onAction="#handleSelectFilesToSignButtonAction" styleClass="button-s" text=" Add files..." textAlignment="CENTER" textFill="WHITE" GridPane.halignment="RIGHT" GridPane.valignment="CENTER">
+                          <graphic>
+                          <FontAwesomeIconView fill="WHITE" glyphName="PLUS_CIRCLE" size="1.2em" strokeType="OUTSIDE" strokeWidth="0.0" />
+                          </graphic>
+                          </JFXButton>
                                 <Label fx:id="fileCountLabel" text="No file selected" GridPane.halignment="LEFT">
-                                <GridPane.margin>
-                                <Insets />
-                                </GridPane.margin>
-                                </Label>
-                                <JFXCheckBox fx:id="selectAllCheckBox" checkedColor="#52bbfe" mnemonicParsing="false" onAction="#handleSelectAllAction" text="Select all" GridPane.halignment="LEFT" GridPane.rowIndex="1">
-                                <GridPane.margin>
-                                <Insets left="8.0" />
-                                </GridPane.margin>
-                                </JFXCheckBox>
-                                <ListView fx:id="filesListView" GridPane.halignment="LEFT" GridPane.rowIndex="2" GridPane.valignment="CENTER" />
-                                <JFXButton fx:id="signFilesButton" alignment="CENTER" buttonType="RAISED" contentDisplay="CENTER" mnemonicParsing="false" onAction="#handleSignFilesButtonAction" styleClass="button-raised" text="SIGN FILES" textAlignment="CENTER" textFill="WHITE" wrapText="true" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.valignment="CENTER">
-                                <opaqueInsets>
-                                <Insets />
-                                </opaqueInsets>
-                                </JFXButton>
-                            </children>
-                        </GridPane>
-                    </children>
-                </AnchorPane>
-
-                <AnchorPane>
+                          <GridPane.margin>
+                          <Insets />
+                          </GridPane.margin>
+                          </Label>
+                          <JFXCheckBox fx:id="selectAllCheckBox" checkedColor="#52bbfe" mnemonicParsing="false" onAction="#handleSelectAllAction" text="Select all" GridPane.halignment="LEFT" GridPane.rowIndex="1">
+                          <GridPane.margin>
+                          <Insets left="8.0" />
+                          </GridPane.margin>
+                          </JFXCheckBox>
+                          <ListView fx:id="filesListView" GridPane.halignment="LEFT" GridPane.rowIndex="2" GridPane.valignment="CENTER" />
+                          <JFXButton fx:id="signFilesButton" alignment="CENTER" buttonType="RAISED" contentDisplay="CENTER" mnemonicParsing="false" onAction="#handleSignFilesButtonAction" styleClass="button-raised" text="SIGN FILES" textAlignment="CENTER" textFill="WHITE" wrapText="true" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.valignment="CENTER">
+                          <opaqueInsets>
+                          <Insets />
+                          </opaqueInsets>
+                          </JFXButton>
+                      </children>
+               <padding>
+                  <Insets bottom="24.0" left="24.0" right="24.0" top="24.0" />
+               </padding>
+                  </GridPane>
+            <GridPane>
+                <columnConstraints>
+                    <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" percentWidth="100.0" />
+                </columnConstraints>
+                <rowConstraints>
+                    <RowConstraints percentHeight="10.0" vgrow="SOMETIMES" />
+                    <RowConstraints percentHeight="90.0" vgrow="SOMETIMES" />
+                </rowConstraints>
                <children>
-                  <Pane prefHeight="200.0" prefWidth="200.0" />
+                  <Label fx:id="readerTitle" text="Label" textAlignment="CENTER" GridPane.rowIndex="0">
+                     <font>
+                        <Font size="14.0" />
+                     </font></Label>
+                  <Pane fx:id="readerPane" GridPane.rowIndex="1" />
                </children>
-                </AnchorPane>
+            </GridPane>
             </items>
         </SplitPane>
     </children>
