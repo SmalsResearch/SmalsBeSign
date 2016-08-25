@@ -331,9 +331,6 @@ public class VerifySigningService {
      * @return
      */
     private boolean isIndividualDigestPartOfMasterDigest(String masterDigest, String individualDigest) {
-        System.out.print("The size of MasterDigest is:  ");
-        System.out.println(masterDigest.length());
-
         int numDigests = masterDigest.length() / 64;
         System.out.print("The number of files are: ");
         System.out.println(numDigests);

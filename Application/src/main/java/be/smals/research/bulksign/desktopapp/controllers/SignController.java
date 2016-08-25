@@ -4,7 +4,6 @@ import be.fedict.commons.eid.client.BeIDCard;
 import be.fedict.commons.eid.client.CancelledException;
 import be.fedict.commons.eid.client.OutOfCardsException;
 import be.fedict.commons.eid.client.spi.BeIDCardsUI;
-import be.smals.research.bulksign.desktopapp.eid.EID;
 import be.smals.research.bulksign.desktopapp.eid.EIDObserver;
 import be.smals.research.bulksign.desktopapp.eid.external.UserCancelledException;
 import be.smals.research.bulksign.desktopapp.services.DigestService;
@@ -133,14 +132,19 @@ public class SignController extends Controller implements EIDObserver, BeIDCards
         File dir = this.directoryChooser.showDialog(this.stage);
         if (dir != null) {
             try {
+                this.updateWaitingDialogMessage("Saving...");
                 SigningOutput signingOutput = new SigningOutput(null, signature, certificateChain);
-                this.signingService.saveSigningOutput(files, signingOutput, dir.getPath()+File.separator+"SignatureFile.sig");
+                this.signingService.saveSigningOutput(files, signingOutput, dir.getAbsolutePath()+File.separator+"SignatureFile.sig");
+                waitingDialog.close();
                 this.showSuccessDialog(successDialog, masterSign, "File saved!",
-                        "Signature successfully saved!\nSigned files can be found at "+dir.getPath());
+                        "Signature successfully saved!\nSigned files can be found at "+dir.getAbsolutePath());
             } catch (CertificateEncodingException e) {
+                waitingDialog.close();
+                this.showErrorDialog(errorDialog, masterSign, "Saving...", "Error while saving the output file...\n"+e.getMessage());
                 e.printStackTrace();
             }
         } else {
+            waitingDialog.close();
             this.showErrorDialog(errorDialog, masterSign, "Save aborted!", "Nothing is saved from your last signing request.");
         }
     }
@@ -292,7 +296,6 @@ public class SignController extends Controller implements EIDObserver, BeIDCards
                     if (!verifySigningOutput.getOutputResult().equals(VerifySigningOutput.VerifyResult.FAILED)) {
                         this.closeInputFiles(inputFiles);
                         // Sign
-                        System.out.println("certificate verification // DONE");
                         this.updateWaitingDialogMessage("Signing...");
                         this.signWithBeIDAndSave(selectedFiles, prepareTask, certificateChain);
                     } else {
@@ -326,11 +329,11 @@ public class SignController extends Controller implements EIDObserver, BeIDCards
         }
     }
     private void signWithBeIDAndSave(List<File> selectedFiles, Task<String> prepareTask, List<X509Certificate> certificateChain) {
-        byte[] signature = this.signingService.signWithEID(prepareTask.getValue(), "SHA-1", EID.NON_REP_KEY_ID);
-        if (signature != null) {
-            updateWaitingDialogMessage("Saving...");
+        this.showWaitingDialog(waitingDialog, masterSign, "Signing...");
+        byte[] signature = this.signingService.signWithEID(prepareTask.getValue());
+        if (signature != null && signature.length!=0) {
             try {
-                saveSigningOutput(selectedFiles, signature, certificateChain);
+                this.saveSigningOutput(selectedFiles, signature, certificateChain);
                 waitingDialog.close();
             } catch (IOException | ParserConfigurationException | TransformerException e) {
                 waitingDialog.close();

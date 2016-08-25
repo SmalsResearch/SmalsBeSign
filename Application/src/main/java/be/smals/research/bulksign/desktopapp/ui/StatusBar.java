@@ -3,27 +3,23 @@ package be.smals.research.bulksign.desktopapp.ui;
 import be.fedict.commons.eid.client.BeIDCard;
 import be.fedict.commons.eid.client.event.BeIDCardEventsListener;
 import be.fedict.commons.eid.client.event.CardTerminalEventsListener;
-import be.smals.research.bulksign.desktopapp.services.EIDService;
 import be.smals.research.bulksign.desktopapp.services.EIDServiceObserver;
 import be.smals.research.bulksign.desktopapp.utilities.Message.MessageType;
 import be.smals.research.bulksign.desktopapp.utilities.Settings;
 import com.jfoenix.controls.JFXSpinner;
 import javafx.application.Platform;
-import javafx.concurrent.Service;
-import javafx.concurrent.Task;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 
-import javax.smartcardio.CardException;
 import javax.smartcardio.CardTerminal;
 
 public class StatusBar extends HBox implements EIDServiceObserver, BeIDCardEventsListener, CardTerminalEventsListener{
     private Label messageLabel;
     private JFXSpinner spinner;
     public StatusBar () {
-        this.messageLabel   = new Label("Ready.");
+        this.messageLabel   = new Label();
         this.spinner        = new JFXSpinner();
         this.messageLabel.setMaxWidth(Double.MAX_VALUE);
         HBox.setHgrow(this.messageLabel, Priority.ALWAYS);
@@ -32,42 +28,6 @@ public class StatusBar extends HBox implements EIDServiceObserver, BeIDCardEvent
         this.getChildren().addAll(messageLabel);
         this.getStyleClass().add("statusBar");
         this.setAlignment(Pos.CENTER);
-
-//        this.createAndStartCheckCardService();
-    }
-
-    /**
-     * Creates and starts the service that checks either the reader and the card are connected or not
-     */
-    private void createAndStartCheckCardService() {
-        Service<String> checkCardService = new Service<String>() {
-            @Override
-            protected Task<String> createTask() {
-                return new Task<String>() {
-                    @Override
-                    protected String call() throws Exception {
-                        try {
-                            while (true) {
-                                EIDService.getInstance().waitForReader();
-                                EIDService.getInstance().waitForCard();
-                                Platform.runLater(() -> {
-                                    getChildren().remove(spinner);
-                                    setMessage(MessageType.DEFAULT, "Ready to sign!");
-                                });
-
-                                while (EIDService.getInstance().isEIDStillPresent())
-                                    ;
-                                Thread.sleep(2000);
-                            }
-                        } catch (CardException|InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                        return "CheckCardTask Finished.";
-                    }
-                };
-            }
-        };
-        checkCardService.start();
     }
 
     public void setMessage (MessageType messageType, String message) {
@@ -116,13 +76,13 @@ public class StatusBar extends HBox implements EIDServiceObserver, BeIDCardEvent
 
     @Override
     public void eIDCardInserted(CardTerminal cardTerminal, BeIDCard beIDCard) {
-        Platform.runLater(() ->setMessage(MessageType.DEFAULT, "EID Card inserted"));
+        Platform.runLater(() ->setMessage(MessageType.DEFAULT, "eID Card inserted"));
         Settings.getInstance().setEIDCardPresent(true);
     }
 
     @Override
     public void eIDCardRemoved(CardTerminal cardTerminal, BeIDCard beIDCard) {
-        Platform.runLater(() -> setMessage(MessageType.DEFAULT, "EID Card removed"));
+        Platform.runLater(() -> setMessage(MessageType.DEFAULT, "eID Card removed"));
         Settings.getInstance().setEIDCardPresent(false);
     }
     // ----- Terminal Events

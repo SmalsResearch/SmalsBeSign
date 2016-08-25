@@ -23,6 +23,8 @@ public class Main extends Application {
 
     private static double WIDTH_MIN = 800;
     private static double HEIGHT_MIN = 480;
+    private static String APP_NAME = "SmalsBeSign";
+
     /**
      * Application entry point
      *
@@ -38,7 +40,7 @@ public class Main extends Application {
         Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
         FXMLLoader loader   = new FXMLLoader(getClass().getClassLoader().getResource("views/main.fxml"));
         StackPane masterPane       = loader.load();
-        primaryStage.setTitle("BulkSign Desktop");
+        primaryStage.setTitle(APP_NAME);
 
         MainController controller = loader.getController();
         controller.initController(controller, primaryStage);

@@ -19,6 +19,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.*;
 import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 import java.text.SimpleDateFormat;
@@ -70,10 +71,9 @@ public class SigningService {
      *
      * @return the signature
      */
-    public byte[] signWithEID(String masterDigest, String algotithm, byte keyID) {
+    public byte[] signWithEID(String masterDigest) {
         try {
             this.masterDigest = masterDigest;
-//            return EIDService.getInstance().sign(Utilities.getInstance().getSha1(this.masterDigest.getBytes()), algotithm, keyID);
             return EIDService.getInstance().signWithBeID(Utilities.getInstance().getSha1(this.masterDigest.getBytes()));
         } catch (Exception e) {
             e.printStackTrace();
@@ -160,7 +160,7 @@ public class SigningService {
         // Entry 2 - SignatureFile
         this.addFileToZIP(new File(sigFilePath), outputStream);
         // Entry 3 - README
-        this.addFileToZIP(new File(this.getClass().getClassLoader().getResource("files/README").getPath()), outputStream);
+        this.addResourceFileToZIP("README.txt",this.getClass().getClassLoader().getResourceAsStream("files/README.txt"), outputStream);
         outputStream.closeEntry();
         outputStream.close();
     }
@@ -178,6 +178,29 @@ public class SigningService {
         zipOutputStream.putNextEntry(entry);
 
         FileInputStream in  = new FileInputStream(file);
+        int len;
+        while ((len = in.read(buffer)) > 0) {
+            zipOutputStream.write(buffer, 0, len);
+        }
+        in.close();
+    }
+    /**
+     * Adds a resource file to a ZIP archive
+     *
+     * @param filename the file name
+     * @param fileStream file to add
+     * @param zipOutputStream
+     * @throws IOException
+     */
+    private void addResourceFileToZIP(String filename, InputStream fileStream, ZipOutputStream zipOutputStream) throws IOException {
+        byte[] buffer = new byte[1024];
+
+        ZipEntry entry = new ZipEntry(filename);
+        zipOutputStream.putNextEntry(entry);
+
+        File tempFile = File.createTempFile(filename, ".file");
+        Files.copy(fileStream, tempFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+        FileInputStream in  = new FileInputStream(tempFile);
         int len;
         while ((len = in.read(buffer)) > 0) {
             zipOutputStream.write(buffer, 0, len);

@@ -93,12 +93,6 @@ public class Utilities {
         return false;
     }
     private boolean testInet (String website) throws MalformedURLException {
-//            URL url = new URL("http://certs.eid.belgium.be");
-//            HttpURLConnection urlConnect = (HttpURLConnection)url.openConnection();
-//            urlConnect.setConnectTimeout(5000);
-//
-//            return InetAddress.getByName("www.google.com").isReachable(1000)
-//                    && urlConnect.getContent()!=null;
         Socket sock = new Socket();
         InetSocketAddress addr = new InetSocketAddress(website,80);
         try {
@@ -136,7 +130,7 @@ public class Utilities {
             VerifySigningOutput.FileWithAltName fileWithAltName = new VerifySigningOutput.FileWithAltName(fileName, newFile);
             if (fileExt.equalsIgnoreCase("sig")) {
                 files.put("SIGNATURE", fileWithAltName);
-            } else if (fileName.equals("README")) {
+            } else if (fileName.equals("README.txt")) {
                 files.put("README", fileWithAltName);
             } else {
                 files.put("FILE", fileWithAltName);

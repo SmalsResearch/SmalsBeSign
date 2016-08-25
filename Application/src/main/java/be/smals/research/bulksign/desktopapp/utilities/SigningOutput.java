@@ -1,14 +1,8 @@
 package be.smals.research.bulksign.desktopapp.utilities;
 
-import org.bouncycastle.asn1.x509.X509Name;
-import org.bouncycastle.jce.PrincipalUtil;
-import org.bouncycastle.jce.X509Principal;
-
-import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 import java.util.Date;
 import java.util.List;
-import java.util.Vector;
 
 /**
  * Data saved to file after a signing
@@ -42,15 +36,9 @@ public class SigningOutput {
         this.masterDigest       = masterDigest;
         this.signature          = signature;
         this.certificateChain   = certificate;
-        final X509Principal principal;
-        try {
-            principal = PrincipalUtil.getSubjectX509Principal(certificate.get(0));
-            final Vector<?> values = principal.getValues(X509Name.CN);
-            final String cn = (String) values.get(0);
-            this.author             = cn.substring(0, cn.indexOf("(")-1);
-        } catch (CertificateEncodingException e) {
-            e.printStackTrace();
-        }
+        String username = certificate.get(0).getSubjectDN().getName().split("CN=")[1].split(" \\(")[0];
+        System.out.println();
+        this.author             = username;
         this.createdAt          = new Date();
     }
 
