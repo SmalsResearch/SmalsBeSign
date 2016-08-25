@@ -284,7 +284,6 @@ public class SignController extends Controller implements EIDObserver, BeIDCards
                 this.updateWaitingDialogMessage("Verifying\ncertificates...");
                 List<X509Certificate> certificateChain = null;
                 try {
-//                    certificateChain = EIDService.getInstance().getCertificateChain();
                     certificateChain = EIDService.getInstance().getBeIDCertificateChain();
                     VerifySigningOutput verifySigningOutput = new VerifySigningOutput();
                     verifySigningOutput = this.verifySigningService.verifyChainCertificate(certificateChain);
@@ -296,7 +295,6 @@ public class SignController extends Controller implements EIDObserver, BeIDCards
                         System.out.println("certificate verification // DONE");
                         this.updateWaitingDialogMessage("Signing...");
                         this.signWithBeIDAndSave(selectedFiles, prepareTask, certificateChain);
-//                        this.signAndSave(selectedFiles, prepareTask, certificateChain);
                     } else {
                         waitingDialog.close();
                         this.showErrorDialog(errorDialog, masterSign, "Certificate Verification",
@@ -325,26 +323,6 @@ public class SignController extends Controller implements EIDObserver, BeIDCards
                         e.getMessage());
                 e.printStackTrace();
             }
-        }
-    }
-
-    private void signAndSave(List<File> selectedFiles, Task<String> prepareTask, List<X509Certificate> certificateChain) {
-        byte[] signature = this.signingService.signWithEID(prepareTask.getValue(), "SHA-1", EID.NON_REP_KEY_ID);
-        if (signature != null) {
-            updateWaitingDialogMessage("Saving...");
-            try {
-                saveSigningOutput(selectedFiles, signature, certificateChain);
-                waitingDialog.close();
-            } catch (IOException | ParserConfigurationException | TransformerException e) {
-                waitingDialog.close();
-                showErrorDialog(errorDialog, masterSign, "Saving error",
-                        e.getMessage());
-                e.printStackTrace();
-            }
-        } else {
-            waitingDialog.close();
-            showErrorDialog(errorDialog, masterSign, "Signing FAILED",
-                    "Error while signing with eID");
         }
     }
     private void signWithBeIDAndSave(List<File> selectedFiles, Task<String> prepareTask, List<X509Certificate> certificateChain) {

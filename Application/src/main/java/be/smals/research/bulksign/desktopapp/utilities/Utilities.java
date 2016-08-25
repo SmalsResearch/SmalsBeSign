@@ -8,9 +8,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.InetAddress;
-import java.net.URL;
+import java.net.InetSocketAddress;
+import java.net.MalformedURLException;
+import java.net.Socket;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
@@ -84,18 +84,32 @@ public class Utilities {
      */
     public boolean isInternetReachable () throws IOException {
         try {
-            URL url = new URL("http://certs.eid.belgium.be");
-            HttpURLConnection urlConnect = (HttpURLConnection)url.openConnection();
-            urlConnect.setConnectTimeout(2000);
-
-            return InetAddress.getByName("www.google.com").isReachable(2000)
-                    && urlConnect.getContent()!=null;
+        return testInet("google.com") && testInet("certs.eid.belgium.be");
 
         } catch (java.io.IOException e) {
             System.out.println("Unknown host - No internet connection!");
         }
 
         return false;
+    }
+    private boolean testInet (String website) throws MalformedURLException {
+//            URL url = new URL("http://certs.eid.belgium.be");
+//            HttpURLConnection urlConnect = (HttpURLConnection)url.openConnection();
+//            urlConnect.setConnectTimeout(5000);
+//
+//            return InetAddress.getByName("www.google.com").isReachable(1000)
+//                    && urlConnect.getContent()!=null;
+        Socket sock = new Socket();
+        InetSocketAddress addr = new InetSocketAddress(website,80);
+        try {
+            sock.connect(addr,3000);
+            return true;
+        } catch (IOException e) {
+            return false;
+        } finally {
+            try {sock.close();}
+            catch (IOException e) {}
+        }
     }
     /**
      * Returns individual files from the Signed file (.signed.zip)
