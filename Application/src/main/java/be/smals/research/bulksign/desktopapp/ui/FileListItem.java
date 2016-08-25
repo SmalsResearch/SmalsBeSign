@@ -4,6 +4,7 @@ import be.smals.research.bulksign.desktopapp.utilities.Utilities;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXCheckBox;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
@@ -31,6 +32,7 @@ public class FileListItem extends HBox {
         super();
         this.file           = file;
         this.nameLabel = new Label(file.getName());
+        this.nameLabel.paddingProperty().setValue(new Insets(0,0, 0, 8));
         this.selectCheckBox = new JFXCheckBox();
         this.selectCheckBox.getStyleClass().add("checkbox");
 

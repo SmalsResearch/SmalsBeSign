@@ -83,15 +83,15 @@
       </JFXDialog>
       <SplitPane dividerPositions="0.29797979797979796" style="-fx-box-border: transparent;">
         <items>
-            <GridPane>
+            <GridPane alignment="CENTER">
               <columnConstraints>
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" percentWidth="100.0" />
               </columnConstraints>
               <rowConstraints>
                 <RowConstraints percentHeight="10.0" vgrow="SOMETIMES" />
                 <RowConstraints percentHeight="10.0" vgrow="SOMETIMES" />
                   <RowConstraints percentHeight="65.0" vgrow="SOMETIMES" />
-                <RowConstraints percentHeight="15.0" vgrow="SOMETIMES" />
+                <RowConstraints percentHeight="15.0" valignment="CENTER" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
                  <JFXButton fx:id="selectSignFileButton" mnemonicParsing="false" onAction="#handleSelectSignFileButtonAction" styleClass="button-s" text="Select zip files" GridPane.halignment="RIGHT">
@@ -111,10 +111,13 @@
                   <ListView fx:id="filesListView" GridPane.rowIndex="2" />
                  <JFXButton fx:id="verifyFileButton" mnemonicParsing="false" onAction="#handleVerifyFilesButtonAction" styleClass="button-raised" text="Verify signed files" GridPane.rowIndex="3" />
                </children>
+               <padding>
+                  <Insets bottom="24.0" left="24.0" right="12.0" top="24.0" />
+               </padding>
             </GridPane>
             <GridPane fx:id="rootVerify" alignment="CENTER">
               <columnConstraints>
-               <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" percentWidth="65.0" />
+               <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" percentWidth="100.0" />
               </columnConstraints>
               <rowConstraints>
                <RowConstraints percentHeight="10.0" valignment="CENTER" vgrow="ALWAYS" />
@@ -129,7 +132,7 @@
                   </Label>
               </children>
                 <padding>
-                    <Insets bottom="24.0" left="24.0" right="24.0" top="24.0" />
+                    <Insets bottom="24.0" left="12.0" right="24.0" top="24.0" />
                 </padding>
             </GridPane>
         </items>

@@ -72,6 +72,7 @@
     -fx-pref-width: 64;
     -fx-text-fill: WHITE;
     -fx-fill: WHITE;
+    -fx-fill: WHITE;
 }
 .button-s-success {
     -fx-font-size: 12px;

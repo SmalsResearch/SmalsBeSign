@@ -30,8 +30,8 @@ public class VerifySigningService {
 
     private static final String CERT_VERIFICATION_URL = "http://certs.eid.belgium.be/";
     private static final String CRL_VERIFICATION_URL = "http://crl.eid.belgium.be/";
-    private static final String CERT_ROOT_URL = CERT_VERIFICATION_URL +"belgiumrca3.crt";
-    private static final String CRL_ROOT_URL = CRL_VERIFICATION_URL +"belgium3.crl";
+    private static final String CERT_ROOT_URL = CERT_VERIFICATION_URL +"belgiumrca";
+    private static final String CRL_ROOT_URL = CRL_VERIFICATION_URL +"belgium";
     public VerifySigningService () {}
 
     /**
@@ -152,8 +152,13 @@ public class VerifySigningService {
      * @return
      */
     private boolean isRootCertificateValid(X509Certificate certificate) {
+        // Prepare URL -
+        String caType = certificate.getSubjectDN().getName().split("CA")[1].split(",")[0];
+        String fullUrl = CERT_ROOT_URL+caType+".crt";
+        System.out.println("Root CERT : "+fullUrl);
+
         try {
-            X509Certificate beRootCA3Certificate = this.getX509CertificateFromUrl(CERT_ROOT_URL);
+            X509Certificate beRootCA3Certificate = this.getX509CertificateFromUrl(fullUrl);
 
             return certificate.equals(beRootCA3Certificate);
         } catch (IOException | CertificateException | NoSuchProviderException e) {
@@ -162,8 +167,12 @@ public class VerifySigningService {
         return false;
     }
     private boolean isRootCertificateInCRL (X509Certificate certificate) {
+        // Prepare URL - C=BE,CN=Belgium Root CA3, .....
+        String caType = certificate.getSubjectDN().getName().split("CA")[1].split(",")[0];
+        String fullUrl = CRL_ROOT_URL+caType+".crl";
+        System.out.println("Root CRL : "+fullUrl);
         try {
-            X509CRL intermCRL       = this.getX509CRLFromUrl(CRL_ROOT_URL);
+            X509CRL intermCRL       = this.getX509CRLFromUrl(fullUrl);
             return intermCRL.isRevoked(certificate);
         } catch (IOException | CertificateException | CRLException | NoSuchProviderException e) {
             e.printStackTrace();
@@ -181,7 +190,7 @@ public class VerifySigningService {
         String subjectName      = (((certificate.getSubjectDN().getName().split("CN="))[1]).split(" "))[0];
         String subjectSerial    = ((certificate.getSubjectDN().getName().split("SERIALNUMBER="))[1]).split(",")[0].trim();
         String fullUrl = CERT_VERIFICATION_URL +subjectName.toLowerCase()+subjectSerial+".crt";
-        System.out.println(fullUrl);
+        System.out.println("Intermediate CERT : "+fullUrl);
         try {
             X509Certificate beIntermCA3Certificate = getX509CertificateFromUrl(fullUrl);
             return certificate.equals(beIntermCA3Certificate);
@@ -201,6 +210,7 @@ public class VerifySigningService {
         String subjectName      = (((certificate.getSubjectDN().getName().split("CN="))[1]).split(" "))[0];
         String subjectSerial    = ((certificate.getSubjectDN().getName().split("SERIALNUMBER="))[1]).split(",")[0].trim();
         String fullUrl = CRL_VERIFICATION_URL +"eid"+(subjectName.toLowerCase()).charAt(0)+subjectSerial+".crl";
+        System.out.println("Intermediate CRL : "+fullUrl);
         try {
             X509CRL intermCRL       = this.getX509CRLFromUrl(fullUrl);
             return intermCRL.isRevoked(certificate);
