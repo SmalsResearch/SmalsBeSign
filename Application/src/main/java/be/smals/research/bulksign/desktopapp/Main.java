@@ -1,5 +1,6 @@
 package be.smals.research.bulksign.desktopapp;
 
+import be.fedict.commons.eid.client.BeIDCardManager;
 import be.smals.research.bulksign.desktopapp.controllers.MainController;
 import be.smals.research.bulksign.desktopapp.services.EIDService;
 import be.smals.research.bulksign.desktopapp.ui.StatusBar;
@@ -20,6 +21,8 @@ import java.security.Security;
  */
 public class Main extends Application {
 
+    private static double WIDTH_MIN = 800;
+    private static double HEIGHT_MIN = 600;
     /**
      * Application entry point
      *
@@ -41,18 +44,21 @@ public class Main extends Application {
         controller.initController(controller, primaryStage);
         BorderPane root         = controller.getRoot();
 
-        // ----- TOP ---------------------------------------------------------------------------------------------------
-        createTop(controller, root);
-
         // ----- BOTTOM ------------------------------------------------------------------------------------------------
         StatusBar statusBar = new StatusBar();
+        BeIDCardManager beIDCardManager = new BeIDCardManager();
+        beIDCardManager.addBeIDCardEventListener(statusBar);
+        beIDCardManager.start();
         EIDService.getInstance().registerAsEIDServiceObserver(statusBar);
         root.setBottom(statusBar);
-
+        // ----- TOP ---------------------------------------------------------------------------------------------------
+        createTop(controller, root);
         // ----- CENTER ------------------------------------------------------------------------------------------------
         createCenter (controller);
 
-        primaryStage.setScene(new Scene(masterPane, 800, 480));
+        primaryStage.setScene(new Scene(masterPane, WIDTH_MIN, HEIGHT_MIN));
+        primaryStage.setMinWidth(WIDTH_MIN);
+        primaryStage.setMinHeight(HEIGHT_MIN);
         primaryStage.show();
     }
     /**

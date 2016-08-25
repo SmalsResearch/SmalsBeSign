@@ -10,6 +10,7 @@
 .statusBar {
     -fx-background-color: #52BBFE;
     -fx-padding: 8px 24px;
+    -fx-text-color: WHITE;
 }
 /*
 ========== TEXT FIELD ==================================================================================================
@@ -159,7 +160,10 @@
     -fx-text-fill: #52BBFE;
 }
 .color-white {
-    -fx-text-fill: WHITE;
+    -fx-text-fill: #FFFFFF;
+}
+.colo-white > .glyph-icon {
+    -fx-fill: #FFFFFF;
 }
 .color-success {
     -fx-text-fill: #5cb85c;

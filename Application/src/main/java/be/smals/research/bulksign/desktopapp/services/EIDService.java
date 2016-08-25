@@ -1,6 +1,9 @@
 package be.smals.research.bulksign.desktopapp.services;
 
 import be.fedict.commons.eid.client.BeIDCards;
+import be.fedict.commons.eid.client.CancelledException;
+import be.fedict.commons.eid.client.FileType;
+import be.fedict.commons.eid.client.impl.BeIDDigest;
 import be.smals.research.bulksign.desktopapp.eid.EID;
 import be.smals.research.bulksign.desktopapp.eid.EIDObserver;
 import be.smals.research.bulksign.desktopapp.eid.external.UserCancelledException;
@@ -110,6 +113,9 @@ public class EIDService {
     }
 
     // ----- Sign ------------------------------------------------------------------------------------------------------
+    public byte[] signWithBeID (byte[] masterDigest) throws CancelledException, CardException, be.fedict.commons.eid.client.spi.UserCancelledException, InterruptedException, IOException {
+        return this.beID.getOneBeIDCard().sign(masterDigest, BeIDDigest.SHA_1, FileType.CACertificate, false);
+    }
     /**
      * Performs the signing operation
      *

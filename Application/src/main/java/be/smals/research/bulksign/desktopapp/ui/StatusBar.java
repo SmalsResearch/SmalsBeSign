@@ -2,8 +2,9 @@ package be.smals.research.bulksign.desktopapp.ui;
 
 import be.fedict.commons.eid.client.BeIDCard;
 import be.fedict.commons.eid.client.event.BeIDCardEventsListener;
-import be.smals.research.bulksign.desktopapp.services.EIDServiceObserver;
+import be.fedict.commons.eid.client.event.CardTerminalEventsListener;
 import be.smals.research.bulksign.desktopapp.services.EIDService;
+import be.smals.research.bulksign.desktopapp.services.EIDServiceObserver;
 import be.smals.research.bulksign.desktopapp.utilities.Message.MessageType;
 import be.smals.research.bulksign.desktopapp.utilities.Settings;
 import com.jfoenix.controls.JFXSpinner;
@@ -18,7 +19,7 @@ import javafx.scene.layout.Priority;
 import javax.smartcardio.CardException;
 import javax.smartcardio.CardTerminal;
 
-public class StatusBar extends HBox implements EIDServiceObserver, BeIDCardEventsListener{
+public class StatusBar extends HBox implements EIDServiceObserver, BeIDCardEventsListener, CardTerminalEventsListener{
     private Label messageLabel;
     private JFXSpinner spinner;
     public StatusBar () {
@@ -49,7 +50,6 @@ public class StatusBar extends HBox implements EIDServiceObserver, BeIDCardEvent
                             while (true) {
                                 EIDService.getInstance().waitForReader();
                                 EIDService.getInstance().waitForCard();
-                                Settings.getInstance().setEIDCardPresent(true);
                                 Platform.runLater(() -> {
                                     getChildren().remove(spinner);
                                     setMessage(MessageType.DEFAULT, "Ready to sign!");
@@ -71,6 +71,8 @@ public class StatusBar extends HBox implements EIDServiceObserver, BeIDCardEvent
     }
 
     public void setMessage (MessageType messageType, String message) {
+        this.messageLabel.setText(message);
+
         switch (messageType) {
             case ERROR:
                 this.messageLabel.getStyleClass().clear();
@@ -88,7 +90,7 @@ public class StatusBar extends HBox implements EIDServiceObserver, BeIDCardEvent
                 this.messageLabel.getStyleClass().clear();
                 this.messageLabel.getStyleClass().add("color-white");
         }
-        messageLabel.setText(message);
+        this.messageLabel.setWrapText(true);
     }
 
     // ----- Implements ------------------------------------------------------------------------------------------------
@@ -108,16 +110,32 @@ public class StatusBar extends HBox implements EIDServiceObserver, BeIDCardEvent
         Platform.runLater(() -> setMessage(MessageType.DEFAULT, "Waiting for an eID card..."));
     }
 
+    // ----- EID Events
     @Override
     public void eIDCardEventsInitialized() {}
 
     @Override
     public void eIDCardInserted(CardTerminal cardTerminal, BeIDCard beIDCard) {
-        this.setMessage(MessageType.DEFAULT, "EID Card inserted");
+        Platform.runLater(() ->setMessage(MessageType.DEFAULT, "EID Card inserted"));
+        Settings.getInstance().setEIDCardPresent(true);
     }
 
     @Override
     public void eIDCardRemoved(CardTerminal cardTerminal, BeIDCard beIDCard) {
-        this.setMessage(MessageType.DEFAULT, "EID Card removed");
+        Platform.runLater(() -> setMessage(MessageType.DEFAULT, "EID Card removed"));
+        Settings.getInstance().setEIDCardPresent(false);
+    }
+    // ----- Terminal Events
+    @Override
+    public void terminalEventsInitialized() {}
+
+    @Override
+    public void terminalAttached(CardTerminal cardTerminal) {
+        Platform.runLater(() ->setMessage(MessageType.DEFAULT, "A new terminal has been attached"));
+    }
+
+    @Override
+    public void terminalDetached(CardTerminal cardTerminal) {
+        Platform.runLater(() ->setMessage(MessageType.DEFAULT, "A terminal has been detached"));
     }
 }
