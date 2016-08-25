@@ -22,7 +22,7 @@ import java.security.Security;
 public class Main extends Application {
 
     private static double WIDTH_MIN = 800;
-    private static double HEIGHT_MIN = 600;
+    private static double HEIGHT_MIN = 480;
     /**
      * Application entry point
      *

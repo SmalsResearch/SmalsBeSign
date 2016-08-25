@@ -284,7 +284,8 @@ public class SignController extends Controller implements EIDObserver, BeIDCards
                 this.updateWaitingDialogMessage("Verifying\ncertificates...");
                 List<X509Certificate> certificateChain = null;
                 try {
-                    certificateChain = EIDService.getInstance().getCertificateChain();
+//                    certificateChain = EIDService.getInstance().getCertificateChain();
+                    certificateChain = EIDService.getInstance().getBeIDCertificateChain();
                     VerifySigningOutput verifySigningOutput = new VerifySigningOutput();
                     verifySigningOutput = this.verifySigningService.verifyChainCertificate(certificateChain);
                     verifySigningOutput.consoleOutput();
@@ -292,8 +293,10 @@ public class SignController extends Controller implements EIDObserver, BeIDCards
                     if (!verifySigningOutput.getOutputResult().equals(VerifySigningOutput.VerifyResult.FAILED)) {
                         this.closeInputFiles(inputFiles);
                         // Sign
+                        System.out.println("certificate verification // DONE");
                         this.updateWaitingDialogMessage("Signing...");
-                        this.signAndSave(selectedFiles, prepareTask, certificateChain);
+                        this.signWithBeIDAndSave(selectedFiles, prepareTask, certificateChain);
+//                        this.signAndSave(selectedFiles, prepareTask, certificateChain);
                     } else {
                         waitingDialog.close();
                         this.showErrorDialog(errorDialog, masterSign, "Certificate Verification",
@@ -303,6 +306,8 @@ public class SignController extends Controller implements EIDObserver, BeIDCards
                     this.waitingDialog.close();
                     this.showErrorDialog(errorDialog, masterSign, "Error while verifying...",
                             e.getMessage());
+                    e.printStackTrace();
+                } catch (InterruptedException | CancelledException e) {
                     e.printStackTrace();
                 }
             });
@@ -324,6 +329,25 @@ public class SignController extends Controller implements EIDObserver, BeIDCards
     }
 
     private void signAndSave(List<File> selectedFiles, Task<String> prepareTask, List<X509Certificate> certificateChain) {
+        byte[] signature = this.signingService.signWithEID(prepareTask.getValue(), "SHA-1", EID.NON_REP_KEY_ID);
+        if (signature != null) {
+            updateWaitingDialogMessage("Saving...");
+            try {
+                saveSigningOutput(selectedFiles, signature, certificateChain);
+                waitingDialog.close();
+            } catch (IOException | ParserConfigurationException | TransformerException e) {
+                waitingDialog.close();
+                showErrorDialog(errorDialog, masterSign, "Saving error",
+                        e.getMessage());
+                e.printStackTrace();
+            }
+        } else {
+            waitingDialog.close();
+            showErrorDialog(errorDialog, masterSign, "Signing FAILED",
+                    "Error while signing with eID");
+        }
+    }
+    private void signWithBeIDAndSave(List<File> selectedFiles, Task<String> prepareTask, List<X509Certificate> certificateChain) {
         byte[] signature = this.signingService.signWithEID(prepareTask.getValue(), "SHA-1", EID.NON_REP_KEY_ID);
         if (signature != null) {
             updateWaitingDialogMessage("Saving...");
@@ -390,9 +414,9 @@ public class SignController extends Controller implements EIDObserver, BeIDCards
 
     @Override
     public BeIDCard selectBeIDCard(Collection<BeIDCard> collection) throws CancelledException, OutOfCardsException {
-        return null;
+        List<BeIDCard> cards = new ArrayList<>(collection);
+        return cards.get(0);
     }
-
     @Override
     public void eIDCardInsertedDuringSelection(BeIDCard beIDCard) {
         System.out.println("eIDCardInserted");

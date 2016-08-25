@@ -73,7 +73,8 @@ public class SigningService {
     public byte[] signWithEID(String masterDigest, String algotithm, byte keyID) {
         try {
             this.masterDigest = masterDigest;
-            return EIDService.getInstance().sign(Utilities.getInstance().getSha1(this.masterDigest.getBytes()), algotithm, keyID);
+//            return EIDService.getInstance().sign(Utilities.getInstance().getSha1(this.masterDigest.getBytes()), algotithm, keyID);
+            return EIDService.getInstance().signWithBeID(Utilities.getInstance().getSha1(this.masterDigest.getBytes()));
         } catch (Exception e) {
             e.printStackTrace();
             return new byte[0];
