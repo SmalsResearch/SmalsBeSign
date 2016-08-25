@@ -1,5 +1,8 @@
 package be.smals.research.bulksign.desktopapp.controllers;
 
+import be.fedict.commons.eid.client.BeIDCards;
+import be.smals.research.bulksign.desktopapp.services.EIDService;
+import be.smals.research.bulksign.desktopapp.services.LoggerService;
 import com.jfoenix.controls.JFXDialog;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -67,6 +70,9 @@ public class MainController extends Controller{
 
             SignController signController = signViewLoader.getController();
             signController.initController(this.mainController, this.stage);
+
+            BeIDCards beIDCards = new BeIDCards(new LoggerService(), signController);
+            EIDService.getInstance().setBeID(beIDCards);
         } catch (IOException e1) {
             e1.printStackTrace();
         }

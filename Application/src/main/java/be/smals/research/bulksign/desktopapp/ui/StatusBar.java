@@ -1,5 +1,7 @@
 package be.smals.research.bulksign.desktopapp.ui;
 
+import be.fedict.commons.eid.client.BeIDCard;
+import be.fedict.commons.eid.client.event.BeIDCardEventsListener;
 import be.smals.research.bulksign.desktopapp.services.EIDServiceObserver;
 import be.smals.research.bulksign.desktopapp.services.EIDService;
 import be.smals.research.bulksign.desktopapp.utilities.Message.MessageType;
@@ -14,8 +16,9 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 
 import javax.smartcardio.CardException;
+import javax.smartcardio.CardTerminal;
 
-public class StatusBar extends HBox implements EIDServiceObserver{
+public class StatusBar extends HBox implements EIDServiceObserver, BeIDCardEventsListener{
     private Label messageLabel;
     private JFXSpinner spinner;
     public StatusBar () {
@@ -29,7 +32,7 @@ public class StatusBar extends HBox implements EIDServiceObserver{
         this.getStyleClass().add("statusBar");
         this.setAlignment(Pos.CENTER);
 
-        this.createAndStartCheckCardService();
+//        this.createAndStartCheckCardService();
     }
 
     /**
@@ -103,5 +106,18 @@ public class StatusBar extends HBox implements EIDServiceObserver{
         if (!this.getChildren().contains(spinner))
             getChildren().add(spinner);
         Platform.runLater(() -> setMessage(MessageType.DEFAULT, "Waiting for an eID card..."));
+    }
+
+    @Override
+    public void eIDCardEventsInitialized() {}
+
+    @Override
+    public void eIDCardInserted(CardTerminal cardTerminal, BeIDCard beIDCard) {
+        this.setMessage(MessageType.DEFAULT, "EID Card inserted");
+    }
+
+    @Override
+    public void eIDCardRemoved(CardTerminal cardTerminal, BeIDCard beIDCard) {
+        this.setMessage(MessageType.DEFAULT, "EID Card removed");
     }
 }

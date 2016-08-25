@@ -1,5 +1,6 @@
 package be.smals.research.bulksign.desktopapp.services;
 
+import be.fedict.commons.eid.client.BeIDCards;
 import be.smals.research.bulksign.desktopapp.eid.EID;
 import be.smals.research.bulksign.desktopapp.eid.EIDObserver;
 import be.smals.research.bulksign.desktopapp.eid.external.UserCancelledException;
@@ -17,6 +18,7 @@ import java.util.List;
 public class EIDService {
     private static EIDService instance = new EIDService();
     private EID eID;
+    private BeIDCards beID;
     private List<EIDServiceObserver> observers;
 
     private enum Services {
@@ -46,7 +48,9 @@ public class EIDService {
     public static EIDService getInstance(){
         return instance;
     }
-
+    public void setBeID (BeIDCards beID) {
+        this.beID = beID;
+    }
     // ----- Status ----------------------------------------------------------------------------------------------------
     /**
      * Returns true if the eID card is present

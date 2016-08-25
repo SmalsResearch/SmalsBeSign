@@ -1,5 +1,9 @@
 package be.smals.research.bulksign.desktopapp.controllers;
 
+import be.fedict.commons.eid.client.BeIDCard;
+import be.fedict.commons.eid.client.CancelledException;
+import be.fedict.commons.eid.client.OutOfCardsException;
+import be.fedict.commons.eid.client.spi.BeIDCardsUI;
 import be.smals.research.bulksign.desktopapp.eid.EID;
 import be.smals.research.bulksign.desktopapp.eid.EIDObserver;
 import be.smals.research.bulksign.desktopapp.eid.external.UserCancelledException;
@@ -49,16 +53,15 @@ import java.security.SignatureException;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Sign screen controller
  *
  * Handles events from Sign view
  */
-public class SignController extends Controller implements EIDObserver{
+public class SignController extends Controller implements EIDObserver, BeIDCardsUI{
 
     private SigningService signingService;
     private VerifySigningService verifySigningService;
@@ -352,5 +355,52 @@ public class SignController extends Controller implements EIDObserver{
     @Override
     public void getPinCode() {
         this.askAndVerifyPin();
+    }
+    // BeIDCards UI ----------------------------------------------------------------------------------------------------
+
+    @Override
+    public void setLocale(Locale locale) {
+
+    }
+
+    @Override
+    public Locale getLocale() {
+        return null;
+    }
+
+    @Override
+    public void adviseCardTerminalRequired() {
+        System.out.println("Advise CardTerminal Required");
+    }
+
+    @Override
+    public void adviseBeIDCardRequired() throws CancelledException {
+        System.out.println("Advise BeIDCard Required");
+    }
+
+    @Override
+    public void adviseBeIDCardRemovalRequired() {
+        System.out.println("Advise BeIDCardRemovalCard Required");
+    }
+
+    @Override
+    public void adviseEnd() {
+        System.out.println("Advise End");
+    }
+
+    @Override
+    public BeIDCard selectBeIDCard(Collection<BeIDCard> collection) throws CancelledException, OutOfCardsException {
+        return null;
+    }
+
+    @Override
+    public void eIDCardInsertedDuringSelection(BeIDCard beIDCard) {
+        System.out.println("eIDCardInserted");
+    }
+
+    @Override
+    public void eIDCardRemovedDuringSelection(BeIDCard beIDCard) {
+        System.out.println("eIDCard Removed");
+
     }
 }
