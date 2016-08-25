@@ -14,6 +14,7 @@
         <fontawesomefx.version>8.9</fontawesomefx.version>
         <openviewerfx.version>7.2.30</openviewerfx.version>
         <bouncycastle.version>1.54</bouncycastle.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
     <repositories>
@@ -57,6 +58,7 @@
             <artifactId>OpenViewerFX</artifactId>
             <version>${openviewerfx.version}</version>
         </dependency>
+        <!-- todo get rid of the following dependency somehow; it cannot be trusted -->
         <dependency>
             <groupId>com.jfoenix</groupId>
             <artifactId>jfoenix</artifactId>
@@ -110,6 +112,18 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <!--
+    todo make it executable
+    http://howtodoinjava.com/for-fun-only/create-windows-exe-file-for-java-application/
+
+    http://www.hascode.com/2012/08/creating-a-windows-executable-from-a-jar-using-maven/
+    http://stackoverflow.com/questions/30298273/need-help-configuring-maven-pom-to-build-exe-file
+
+    https://github.com/lukaszlenart/launch4j-maven-plugin
+    http://maven.apache.org/plugins/maven-shade-plugin/
+    -->
+
 
     <build>
         <plugins>
@@ -184,6 +198,18 @@
                 </executions>
                 <configuration>
                     <mainClass>${mainClass}</mainClass>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>animal-sniffer-maven-plugin</artifactId>
+                <version>1.15</version>
+                <configuration>
+                    <signature>
+                        <groupId>org.codehaus.mojo.signature</groupId>
+                        <artifactId>java18</artifactId>
+                        <version>1.0</version>
+                    </signature>
                 </configuration>
             </plugin>
         </plugins>
