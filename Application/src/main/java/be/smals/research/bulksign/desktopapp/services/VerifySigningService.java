@@ -31,7 +31,7 @@ public class VerifySigningService {
     private static final String CERT_VERIFICATION_URL = "http://certs.eid.belgium.be/";
     private static final String CRL_VERIFICATION_URL = "http://crl.eid.belgium.be/";
     private static final String CERT_ROOT_URL = CERT_VERIFICATION_URL +"belgiumrca3.crt";
-    private static final String CRL_ROOT_URL = CERT_VERIFICATION_URL +"belgium3.crt";
+    private static final String CRL_ROOT_URL = CRL_VERIFICATION_URL +"belgium3.crl";
     public VerifySigningService () {}
 
     /**

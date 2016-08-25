@@ -68,7 +68,7 @@
         </JFXDialogLayout>
         </JFXDialog>
 
-        <SplitPane dividerPositions="0.29797979797979796" StackPane.alignment="CENTER">
+        <SplitPane dividerPositions="0.29797979797979796" style="-fx-box-border: transparent;" StackPane.alignment="CENTER">
             <items>
                   <GridPane>
                       <columnConstraints>
@@ -81,7 +81,7 @@
                           <RowConstraints percentHeight="15.0" vgrow="SOMETIMES" />
                       </rowConstraints>
                       <children>
-                          <JFXButton fx:id="selectSignFileButton" mnemonicParsing="false" onAction="#handleSelectFilesToSignButtonAction" styleClass="button-s" text=" Add files..." textAlignment="CENTER" textFill="WHITE" GridPane.halignment="RIGHT" GridPane.valignment="CENTER">
+                          <JFXButton fx:id="selectSignFileButton" mnemonicParsing="false" onAction="#handleSelectFilesToSignButtonAction" styleClass="button-s" text="Select files..." textAlignment="CENTER" textFill="WHITE" GridPane.halignment="RIGHT" GridPane.valignment="CENTER">
                           <graphic>
                           <FontAwesomeIconView fill="WHITE" glyphName="PLUS_CIRCLE" size="1.2em" strokeType="OUTSIDE" strokeWidth="0.0" />
                           </graphic>
@@ -97,14 +97,14 @@
                           </GridPane.margin>
                           </JFXCheckBox>
                           <ListView fx:id="filesListView" GridPane.halignment="LEFT" GridPane.rowIndex="2" GridPane.valignment="CENTER" />
-                          <JFXButton fx:id="signFilesButton" alignment="CENTER" buttonType="RAISED" contentDisplay="CENTER" mnemonicParsing="false" onAction="#handleSignFilesButtonAction" styleClass="button-raised" text="SIGN FILES" textAlignment="CENTER" textFill="WHITE" wrapText="true" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.valignment="CENTER">
+                          <JFXButton fx:id="signFilesButton" alignment="CENTER" buttonType="RAISED" contentDisplay="CENTER" mnemonicParsing="false" onAction="#handleSignFilesButtonAction" styleClass="button-raised" text="Sgn files" textAlignment="CENTER" textFill="WHITE" wrapText="true" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.valignment="CENTER">
                           <opaqueInsets>
                           <Insets />
                           </opaqueInsets>
                           </JFXButton>
                       </children>
                <padding>
-                  <Insets bottom="24.0" left="24.0" right="24.0" top="24.0" />
+                  <Insets bottom="24.0" left="24.0" right="12.0" top="24.0" />
                </padding>
                   </GridPane>
             <GridPane>
@@ -122,8 +122,14 @@
                      </font></Label>
                   <Pane fx:id="readerPane" GridPane.rowIndex="1" />
                </children>
+               <padding>
+                  <Insets left="12.0" top="24.0" />
+               </padding>
             </GridPane>
             </items>
+         <StackPane.margin>
+            <Insets />
+         </StackPane.margin>
         </SplitPane>
     </children>
 </StackPane>

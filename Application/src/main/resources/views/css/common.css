@@ -65,6 +65,14 @@
     -fx-text-fill: WHITE;
     -fx-fill: WHITE;
 }
+.button-s-list {
+    -fx-font-size: 12px;
+    -fx-button-type: FLAT;
+    -fx-background-color:  #52BBFE;
+    -fx-pref-width: 64;
+    -fx-text-fill: WHITE;
+    -fx-fill: WHITE;
+}
 .button-s-success {
     -fx-font-size: 12px;
     -fx-button-type: FLAT;
