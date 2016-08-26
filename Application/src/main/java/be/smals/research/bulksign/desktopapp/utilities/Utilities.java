@@ -102,7 +102,9 @@ public class Utilities {
             return false;
         } finally {
             try {sock.close();}
-            catch (IOException e) {}
+            catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
     /**
@@ -116,8 +118,8 @@ public class Utilities {
         Map<String, VerifySigningOutput.FileWithAltName> files = new HashMap<>();
         ZipInputStream zipInputStream   = new ZipInputStream(new FileInputStream(signedFile));
         ZipEntry zipEntry               = zipInputStream.getNextEntry();
-
-        while (zipEntry != null) {
+        int fileCount = 0;
+        while (zipEntry != null && fileCount<3) {
             String fileName         = zipEntry.getName();
             File newFile            = File.createTempFile(signedFile.getParent()+File.separator+fileName, "");
             FileOutputStream fos    = new FileOutputStream(newFile);
@@ -135,8 +137,11 @@ public class Utilities {
             } else {
                 files.put("FILE", fileWithAltName);
             }
+            fileCount++;
             zipEntry = zipInputStream.getNextEntry();
         }
+        if (fileCount != 3)
+            throw new IOException("Unable to retrieve necessary files");
 
         zipInputStream.closeEntry();
         zipInputStream.close();

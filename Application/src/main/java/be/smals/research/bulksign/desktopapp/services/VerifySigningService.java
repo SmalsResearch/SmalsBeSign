@@ -280,10 +280,11 @@ public class VerifySigningService {
         Document document = builder.parse(signingOutputFile);
 
         document.getDocumentElement().normalize();
-
         Element signingOutputElement    = (Element) document.getElementsByTagName("SigningOutput").item(0);
         String masterDigest             = signingOutputElement.getElementsByTagName("MasterDigest").item(0).getTextContent().toLowerCase();
+        System.out.println("After master digest");
         String signedBy                 = signingOutputElement.getElementsByTagName("SignedBy").item(0).getTextContent();
+        System.out.println("After singed by");
         Date signedAt                   = new SimpleDateFormat("yyyy-MM-dd 'at' HH:mm:ss").parse(signingOutputElement.getElementsByTagName("SignedAt").item(0).getTextContent());
         byte[] signature                = DatatypeConverter.parseHexBinary(signingOutputElement.getElementsByTagName("Signature").item(0).getTextContent());
         Element certificateElement      = (Element) signingOutputElement.getElementsByTagName("Certificate").item(0);

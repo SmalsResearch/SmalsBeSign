@@ -21,6 +21,8 @@ public class VerifySigningOutput {
     public boolean  intermCertInCRL;
     public boolean  userCertValid;
     public boolean  userCertChecked;
+    public boolean  errorDuringVerification;
+    public String   errorMessage;
 
     public enum VerifyResult {
         OK {
@@ -72,6 +74,8 @@ public class VerifySigningOutput {
     }
 
     public VerifyResult getOutputResult () {
+        if (errorDuringVerification)
+            return VerifyResult.FAILED;
         // Digest
         if (!this.digestValid)
             return VerifyResult.FAILED;
@@ -115,6 +119,9 @@ public class VerifySigningOutput {
     }
 
     @Override public String toString() {
+        if (this.errorDuringVerification) {
+            return errorMessage;
+        }
         String returnValue = "\n- Signed by "+this.signedBy + "\n- Signed on "+this.signedAt;
         if (!this.digestValid) {
             returnValue += "\n- Master digest verification : FAILED"

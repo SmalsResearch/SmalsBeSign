@@ -202,14 +202,29 @@ public class VerifyController extends Controller {
                     for (File signedFile : selectedFiles) {
                         int percent = (int)((ind/nbFiles)*100);
                         Platform.runLater(() -> updateWaitingDialogMessage(percent + "% done..."));
+                        VerifySigningOutput verifySigningOutput = new VerifySigningOutput();
                         try {
                             Map<String, FileWithAltName> files = Utilities.getInstance().getFilesFromSignedFile(signedFile);
+                            if (files.keySet().size()!=3 || files.values().size() != 3) {
+                                verifySigningOutput.errorDuringVerification = true;
+                                verifySigningOutput.errorMessage = "Unable to retrieve necessary files.";
+                                showErrorDialog(errorDialog, masterVerify, "Corrupted file", "Unable to retrieve necessary files.");
+                                return null;
+                            }
                             SigningOutput signingOutput = verifySigningService.getSigningOutput(files.get("SIGNATURE").file);
-                            VerifySigningOutput verifySigningOutput = verifySigningService.verifySigning(files.get("FILE").file, signingOutput);
+                            verifySigningOutput = verifySigningService.verifySigning(files.get("FILE").file, signingOutput);
                             verifySigningOutput.fileName = files.get("FILE").name;
                             results.add(verifySigningOutput);
-                        } catch (SignatureException | SAXException | NoSuchAlgorithmException | ParseException | InvalidKeyException | CertificateException | IOException | ParserConfigurationException | NoSuchProviderException e) {
+                        } catch (SignatureException | NoSuchAlgorithmException | InvalidKeyException | CertificateException | NoSuchProviderException e) {
+//                            e.printStackTrace();
+                            verifySigningOutput.errorDuringVerification = true;
+                            verifySigningOutput.errorMessage = "An error occurred \n"+e.getCause().getMessage();
+                            results.add(verifySigningOutput);
+                        } catch (ParserConfigurationException | IOException | SAXException | ParseException e) {
                             e.printStackTrace();
+                            verifySigningOutput.errorDuringVerification = true;
+                            verifySigningOutput.errorMessage = "Error while parsing the file\n- "+e.getCause().getMessage();
+                            results.add(verifySigningOutput);
                         }
                         ind++;
                     }
