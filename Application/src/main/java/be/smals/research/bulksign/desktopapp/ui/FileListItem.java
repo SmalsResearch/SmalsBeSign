@@ -22,6 +22,9 @@ public class FileListItem extends HBox {
     private File file;
     private String fileExtension;
 
+    private boolean fileInViewer;
+    private boolean fileViewed;
+
     /**
      * Constructor
      * Initializes components with the file information received
@@ -61,7 +64,9 @@ public class FileListItem extends HBox {
      * @param selected the new status, checked (true) or not
      */
     public void setFileSelected (boolean selected) {
-        this.selectCheckBox.setSelected(selected);
+        try {
+            this.selectCheckBox.setSelected(selected);
+        } catch (Exception e) {}
     }
 
     /**
@@ -82,5 +87,16 @@ public class FileListItem extends HBox {
     }
     public String getFileExtension () {
         return this.fileExtension;
+    }
+    public void setFileInViewer (boolean fileInViewer) {
+        this.fileInViewer = fileInViewer;
+        if (this.fileInViewer) {
+            this.getStyleClass().add("item-highlight");
+        }
+    }
+    public void setFileViewed (boolean fileViewed) {
+        this.fileViewed = fileViewed;
+        if (this.fileViewed)
+            this.getStyleClass().add("item-disabled");
     }
 }

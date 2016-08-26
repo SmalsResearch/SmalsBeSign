@@ -72,6 +72,7 @@ public class SignController extends Controller implements EIDObserver, BeIDCards
     @FXML private Label fileCountLabel;
     @FXML private ListView filesListView;
     @FXML private Pane readerPane;
+    @FXML private Label readerTitle;
     @FXML private StackPane masterSign;
     @FXML private JFXDialog infoDialog;
     @FXML private JFXDialog errorDialog;
@@ -160,10 +161,16 @@ public class SignController extends Controller implements EIDObserver, BeIDCards
             if (listItem.getFileExtension().equalsIgnoreCase("pdf")) {
                 event = event1 -> {
                     Object[] args = {file};
+                    listItem.setFileSelected(true);
+                    listItem.setFileInViewer(true);
+
                     viewerFx.executeCommand(Commands.OPENFILE, args);
+                    readerTitle.setText(file.getName());
                 };
             } else {
                 event = event1 -> {
+                    listItem.setFileSelected(true);
+
                     try {
                         Desktop.getDesktop().open(file);
                     } catch (IOException e) {
@@ -355,6 +362,12 @@ public class SignController extends Controller implements EIDObserver, BeIDCards
         for (Object item : filesListView.getItems())
             ((FileListItem)item).setFileSelected(selectAllCheckBox.isSelected());
     }
+    @FXML public void handleClearListAction() {
+        this.filesToSign.clear();
+        this.filesListView.getItems().clear();
+        this.selectAllCheckBox.setSelected(false);
+        this.fileCountLabel.setText("");
+    }
 
     // ---------- Observable notifications
     @Override
@@ -408,4 +421,5 @@ public class SignController extends Controller implements EIDObserver, BeIDCards
         System.out.println("eIDCard Removed");
 
     }
+
 }

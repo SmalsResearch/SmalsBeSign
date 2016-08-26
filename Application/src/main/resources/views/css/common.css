@@ -196,3 +196,13 @@
 .glyph-icon {
     -fx-padding: 4px 12px 4px 4px;
 }
+
+/*
+
+*/
+.label-highlight {
+    -fx-text-color: #52BBFE;
+}
+.label-disabled {
+    -fx-text-color: GREY;
+}

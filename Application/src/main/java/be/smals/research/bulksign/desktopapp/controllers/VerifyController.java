@@ -55,6 +55,7 @@ public class VerifyController extends Controller {
     @FXML private StackPane masterVerify;
     @FXML private ListView filesListView;
     @FXML private Pane readerPane;
+    @FXML private Label readerTitle;
     @FXML private JFXDialog infoDialog;
     @FXML private JFXDialog errorDialog;
     @FXML private JFXDialog waitingDialog;
@@ -115,6 +116,7 @@ public class VerifyController extends Controller {
         List<FileListItem> fileListItems = new ArrayList<>();
         this.filesToVerify.stream().filter(file -> !files.contains(file)).forEach(file -> {
             FileListItem listItem = new FileListItem(file);
+            listItem.setFileViewed(true);
             listItem.setViewButtonAction(event1 -> {
                 try {
                     // Unzip .signed.zip file then get main file
@@ -124,6 +126,8 @@ public class VerifyController extends Controller {
                     if (Utilities.getInstance().getFileExtension(signedFile.name).equalsIgnoreCase("pdf")) {
                         Object[] args = {signedFile.file};
                         viewerFx.executeCommand(Commands.OPENFILE, args);
+                        readerTitle.setText(file.getName());
+                        listItem.setFileInViewer(true);
                     } else {
                         try {
                             Desktop.getDesktop().open(file);
@@ -234,5 +238,12 @@ public class VerifyController extends Controller {
      */
     @FXML public void handleCloseVerifyDialog() {
         verifyResultDialog.close();
+    }
+
+    @FXML public void handleClearListAction() {
+        this.filesToVerify.clear();
+        this.filesListView.getItems().clear();
+        this.selectAllCheckBox.setSelected(false);
+        this.filesToSignCount.setText("");
     }
 }

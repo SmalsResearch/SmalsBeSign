@@ -83,7 +83,7 @@
       </JFXDialog>
       <SplitPane dividerPositions="0.29797979797979796" style="-fx-box-border: transparent;">
         <items>
-            <GridPane alignment="CENTER">
+            <GridPane alignment="CENTER" minWidth="200.0">
               <columnConstraints>
                 <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" percentWidth="100.0" />
               </columnConstraints>
@@ -94,7 +94,7 @@
                 <RowConstraints percentHeight="15.0" valignment="CENTER" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                 <JFXButton fx:id="selectSignFileButton" mnemonicParsing="false" onAction="#handleSelectSignFileButtonAction" styleClass="button-s" text="Select zip files" GridPane.halignment="RIGHT">
+                 <JFXButton fx:id="selectSignFileButton" mnemonicParsing="false" onAction="#handleSelectSignFileButtonAction" prefWidth="108.0" styleClass="button-s" text="Select zip files" GridPane.halignment="RIGHT">
                     <GridPane.margin>
                        <Insets />
                     </GridPane.margin>
@@ -102,12 +102,17 @@
                         <FontAwesomeIconView fill="WHITE" glyphName="PLUS_CIRCLE" size="1.2em" strokeType="OUTSIDE" strokeWidth="0.0" />
                      </graphic>
                  </JFXButton>
-                 <Label fx:id="filesToSignCount" text="No file selected" GridPane.halignment="LEFT" />
-                  <JFXCheckBox fx:id="selectAllCheckBox" checkedColor="#52bbfe" mnemonicParsing="false" onAction="#handleSelectAllAction" text="Select all" GridPane.halignment="LEFT" GridPane.rowIndex="1">
+                 <Label fx:id="filesToSignCount" GridPane.halignment="LEFT" />
+                  <JFXCheckBox fx:id="selectAllCheckBox" checkedColor="#52bbfe" mnemonicParsing="false" onAction="#handleSelectAllAction" GridPane.halignment="LEFT" GridPane.rowIndex="1">
                      <GridPane.margin>
                         <Insets left="8.0" />
                      </GridPane.margin>
                   </JFXCheckBox>
+                   <JFXButton alignment="BASELINE_LEFT" mnemonicParsing="false" onAction="#handleClearListAction" prefWidth="108.0" styleClass="button-s-danger" text="Clear file list" textAlignment="CENTER" textFill="WHITE" GridPane.halignment="RIGHT" GridPane.rowIndex="1" GridPane.valignment="CENTER">
+                       <graphic>
+                           <FontAwesomeIconView fill="WHITE" glyphName="TIMES_CIRCLE" size="1.2em" strokeType="OUTSIDE" strokeWidth="0.0" />
+                       </graphic>
+                   </JFXButton>
                   <ListView fx:id="filesListView" GridPane.rowIndex="2" />
                  <JFXButton fx:id="verifyFileButton" mnemonicParsing="false" onAction="#handleVerifyFilesButtonAction" styleClass="button-raised" text="Verify signed files" GridPane.rowIndex="3" />
                </children>
@@ -125,9 +130,9 @@
               </rowConstraints>
               <children>
                   <Pane fx:id="readerPane" GridPane.columnSpan="2147483647" GridPane.rowIndex="1" GridPane.rowSpan="2147483647" />
-                  <Label text="Label">
+                  <Label fx:id="readerTitle">
                      <font>
-                        <Font size="14.0" />
+                        <Font name="System Bold" size="14.0" />
                      </font>
                   </Label>
               </children>
