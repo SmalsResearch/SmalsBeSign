@@ -20,6 +20,7 @@ import com.jfoenix.controls.JFXDialog;
 import com.jfoenix.controls.JFXPasswordField;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -161,28 +162,34 @@ public class SignController extends Controller implements EIDObserver, BeIDCards
             if (listItem.getFileExtension().equalsIgnoreCase("pdf")) {
                 event = event1 -> {
                     Object[] args = {file};
-                    listItem.setFileSelected(true);
-                    listItem.setFileInViewer(true);
-
                     viewerFx.executeCommand(Commands.OPENFILE, args);
                     readerTitle.setText(file.getName());
+                    listItem.setFileInViewer(true);
+                    listItem.setFileViewed(true);
+                    setFileInViewer(listItem);
                 };
             } else {
                 event = event1 -> {
-                    listItem.setFileSelected(true);
-
                     try {
                         Desktop.getDesktop().open(file);
                     } catch (IOException e) {
                         this.showErrorDialog(this.errorDialog, this.masterSign, "Unable to open the file...",
                                 "No application associated with the specified file.");
                     }
+                    listItem.setFileViewed(true);
                 };
             }
             listItem.setViewButtonAction(event);
+            listItem.setFileSelected(true);
             fileListItems.add(listItem);
         });
         this.filesListView.getItems().addAll(FXCollections.observableList(fileListItems));
+    }
+    private void setFileInViewer (FileListItem inViewerItem) {
+        ObservableList<FileListItem> items = this.filesListView.getItems();
+        items.stream().filter(fileListItem ->
+                (!fileListItem.equals(inViewerItem) && fileListItem.isFileInViewer()))
+                .forEach(fileListItem -> fileListItem.setFileInViewer(false));
     }
     /**
      * Returns selected files from the file list
@@ -297,7 +304,9 @@ public class SignController extends Controller implements EIDObserver, BeIDCards
                 try {
                     certificateChain = EIDService.getInstance().getBeIDCertificateChain();
                     VerifySigningOutput verifySigningOutput = new VerifySigningOutput();
-                    verifySigningOutput = this.verifySigningService.verifyChainCertificate(certificateChain);
+                    verifySigningOutput.digestValid = true;
+                    verifySigningOutput.signatureValid = true;
+                    this.verifySigningService.verifyCertificates(certificateChain, verifySigningOutput);
                     verifySigningOutput.consoleOutput();
 
                     if (!verifySigningOutput.getOutputResult().equals(VerifySigningOutput.VerifyResult.FAILED)) {
@@ -322,7 +331,6 @@ public class SignController extends Controller implements EIDObserver, BeIDCards
             new Thread(prepareTask).start();
         }
     }
-
     private void closeInputFiles(FileInputStream[] inputFiles) {
         for (FileInputStream file : inputFiles) {
             try {
@@ -354,7 +362,6 @@ public class SignController extends Controller implements EIDObserver, BeIDCards
                     "Error while signing with eID");
         }
     }
-
     /**
      * Select / Deselect selected all checkbox action
      */
@@ -375,37 +382,30 @@ public class SignController extends Controller implements EIDObserver, BeIDCards
         this.askAndVerifyPin();
     }
     // BeIDCards UI ----------------------------------------------------------------------------------------------------
-
     @Override
     public void setLocale(Locale locale) {
 
     }
-
     @Override
     public Locale getLocale() {
         return null;
     }
-
     @Override
     public void adviseCardTerminalRequired() {
         System.out.println("Advise CardTerminal Required");
     }
-
     @Override
     public void adviseBeIDCardRequired() throws CancelledException {
         System.out.println("Advise BeIDCard Required");
     }
-
     @Override
     public void adviseBeIDCardRemovalRequired() {
         System.out.println("Advise BeIDCardRemovalCard Required");
     }
-
     @Override
     public void adviseEnd() {
         System.out.println("Advise End");
     }
-
     @Override
     public BeIDCard selectBeIDCard(Collection<BeIDCard> collection) throws CancelledException, OutOfCardsException {
         List<BeIDCard> cards = new ArrayList<>(collection);
@@ -415,7 +415,6 @@ public class SignController extends Controller implements EIDObserver, BeIDCards
     public void eIDCardInsertedDuringSelection(BeIDCard beIDCard) {
         System.out.println("eIDCardInserted");
     }
-
     @Override
     public void eIDCardRemovedDuringSelection(BeIDCard beIDCard) {
         System.out.println("eIDCard Removed");

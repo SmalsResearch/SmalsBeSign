@@ -12,6 +12,7 @@ import com.jfoenix.controls.JFXDialog;
 import com.jfoenix.controls.JFXListView;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
@@ -116,8 +117,7 @@ public class VerifyController extends Controller {
         List<FileListItem> fileListItems = new ArrayList<>();
         this.filesToVerify.stream().filter(file -> !files.contains(file)).forEach(file -> {
             FileListItem listItem = new FileListItem(file);
-            listItem.setFileViewed(true);
-            listItem.setViewButtonAction(event1 -> {
+            listItem.setViewButtonAction(event -> {
                 try {
                     // Unzip .signed.zip file then get main file
                     final Map<String, FileWithAltName> signedZipFiles = Utilities.getInstance().getFilesFromSignedFile(file);
@@ -127,10 +127,13 @@ public class VerifyController extends Controller {
                         Object[] args = {signedFile.file};
                         viewerFx.executeCommand(Commands.OPENFILE, args);
                         readerTitle.setText(file.getName());
+                        listItem.setFileViewed(true);
                         listItem.setFileInViewer(true);
+                        setFileInViewer(listItem);
                     } else {
                         try {
                             Desktop.getDesktop().open(file);
+                            listItem.setFileViewed(true);
                         } catch (IOException e) {
                             this.showErrorDialog(errorDialog, masterVerify, "Unable to open the file...",
                                     "No application associated with the specified file.");
@@ -141,9 +144,16 @@ public class VerifyController extends Controller {
                 }
 
             });
+            listItem.setFileSelected(true);
             fileListItems.add(listItem);
         });
         this.filesListView.getItems().addAll(FXCollections.observableList(fileListItems));
+    }
+    private void setFileInViewer (FileListItem inViewerItem) {
+        ObservableList<FileListItem> items = this.filesListView.getItems();
+        items.stream().filter(fileListItem ->
+                (!fileListItem.equals(inViewerItem) && fileListItem.isFileInViewer()))
+                .forEach(fileListItem -> fileListItem.setFileInViewer(false));
     }
     /**
      * Used to display verification results

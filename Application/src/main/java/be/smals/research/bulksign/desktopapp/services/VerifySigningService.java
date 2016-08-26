@@ -56,34 +56,7 @@ public class VerifySigningService {
             return vOut;
         vOut.digestValid = true;
 
-        if (this.isCertificateChainValid(sOut.certificateChain))
-            vOut.certChainValid = true;
-
-        if (Utilities.getInstance().isInternetReachable()) {
-            vOut.userCertChecked = true;
-            try {
-                OCSP.RevocationStatus response = OCSP.check(sOut.certificateChain.get(0), sOut.certificateChain.get(1));
-                if (response.getCertStatus().equals(OCSP.RevocationStatus.CertStatus.GOOD))
-                    vOut.userCertValid = true;
-            } catch (CertPathValidatorException e) {
-                e.printStackTrace();
-            }
-        }
-        if (Utilities.getInstance().isInternetReachable()) {
-            vOut.intermCertChecked = true;
-            if (this.isIntermediateCertificateValid(sOut.certificateChain.get(1)))
-                vOut.intermCertValid = true;
-            if (!vOut.intermCertValid)
-                vOut.intermCertInCRL = this.isIntermediateCertificateInCRL(sOut.certificateChain.get(1));
-        }
-
-        if (Utilities.getInstance().isInternetReachable()) {
-            vOut.rootCertChecked = true;
-            if (this.isRootCertificateValid(sOut.certificateChain.get(2)))
-                vOut.rootCertValid = true;
-            if (!vOut.rootCertValid)
-                vOut.rootCertInCRL = this.isRootCertificateInCRL(sOut.certificateChain.get(2));
-        }
+        this.verifyCertificates(sOut.certificateChain, vOut);
 
         Signature signer = Signature.getInstance("SHA1withRSA", "BC");
         signer.initVerify(sOut.certificateChain.get(0).getPublicKey()); // [0] is the user certificate
@@ -357,19 +330,19 @@ public class VerifySigningService {
         }
         return found;
     }
-    public VerifySigningOutput verifyChainCertificate(List<X509Certificate> certificateChain) throws CertificateException, NoSuchAlgorithmException, InvalidKeyException, NoSuchProviderException, SignatureException, IOException {
-        VerifySigningOutput vOut = new VerifySigningOutput();
-        vOut.digestValid = true;
-        vOut.signatureValid = true;
+    public VerifySigningOutput verifyCertificates(List<X509Certificate> certificateChain, VerifySigningOutput vOut) throws CertificateException, NoSuchAlgorithmException, InvalidKeyException, NoSuchProviderException, SignatureException, IOException {
 
         if (this.isCertificateChainValid(certificateChain))
             vOut.certChainValid = true;
+
         if (Utilities.getInstance().isInternetReachable()) {
             vOut.userCertChecked = true;
             try {
                 OCSP.RevocationStatus response = OCSP.check(certificateChain.get(0), certificateChain.get(1));
                 if (response.getCertStatus().equals(OCSP.RevocationStatus.CertStatus.GOOD))
                     vOut.userCertValid = true;
+                else if (response.getCertStatus().equals(OCSP.RevocationStatus.CertStatus.UNKNOWN))
+                    vOut.userCertChecked = false;
             } catch (CertPathValidatorException e) {
                 e.printStackTrace();
             }

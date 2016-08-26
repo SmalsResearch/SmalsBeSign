@@ -58,7 +58,7 @@ public class Main extends Application {
         // ----- CENTER ------------------------------------------------------------------------------------------------
         createCenter (controller);
 
-        primaryStage.setScene(new Scene(masterPane, WIDTH_MIN, HEIGHT_MIN));
+        primaryStage.setScene(new Scene(masterPane, 800, 480));
         primaryStage.setMinWidth(WIDTH_MIN);
         primaryStage.setMinHeight(HEIGHT_MIN);
         primaryStage.show();

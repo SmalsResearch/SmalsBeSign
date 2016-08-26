@@ -94,7 +94,7 @@
                 <RowConstraints percentHeight="15.0" valignment="CENTER" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                 <JFXButton fx:id="selectSignFileButton" mnemonicParsing="false" onAction="#handleSelectSignFileButtonAction" prefWidth="108.0" styleClass="button-s" text="Select zip files" GridPane.halignment="RIGHT">
+                 <JFXButton fx:id="selectSignFileButton" alignment="CENTER" mnemonicParsing="false" onAction="#handleSelectSignFileButtonAction" styleClass="button-s" text="Select zip files" GridPane.halignment="RIGHT">
                     <GridPane.margin>
                        <Insets />
                     </GridPane.margin>
@@ -108,13 +108,13 @@
                         <Insets left="8.0" />
                      </GridPane.margin>
                   </JFXCheckBox>
-                   <JFXButton alignment="BASELINE_LEFT" mnemonicParsing="false" onAction="#handleClearListAction" prefWidth="108.0" styleClass="button-s-danger" text="Clear file list" textAlignment="CENTER" textFill="WHITE" GridPane.halignment="RIGHT" GridPane.rowIndex="1" GridPane.valignment="CENTER">
+                   <JFXButton alignment="CENTER" mnemonicParsing="false" onAction="#handleClearListAction" styleClass="button-s-danger" text="Clear file list" textAlignment="CENTER" textFill="WHITE" GridPane.halignment="RIGHT" GridPane.rowIndex="1" GridPane.valignment="CENTER">
                        <graphic>
                            <FontAwesomeIconView fill="WHITE" glyphName="TIMES_CIRCLE" size="1.2em" strokeType="OUTSIDE" strokeWidth="0.0" />
                        </graphic>
                    </JFXButton>
                   <ListView fx:id="filesListView" GridPane.rowIndex="2" />
-                 <JFXButton fx:id="verifyFileButton" mnemonicParsing="false" onAction="#handleVerifyFilesButtonAction" styleClass="button-raised" text="Verify signed files" GridPane.rowIndex="3" />
+                 <JFXButton fx:id="verifyFileButton" mnemonicParsing="false" onAction="#handleVerifyFilesButtonAction" styleClass="button-raised" text="Verify signed files" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.valignment="BOTTOM" />
                </children>
                <padding>
                   <Insets bottom="24.0" left="24.0" right="12.0" top="24.0" />

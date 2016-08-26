@@ -76,6 +76,14 @@ public class FileListItem extends HBox {
     public void setViewButtonAction (EventHandler event) {
         this.viewButton.setOnAction(event);
     }
+    public void setFileInViewer (boolean fileInViewer) {
+        this.fileInViewer = fileInViewer;
+        this.update();
+    }
+    public void setFileViewed (boolean fileViewed) {
+        this.fileViewed = fileViewed;
+        this.update();
+    }
 
     /**
      * Returns the file
@@ -88,15 +96,16 @@ public class FileListItem extends HBox {
     public String getFileExtension () {
         return this.fileExtension;
     }
-    public void setFileInViewer (boolean fileInViewer) {
-        this.fileInViewer = fileInViewer;
-        if (this.fileInViewer) {
-            this.getStyleClass().add("item-highlight");
-        }
+    public boolean isFileInViewer () {
+        return this.fileInViewer;
     }
-    public void setFileViewed (boolean fileViewed) {
-        this.fileViewed = fileViewed;
+    private void update () {
+        this.nameLabel.getStyleClass().clear();
         if (this.fileViewed)
-            this.getStyleClass().add("item-disabled");
+            this.nameLabel.getStyleClass().add("item-disabled");
+        if (this.fileInViewer) {
+            this.nameLabel.getStyleClass().remove("item-disabled");
+            this.nameLabel.getStyleClass().add("item-highlight");
+        }
     }
 }

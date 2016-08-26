@@ -200,9 +200,9 @@
 /*
 
 */
-.label-highlight {
-    -fx-text-color: #52BBFE;
+.item-highlight {
+    -fx-text-fill: #52BBFE;
 }
-.label-disabled {
-    -fx-text-color: GREY;
+.item-disabled {
+    -fx-text-fill: GREY;
 }

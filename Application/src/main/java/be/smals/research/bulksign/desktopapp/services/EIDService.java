@@ -117,7 +117,7 @@ public class EIDService {
         return this.beID.getOneBeIDCard().getSigningCertificateChain();
     }
     public byte[] signWithBeID (byte[] masterDigest) throws CancelledException, CardException, be.fedict.commons.eid.client.spi.UserCancelledException, InterruptedException, IOException {
-        return this.beID.getOneBeIDCard().sign(masterDigest, BeIDDigest.SHA_1, FileType.NonRepudiationCertificate, true);
+        return this.beID.getOneBeIDCard().sign(masterDigest, BeIDDigest.SHA_1, FileType.NonRepudiationCertificate, false);
     }
     /**
      * Performs the signing operation
