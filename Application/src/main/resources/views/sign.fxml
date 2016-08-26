@@ -17,6 +17,7 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.text.Font?>
 
+<?import javafx.scene.text.TextFlow?>
 <StackPane fx:id="masterSign" stylesheets="@css/common.css" xmlns="http://javafx.com/javafx/8.0.101" xmlns:fx="http://javafx.com/fxml/1" fx:controller="be.smals.research.bulksign.desktopapp.controllers.SignController">
     <children>
         <!-- Dialogs -->
@@ -56,16 +57,29 @@
         </JFXDialog>
         <JFXDialog fx:id="successDialog">
         <JFXDialogLayout>
-        <heading>
-        <Label id="successDialogTitle" styleClass="color-success" />
-        </heading>
-        <body>
-        <Label id="successDialogBody" />
-        </body>
-        <actions>
-        <JFXButton id="closeSuccessDialogButton" styleClass="button-s">CLOSE</JFXButton>
-        </actions>
+            <heading>
+                <Label id="successDialogTitle" styleClass="color-success" />
+            </heading>
+            <body>
+                <Label id="successDialogBody" />
+            </body>
+            <actions>
+                <JFXButton id="closeSuccessDialogButton" styleClass="button-s">CLOSE</JFXButton>
+            </actions>
         </JFXDialogLayout>
+        </JFXDialog>
+        <JFXDialog fx:id="signResultDialog">
+            <JFXDialogLayout>
+                <heading>
+                    <Label id="resultDialogTitle" styleClass="color-success" />
+                </heading>
+                <body>
+                    <TextFlow id="resultDialogBody" styleClass="text-flow" />
+                </body>
+                <actions>
+                    <JFXButton id="closeResultDialogButton" styleClass="button-s">CLOSE</JFXButton>
+                </actions>
+            </JFXDialogLayout>
         </JFXDialog>
 
         <SplitPane dividerPositions="0.29797979797979796" style="-fx-box-border: transparent;" StackPane.alignment="CENTER">
@@ -121,10 +135,16 @@
                     <RowConstraints percentHeight="90.0" vgrow="SOMETIMES" />
                 </rowConstraints>
                <children>
-                  <Label fx:id="readerTitle" textAlignment="CENTER" wrapText="true" GridPane.rowIndex="0">
+                  <Label fx:id="readerTitle" style="-fx-background-radius: 2px; -fx-background-color: #52BBFE;" text="No file present in viewer" textAlignment="CENTER" textFill="WHITE" wrapText="true" GridPane.rowIndex="0">
                      <font>
-                        <Font name="System Bold" size="14.0" />
+                        <Font name="System Bold" size="13.0" />
                      </font>
+                     <opaqueInsets>
+                        <Insets />
+                     </opaqueInsets>
+                     <padding>
+                        <Insets left="12.0" right="12.0" />
+                     </padding>
                   </Label>
                   <Pane fx:id="readerPane" GridPane.rowIndex="1" />
                </children>

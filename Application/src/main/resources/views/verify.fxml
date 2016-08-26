@@ -129,12 +129,18 @@
                <RowConstraints percentHeight="90.0" valignment="CENTER" vgrow="SOMETIMES" />
               </rowConstraints>
               <children>
-                  <Pane fx:id="readerPane" GridPane.columnSpan="2147483647" GridPane.rowIndex="1" GridPane.rowSpan="2147483647" />
-                  <Label fx:id="readerTitle">
-                     <font>
-                        <Font name="System Bold" size="14.0" />
-                     </font>
+                  <Label fx:id="readerTitle" style="-fx-background-radius: 2px; -fx-background-color: #52BBFE;" text="No file present in viewer" textAlignment="CENTER" textFill="WHITE" wrapText="true" GridPane.rowIndex="0">
+                      <font>
+                          <Font name="System Bold" size="13.0" />
+                      </font>
+                      <opaqueInsets>
+                          <Insets />
+                      </opaqueInsets>
+                      <padding>
+                          <Insets left="12.0" right="12.0" />
+                      </padding>
                   </Label>
+                  <Pane fx:id="readerPane" GridPane.columnSpan="2147483647" GridPane.rowIndex="1" GridPane.rowSpan="2147483647" />
               </children>
                 <padding>
                     <Insets bottom="24.0" left="12.0" right="24.0" top="24.0" />

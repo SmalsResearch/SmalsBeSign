@@ -15,6 +15,7 @@ import be.smals.research.bulksign.desktopapp.utilities.Settings;
 import be.smals.research.bulksign.desktopapp.utilities.SigningOutput;
 import be.smals.research.bulksign.desktopapp.utilities.Utilities;
 import be.smals.research.bulksign.desktopapp.utilities.VerifySigningOutput;
+import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXCheckBox;
 import com.jfoenix.controls.JFXDialog;
 import com.jfoenix.controls.JFXPasswordField;
@@ -32,6 +33,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextFlow;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -79,6 +82,7 @@ public class SignController extends Controller implements EIDObserver, BeIDCards
     @FXML private JFXDialog errorDialog;
     @FXML private JFXDialog successDialog;
     @FXML private JFXDialog waitingDialog;
+    @FXML private JFXDialog signResultDialog;
     @FXML private JFXCheckBox selectAllCheckBox;
 
     /**
@@ -120,6 +124,7 @@ public class SignController extends Controller implements EIDObserver, BeIDCards
         this.infoDialog.setTransitionType(JFXDialog.DialogTransition.TOP);
         this.errorDialog.setTransitionType(JFXDialog.DialogTransition.TOP);
         this.successDialog.setTransitionType(JFXDialog.DialogTransition.TOP);
+        this.signResultDialog.setTransitionType(JFXDialog.DialogTransition.TOP);
     }
     /**
      * Handles the output file saving process
@@ -129,7 +134,8 @@ public class SignController extends Controller implements EIDObserver, BeIDCards
      * @throws ParserConfigurationException
      * @throws TransformerException
      */
-    private void saveSigningOutput(List<File> files, byte[] signature, List<X509Certificate> certificateChain) throws IOException, ParserConfigurationException, TransformerException {
+    private void saveSigningOutput(List<File> files, byte[] signature, List<X509Certificate> certificateChain,
+                                   VerifySigningOutput verifySigningOutput) throws IOException, ParserConfigurationException, TransformerException {
         this.directoryChooser.setTitle("Save the signing output");
         File dir = this.directoryChooser.showDialog(this.stage);
         if (dir != null) {
@@ -138,8 +144,16 @@ public class SignController extends Controller implements EIDObserver, BeIDCards
                 SigningOutput signingOutput = new SigningOutput(null, signature, certificateChain);
                 this.signingService.saveSigningOutput(files, signingOutput, dir.getAbsolutePath()+File.separator+"SignatureFile.sig");
                 waitingDialog.close();
-                this.showSuccessDialog(successDialog, masterSign, "File saved!",
-                        "Signature successfully saved!\nSigned files can be found at "+dir.getAbsolutePath());
+                Text line1 = new Text("Signature successfully saved!\nSigned files can be found at "+dir.getAbsolutePath());
+                if (verifySigningOutput.getOutputResult().equals(VerifySigningOutput.VerifyResult.WARNING)) {
+                    Text line2 = new Text(verifySigningOutput.outputCertificateResult());
+                    line2.setFill(Color.ORANGE);
+                    this.showSignResultDialog ("File saved!", line1, line2);
+                } else {
+                    this.showSignResultDialog ("File saved!", line1);
+                }
+
+
             } catch (CertificateEncodingException e) {
                 waitingDialog.close();
                 this.showErrorDialog(errorDialog, masterSign, "Saving...", "Error while saving the output file...\n"+e.getMessage());
@@ -148,6 +162,17 @@ public class SignController extends Controller implements EIDObserver, BeIDCards
         } else {
             waitingDialog.close();
             this.showErrorDialog(errorDialog, masterSign, "Save aborted!", "Nothing is saved from your last signing request.");
+        }
+    }
+    private void showSignResultDialog (String title, Object... textList) {
+        signResultDialog.show(masterSign);
+        Label titleLabel     = (Label) this.stage.getScene().lookup("#resultDialogTitle");
+        TextFlow bodyText      = (TextFlow) this.stage.getScene().lookup("#resultDialogBody");
+        JFXButton closeButton   = (JFXButton) this.stage.getScene().lookup("#closeResultDialogButton");
+        closeButton.setOnAction(event -> signResultDialog.close());
+        titleLabel.setText(title);
+        for (Object text:textList){
+            bodyText.getChildren().add((Text) text);
         }
     }
     /**
@@ -313,7 +338,7 @@ public class SignController extends Controller implements EIDObserver, BeIDCards
                         this.closeInputFiles(inputFiles);
                         // Sign
                         this.updateWaitingDialogMessage("Signing...");
-                        this.signWithBeIDAndSave(selectedFiles, prepareTask, certificateChain);
+                        this.signWithBeIDAndSave(selectedFiles, prepareTask, certificateChain, verifySigningOutput);
                     } else {
                         waitingDialog.close();
                         this.showErrorDialog(errorDialog, masterSign, "Certificate Verification",
@@ -343,12 +368,13 @@ public class SignController extends Controller implements EIDObserver, BeIDCards
             }
         }
     }
-    private void signWithBeIDAndSave(List<File> selectedFiles, Task<String> prepareTask, List<X509Certificate> certificateChain) {
-        this.showWaitingDialog(waitingDialog, masterSign, "Signing...");
+    private void signWithBeIDAndSave(List<File> selectedFiles, Task<String> prepareTask,
+                                     List<X509Certificate> certificateChain, VerifySigningOutput verifySigningOutput) {
         byte[] signature = this.signingService.signWithEID(prepareTask.getValue());
         if (signature != null && signature.length!=0) {
             try {
-                this.saveSigningOutput(selectedFiles, signature, certificateChain);
+                this.showWaitingDialog(waitingDialog, masterSign, "Saving\nFiles...");
+                this.saveSigningOutput(selectedFiles, signature, certificateChain, verifySigningOutput);
                 waitingDialog.close();
             } catch (IOException | ParserConfigurationException | TransformerException e) {
                 waitingDialog.close();
