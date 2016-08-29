@@ -143,13 +143,13 @@ public class SignController extends Controller implements EIDObserver, BeIDCards
                 SigningOutput signingOutput = new SigningOutput(null, signature, certificateChain);
                 this.signingService.saveSigningOutput(files, signingOutput, dir.getAbsolutePath()+File.separator+"SignatureFile.sig");
                 waitingDialog.close();
-                Text line1 = new Text("Signature successfully saved!\nSigned files can be found at "+dir.getAbsolutePath());
+                Text line1 = new Text("Signature(s) successfully computed!\nSigned file(s) can be found at "+dir.getAbsolutePath());
                 if (verifySigningOutput.getOutputResult().equals(VerifySigningOutput.VerifyResult.WARNING)) {
                     Text line2 = new Text(verifySigningOutput.outputCertificateResult());
                     line2.setFill(Color.ORANGE);
-                    this.showSignResultDialog ("File saved!", line1, line2);
+                    this.showSignResultDialog ("File(s) saved!", line1, line2);
                 } else {
-                    this.showSignResultDialog ("File saved!", line1);
+                    this.showSignResultDialog ("File(s) saved!", line1);
                 }
             } catch (CertificateEncodingException e) {
                 waitingDialog.close();

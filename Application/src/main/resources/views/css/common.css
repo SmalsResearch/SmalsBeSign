@@ -149,6 +149,9 @@
 	-fx-alignment: center-left;
 	-fx-padding: 5.0 0.0 5.0 0.0;
 }
+.jfx-layout-body {
+    -fx-min-height: 120px;
+}
 .jfx-layout-body .label, .jfx-layout-body .text-flow {
 	-fx-font-size: 14.0px;
 	-fx-pref-width: 400.0px;

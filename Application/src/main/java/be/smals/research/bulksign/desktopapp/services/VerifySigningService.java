@@ -279,19 +279,45 @@ public class VerifySigningService {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = factory.newDocumentBuilder();
         Document document = builder.parse(signingOutputFile);
-
         document.getDocumentElement().normalize();
-        Element signingOutputElement = (Element) document.getElementsByTagName("SigningOutput").item(0);
-        String masterDigest = signingOutputElement.getElementsByTagName("MasterDigest").item(0).getTextContent().toLowerCase();
-        String signedBy = signingOutputElement.getElementsByTagName("SignedBy").item(0).getTextContent();
-        Date signedAt = new SimpleDateFormat("yyyy-MM-dd 'at' HH:mm:ss").parse(signingOutputElement.getElementsByTagName("SignedAt").item(0).getTextContent());
-        byte[] signature = DatatypeConverter.parseHexBinary(signingOutputElement.getElementsByTagName("Signature").item(0).getTextContent());
-        Element certificateElement = (Element) signingOutputElement.getElementsByTagName("Certificate").item(0);
-        byte[] userEncodedCertificate;
-        byte[] intermEncodedCertificate;
-        byte[] rootEncodedCertificate;
-        List<X509Certificate> certificateChain = new ArrayList<>();
 
+        Element signingOutputElement, certificateElement;
+        List<X509Certificate> certificateChain = new ArrayList<>();
+        byte[] signature, userEncodedCertificate,intermEncodedCertificate,rootEncodedCertificate;
+        String masterDigest, signedBy;
+        Date signedAt;
+        InputStream encodedStream;
+
+        try {
+            signingOutputElement = (Element) document.getElementsByTagName("SigningOutput").item(0);
+            if (signingOutputElement == null || !signingOutputElement.hasChildNodes())
+                throw new BulkSignException();
+        } catch (Exception e) {
+            throw new BulkSignException("Missing signing output.\nThe signature file might be corrupted.");
+        }
+        try {
+            masterDigest = signingOutputElement.getElementsByTagName("MasterDigest").item(0).getTextContent().toLowerCase();
+        } catch (Exception e) {
+            throw new BulkSignException("Unable to retrieve the MasterDigest.\nThe signature file might be corrupted.");
+        }
+        try {
+            signedBy = signingOutputElement.getElementsByTagName("SignedBy").item(0).getTextContent();
+            signedAt = new SimpleDateFormat("yyyy-MM-dd 'at' HH:mm:ss").parse(signingOutputElement.getElementsByTagName("SignedAt").item(0).getTextContent());
+        } catch (Exception e) {
+            throw new BulkSignException("Unable to retrieve the signing date.\nThe signature file might be corrupted.");
+        }
+        try {
+            signature = DatatypeConverter.parseHexBinary(signingOutputElement.getElementsByTagName("Signature").item(0).getTextContent());
+        } catch (Exception e) {
+            throw new BulkSignException("Unable to retrieve the signature.\nThe signature file might be corrupted.");
+        }
+        try {
+            certificateElement = (Element) signingOutputElement.getElementsByTagName("Certificate").item(0);
+            if (certificateElement == null || !certificateElement.hasChildNodes())
+                throw new BulkSignException("Unable to retrieve certificates.\nThe signature file might be corrupted.");
+        } catch (Exception e) {
+            throw new BulkSignException("Missing certificates.\nThe signature file might be corrupted.");
+        }
         try {
             userEncodedCertificate = DatatypeConverter.parseHexBinary(certificateElement.getElementsByTagName("User").item(0).getTextContent());
         } catch (Exception e) {
@@ -308,22 +334,22 @@ public class VerifySigningService {
             throw new BulkSignException("Error while parsing the root certificate.\nThe signature file might be corrupted.");
         }
         CertificateFactory certFactory = CertificateFactory.getInstance("X.509", "BC");
-        InputStream encodedStream = new ByteArrayInputStream(userEncodedCertificate);
         try {
+            encodedStream = new ByteArrayInputStream(userEncodedCertificate);
             X509Certificate userCertificate = (X509Certificate) certFactory.generateCertificate(encodedStream);
             certificateChain.add(userCertificate);
         } catch (Exception e) {
             throw new BulkSignException("Error while creating user certificate.\nThe signature file might be corrupted.");
         }
-        encodedStream = new ByteArrayInputStream(intermEncodedCertificate);
         try {
+            encodedStream = new ByteArrayInputStream(intermEncodedCertificate);
             X509Certificate intermCertificate = (X509Certificate) certFactory.generateCertificate(encodedStream);
             certificateChain.add(intermCertificate);
         } catch (Exception e) {
             throw new BulkSignException("Error while creating intermediate certificate.\nThe signature file might be corrupted.");
         }
-        encodedStream = new ByteArrayInputStream(rootEncodedCertificate);
         try {
+            encodedStream = new ByteArrayInputStream(rootEncodedCertificate);
             X509Certificate rootCertificate = (X509Certificate) certFactory.generateCertificate(encodedStream);
             certificateChain.add(rootCertificate);
         } catch (Exception e){
@@ -356,39 +382,38 @@ public class VerifySigningService {
         }
         return found;
     }
-    public VerifySigningOutput verifyCertificates(List<X509Certificate> certificateChain, VerifySigningOutput vOut)
+    public VerifySigningOutput verifyCertificates(List<X509Certificate> certificateChain, VerifySigningOutput verifySigningOutput)
             throws CertificateException, NoSuchAlgorithmException, InvalidKeyException, NoSuchProviderException, SignatureException, IOException {
         if (this.isCertificateChainValid(certificateChain))
-            vOut.certChainValid = true;
+            verifySigningOutput.certChainValid = true;
 
         if (Utilities.getInstance().isInternetReachable()) {
-            vOut.userCertChecked = true;
+            verifySigningOutput.userCertChecked = true;
             try {
                 OCSP.RevocationStatus response = OCSP.check(certificateChain.get(0), certificateChain.get(1));
                 if (response.getCertStatus().equals(OCSP.RevocationStatus.CertStatus.GOOD))
-                    vOut.userCertValid = true;
+                    verifySigningOutput.userCertValid = true;
                 else if (response.getCertStatus().equals(OCSP.RevocationStatus.CertStatus.UNKNOWN))
-                    vOut.userCertChecked = false;
+                    verifySigningOutput.userCertChecked = false;
             } catch (CertPathValidatorException e) {
                 e.printStackTrace();
             }
         }
         if (Utilities.getInstance().isInternetReachable()) {
-            vOut.intermCertChecked = true;
+            verifySigningOutput.intermCertChecked = true;
             if (this.isIntermediateCertificateValid(certificateChain.get(1)))
-                vOut.intermCertValid = true;
-            if (!vOut.intermCertValid)
-                vOut.intermCertInCRL = this.isIntermediateCertificateInCRL(certificateChain.get(1));
+                verifySigningOutput.intermCertValid = true;
+            if (!verifySigningOutput.intermCertValid)
+                verifySigningOutput.intermCertInCRL = this.isIntermediateCertificateInCRL(certificateChain.get(1));
         }
-
         if (Utilities.getInstance().isInternetReachable()) {
-            vOut.rootCertChecked = true;
+            verifySigningOutput.rootCertChecked = true;
             if (this.isRootCertificateValid(certificateChain.get(2)))
-                vOut.rootCertValid = true;
-            if (!vOut.rootCertValid)
-                vOut.rootCertInCRL = this.isRootCertificateInCRL(certificateChain.get(2));
+                verifySigningOutput.rootCertValid = true;
+            if (!verifySigningOutput.rootCertValid)
+                verifySigningOutput.rootCertInCRL = this.isRootCertificateInCRL(certificateChain.get(2));
         }
 
-        return vOut;
+        return verifySigningOutput;
     }
 }

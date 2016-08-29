@@ -192,20 +192,22 @@ public class VerifyController extends Controller {
             this.showInfoDialog(infoDialog, masterVerify, "No file selected",
                     "Please, select the signature file and a least one signed file.");
         } else {
-
-            Task<Void> verifyTask = new Task<Void>() {
+            this.showWaitingDialog(waitingDialog, masterVerify, "");
+            Task<List> verifyTask = new Task<List>() {
                 @Override
-                protected Void call() throws Exception {
-                    showWaitingDialog(waitingDialog, masterVerify, "");
-                    return null;
+                protected List call() throws Exception {
+                    return verifyAndGetResults(selectedFiles);
                 }
             };
+            verifyTask.setOnSucceeded( event -> {
+                waitingDialog.close();
+                this.displayVerifyResult(verifyTask.getValue());
+            });
             new Thread(verifyTask).start();
-            verifyAndDisplayResult(selectedFiles);
         }
     }
 
-    private void verifyAndDisplayResult(List<File> selectedFiles) {
+    private List<VerifySigningOutput> verifyAndGetResults(List<File> selectedFiles) {
         List<VerifySigningOutput> results = new ArrayList<>();
         float ind = 1.0f;
         float nbFiles = selectedFiles.size();
@@ -220,7 +222,7 @@ public class VerifyController extends Controller {
                     verifySigningOutput.errorDuringVerification = true;
                     verifySigningOutput.errorMessage = "Unable to retrieve necessary files.";
                     showErrorDialog(errorDialog, masterVerify, "Corrupted file", "Unable to retrieve necessary files.");
-                    return;
+                    return results;
                 }
                 filename = files.get("FILE").name;
                 SigningOutput signingOutput = verifySigningService.getSigningOutput(files.get("SIGNATURE").file);
@@ -249,7 +251,8 @@ public class VerifyController extends Controller {
             }
             ind++;
         }
-        this.displayVerifyResult(results);
+        this.waitingDialog.close();
+        return results;
     }
 
     /**
