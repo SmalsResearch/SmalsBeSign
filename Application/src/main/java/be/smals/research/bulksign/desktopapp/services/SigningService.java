@@ -1,5 +1,7 @@
 package be.smals.research.bulksign.desktopapp.services;
 
+import be.fedict.commons.eid.client.CancelledException;
+import be.fedict.commons.eid.client.spi.UserCancelledException;
 import be.smals.research.bulksign.desktopapp.utilities.SigningOutput;
 import be.smals.research.bulksign.desktopapp.utilities.Utilities;
 import org.w3c.dom.Document;
@@ -7,6 +9,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Text;
 import sun.security.pkcs11.wrapper.PKCS11Exception;
 
+import javax.smartcardio.CardException;
 import javax.xml.bind.DatatypeConverter;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -20,6 +23,7 @@ import javax.xml.transform.stream.StreamResult;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
+import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 import java.text.SimpleDateFormat;
@@ -71,14 +75,9 @@ public class SigningService {
      *
      * @return the signature
      */
-    public byte[] signWithEID(String masterDigest) {
-        try {
-            this.masterDigest = masterDigest;
-            return EIDService.getInstance().signWithBeID(Utilities.getInstance().getSha1(this.masterDigest.getBytes()));
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new byte[0];
-        }
+    public byte[] signWithEID(String masterDigest) throws NoSuchAlgorithmException, CardException, CancelledException, InterruptedException, UserCancelledException, IOException {
+        this.masterDigest = masterDigest;
+        return EIDService.getInstance().signWithBeID(Utilities.getInstance().getSha1(this.masterDigest.getBytes()));
     }
     /**
      * Turns a signing output into a signed zip (.signed.zip)

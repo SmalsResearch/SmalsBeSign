@@ -4,6 +4,7 @@ import be.fedict.commons.eid.client.BeIDCard;
 import be.fedict.commons.eid.client.CancelledException;
 import be.fedict.commons.eid.client.OutOfCardsException;
 import be.fedict.commons.eid.client.spi.BeIDCardsUI;
+import be.fedict.commons.eid.client.spi.UserCancelledException;
 import be.smals.research.bulksign.desktopapp.exception.BulkSignException;
 import be.smals.research.bulksign.desktopapp.services.DigestService;
 import be.smals.research.bulksign.desktopapp.services.EIDService;
@@ -342,7 +343,14 @@ public class SignController extends Controller implements BeIDCardsUI{
     }
     private void signWithBeIDAndSave(List<File> selectedFiles, Task<String> prepareTask,
                                      List<X509Certificate> certificateChain, VerifySigningOutput verifySigningOutput) {
-        byte[] signature = this.signingService.signWithEID(prepareTask.getValue());
+        byte[] signature = new byte[0];
+        try {
+            signature = this.signingService.signWithEID(prepareTask.getValue());
+        } catch (IOException | CardException | InterruptedException | NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (CancelledException | UserCancelledException e) {
+            this.showErrorDialog(errorDialog, masterSign, "Signing canceled!", "Signing operation canceled!");
+        }
         if (signature != null && signature.length!=0) {
             try {
                 this.showWaitingDialog(waitingDialog, masterSign, "Saving\nFiles...");
