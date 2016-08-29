@@ -27,6 +27,8 @@ public class StatusBar extends HBox implements BeIDCardEventsListener, CardTermi
         this.getChildren().addAll(messageLabel);
         this.getStyleClass().add("statusBar");
         this.setAlignment(Pos.CENTER);
+
+        this.setMessage(MessageType.DEFAULT, "Welcome!");
     }
 
     public void setMessage (MessageType messageType, String message) {

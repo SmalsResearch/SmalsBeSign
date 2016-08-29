@@ -141,7 +141,9 @@ public class VerifyController extends Controller {
                         }
                     }
                 } catch (IOException e) {
-                    this.showErrorDialog(errorDialog, masterVerify, "Open SignedFile", "Unable to open the .signed.zip file.");
+                    this.showErrorDialog(errorDialog, masterVerify, "Open File", "Unable to open the .signed.zip file.");
+                } catch (BulkSignException e) {
+                    this.showErrorDialog(errorDialog, masterVerify, "Open file", e.getMessage());
                 }
 
             });
@@ -183,6 +185,52 @@ public class VerifyController extends Controller {
 
         resultLabel.setText(failedCount+" - FAILED | "+warningCount+" - WARNINGS | "+okCount+ " - OK");
     }
+    private List<VerifySigningOutput> verifyAndGetResults(List<File> selectedFiles) {
+        List<VerifySigningOutput> results = new ArrayList<>();
+        float ind = 1.0f;
+        float nbFiles = selectedFiles.size();
+        for (File signedFile : selectedFiles) {
+            int percent = (int)((ind/nbFiles)*100);
+            Platform.runLater(() -> updateWaitingDialogMessage(percent + "% done..."));
+            VerifySigningOutput verifySigningOutput = new VerifySigningOutput();
+            String filename = "";
+            try {
+                Map<String, FileWithAltName> files = Utilities.getInstance().getFilesFromSignedFile(signedFile);
+
+                filename = files.get("FILE").name;
+                SigningOutput signingOutput = verifySigningService.getSigningOutput(files.get("SIGNATURE").file);
+                if (signingOutput != null) {
+                    verifySigningOutput = verifySigningService.verifySigning(files.get("FILE").file, signingOutput);
+                    results.add(verifySigningOutput);
+                } else {
+                    verifySigningOutput.errorDuringVerification = true;
+                    verifySigningOutput.errorMessage = filename+"\nError while parsing the signature file\nThe signature file might be corrupted.";
+                    results.add(verifySigningOutput);
+                }
+            } catch (SignatureException | NoSuchAlgorithmException | InvalidKeyException | CertificateException |
+                    NoSuchProviderException | ParserConfigurationException | IOException | SAXException | ParseException e) {
+                filename = (filename=="" || filename==null) ? signedFile.getName() : filename;
+                verifySigningOutput.errorDuringVerification = true;
+                verifySigningOutput.errorMessage = filename+"\n- "+e.getMessage();
+                results.add(verifySigningOutput);
+            } catch (BulkSignException e) {
+                filename = (filename=="" || filename==null) ? signedFile.getName() : filename;
+                verifySigningOutput.errorDuringVerification = true;
+                verifySigningOutput.errorMessage = filename+"\n"+e.getMessage();
+                results.add(verifySigningOutput);
+            } catch (Exception e) {
+                e.printStackTrace();
+                filename = (filename.equals("") || filename==null) ? signedFile.getName() : filename;
+                verifySigningOutput.errorDuringVerification = true;
+                verifySigningOutput.errorMessage = filename+"\n- "+e.getMessage();
+                results.add(verifySigningOutput);
+            }
+            ind++;
+        }
+        this.waitingDialog.close();
+        return results;
+    }
+
     /**
      * Submits verification
      */
@@ -206,55 +254,6 @@ public class VerifyController extends Controller {
             new Thread(verifyTask).start();
         }
     }
-
-    private List<VerifySigningOutput> verifyAndGetResults(List<File> selectedFiles) {
-        List<VerifySigningOutput> results = new ArrayList<>();
-        float ind = 1.0f;
-        float nbFiles = selectedFiles.size();
-        for (File signedFile : selectedFiles) {
-            int percent = (int)((ind/nbFiles)*100);
-            Platform.runLater(() -> updateWaitingDialogMessage(percent + "% done..."));
-            VerifySigningOutput verifySigningOutput = new VerifySigningOutput();
-            String filename = "";
-            try {
-                Map<String, FileWithAltName> files = Utilities.getInstance().getFilesFromSignedFile(signedFile);
-                if (files.keySet().size()!=3 || files.values().size() != 3) {
-                    verifySigningOutput.errorDuringVerification = true;
-                    verifySigningOutput.errorMessage = "Unable to retrieve necessary files.";
-                    showErrorDialog(errorDialog, masterVerify, "Corrupted file", "Unable to retrieve necessary files.");
-                    return results;
-                }
-                filename = files.get("FILE").name;
-                SigningOutput signingOutput = verifySigningService.getSigningOutput(files.get("SIGNATURE").file);
-                if (signingOutput != null) {
-                    verifySigningOutput = verifySigningService.verifySigning(files.get("FILE").file, signingOutput);
-                    results.add(verifySigningOutput);
-                } else {
-                    verifySigningOutput.errorDuringVerification = true;
-                    verifySigningOutput.errorMessage = filename+"\nError while parsing the signature file\nThe signature file might be corrupted.";
-                    results.add(verifySigningOutput);
-                }
-            } catch (SignatureException | NoSuchAlgorithmException | InvalidKeyException | CertificateException |
-                    NoSuchProviderException | ParserConfigurationException | IOException | SAXException | ParseException e) {
-                verifySigningOutput.errorDuringVerification = true;
-                verifySigningOutput.errorMessage = filename+"\n- "+e.getMessage();
-                results.add(verifySigningOutput);
-            } catch (BulkSignException e) {
-                verifySigningOutput.errorDuringVerification = true;
-                verifySigningOutput.errorMessage = filename+"\n"+e.getMessage();
-                results.add(verifySigningOutput);
-            } catch (Exception e) {
-                e.printStackTrace();
-                verifySigningOutput.errorDuringVerification = true;
-                verifySigningOutput.errorMessage = filename+"\n- "+e.getMessage();
-                results.add(verifySigningOutput);
-            }
-            ind++;
-        }
-        this.waitingDialog.close();
-        return results;
-    }
-
     /**
      * Signed files selection action
      */
@@ -281,7 +280,6 @@ public class VerifyController extends Controller {
     @FXML public void handleCloseVerifyDialog() {
         verifyResultDialog.close();
     }
-
     @FXML public void handleClearListAction() {
         this.filesToVerify.clear();
         this.filesListView.getItems().clear();
