@@ -48,6 +48,7 @@ public class VerifySigningOutput {
     public VerifySigningOutput () {
         digestValid         = false;
         certChainValid      = false;
+        userCertValid       = false;
         intermCertChecked   = false;
         intermCertInCRL     = false;
         intermCertValid     = false;
@@ -55,6 +56,8 @@ public class VerifySigningOutput {
         rootCertInCRL       = false;
         rootCertValid       = false;
         signatureValid      = false;
+
+        errorMessage        = "";
     }
     public VerifySigningOutput (String fileName, String signedBy, Date signedAt) {
         this.fileName       = fileName;
@@ -71,6 +74,8 @@ public class VerifySigningOutput {
         rootCertInCRL       = false;
         rootCertValid       = false;
         signatureValid      = false;
+
+        errorMessage        = "";
     }
 
     public VerifyResult getOutputResult () {

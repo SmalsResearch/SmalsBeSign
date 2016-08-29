@@ -4,9 +4,9 @@ import be.fedict.commons.eid.client.BeIDCards;
 import be.fedict.commons.eid.client.CancelledException;
 import be.fedict.commons.eid.client.FileType;
 import be.fedict.commons.eid.client.impl.BeIDDigest;
+import be.fedict.commons.eid.client.spi.UserCancelledException;
 import be.smals.research.bulksign.desktopapp.eid.EID;
 import be.smals.research.bulksign.desktopapp.eid.EIDObserver;
-import be.smals.research.bulksign.desktopapp.eid.external.UserCancelledException;
 
 import javax.smartcardio.CardException;
 import java.io.IOException;
@@ -116,7 +116,7 @@ public class EIDService {
     public List<X509Certificate> getBeIDCertificateChain () throws CancelledException, CardException, CertificateException, InterruptedException, IOException {
         return this.beID.getOneBeIDCard().getSigningCertificateChain();
     }
-    public byte[] signWithBeID (byte[] masterDigest) throws CancelledException, CardException, be.fedict.commons.eid.client.spi.UserCancelledException, InterruptedException, IOException {
+    public byte[] signWithBeID (byte[] masterDigest) throws CancelledException, CardException, UserCancelledException, InterruptedException, IOException {
         return this.beID.getOneBeIDCard().sign(masterDigest, BeIDDigest.SHA_1, FileType.NonRepudiationCertificate, false);
     }
     /**
@@ -135,17 +135,6 @@ public class EIDService {
     }
 
     // ----- PIN -------------------------------------------------------------------------------------------------------
-    /**
-     * Checks either the pin passed to him is valid for the connected eID card or not
-     *
-     * @param pin the pin code
-     * @return true or false
-     * @throws UserCancelledException
-     * @throws CardException
-     */
-    public boolean isPinValid (char[] pin) throws UserCancelledException, CardException {
-        return this.eID.isPinValid(pin);
-    }
 
     // ----- OTHERS ----------------------------------------------------------------------------------------------------
     /**

@@ -5,7 +5,6 @@ import be.fedict.commons.eid.client.CancelledException;
 import be.fedict.commons.eid.client.OutOfCardsException;
 import be.fedict.commons.eid.client.spi.BeIDCardsUI;
 import be.smals.research.bulksign.desktopapp.eid.EIDObserver;
-import be.smals.research.bulksign.desktopapp.eid.external.UserCancelledException;
 import be.smals.research.bulksign.desktopapp.services.DigestService;
 import be.smals.research.bulksign.desktopapp.services.EIDService;
 import be.smals.research.bulksign.desktopapp.services.SigningService;
@@ -152,8 +151,6 @@ public class SignController extends Controller implements EIDObserver, BeIDCards
                 } else {
                     this.showSignResultDialog ("File saved!", line1);
                 }
-
-
             } catch (CertificateEncodingException e) {
                 waitingDialog.close();
                 this.showErrorDialog(errorDialog, masterSign, "Saving...", "Error while saving the output file...\n"+e.getMessage());
@@ -171,6 +168,7 @@ public class SignController extends Controller implements EIDObserver, BeIDCards
         JFXButton closeButton   = (JFXButton) this.stage.getScene().lookup("#closeResultDialogButton");
         closeButton.setOnAction(event -> signResultDialog.close());
         titleLabel.setText(title);
+        bodyText.getChildren().clear();
         for (Object text:textList){
             bodyText.getChildren().add((Text) text);
         }
@@ -263,6 +261,7 @@ public class SignController extends Controller implements EIDObserver, BeIDCards
 
     // ---------- ------------------------------------------------------------------------------------------------------
     /**
+     * @TODO delete this and eID
      * Validates the user pin code
      *
      * @return true if the PIN code is correct
@@ -281,12 +280,7 @@ public class SignController extends Controller implements EIDObserver, BeIDCards
 
         Optional<String> result = pinDialog.showAndWait();
         if (result.isPresent()) {
-            try {
-                return EIDService.getInstance().isPinValid(passwordField.getText().trim().toCharArray());
-            } catch (UserCancelledException|CardException e) {
-                this.showErrorDialog(errorDialog, masterSign, "Verifying PIN code...",
-                        "Unable to verify your PIN.\nError message : "+e.getMessage());
-            }
+                return false;
         }
 
         return false;

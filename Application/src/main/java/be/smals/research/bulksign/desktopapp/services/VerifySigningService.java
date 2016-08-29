@@ -1,5 +1,6 @@
 package be.smals.research.bulksign.desktopapp.services;
 
+import be.smals.research.bulksign.desktopapp.exception.BulkSignException;
 import be.smals.research.bulksign.desktopapp.utilities.SigningOutput;
 import be.smals.research.bulksign.desktopapp.utilities.Utilities;
 import be.smals.research.bulksign.desktopapp.utilities.VerifySigningOutput;
@@ -274,36 +275,60 @@ public class VerifySigningService {
      * @throws NoSuchProviderException
      */
     public SigningOutput getSigningOutput (File signingOutputFile)
-            throws ParserConfigurationException, IOException, SAXException, CertificateException, NoSuchProviderException, ParseException {
+            throws ParserConfigurationException, IOException, SAXException, CertificateException, NoSuchProviderException, ParseException, BulkSignException {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = factory.newDocumentBuilder();
         Document document = builder.parse(signingOutputFile);
 
         document.getDocumentElement().normalize();
-        Element signingOutputElement    = (Element) document.getElementsByTagName("SigningOutput").item(0);
-        String masterDigest             = signingOutputElement.getElementsByTagName("MasterDigest").item(0).getTextContent().toLowerCase();
-        System.out.println("After master digest");
-        String signedBy                 = signingOutputElement.getElementsByTagName("SignedBy").item(0).getTextContent();
-        System.out.println("After singed by");
-        Date signedAt                   = new SimpleDateFormat("yyyy-MM-dd 'at' HH:mm:ss").parse(signingOutputElement.getElementsByTagName("SignedAt").item(0).getTextContent());
-        byte[] signature                = DatatypeConverter.parseHexBinary(signingOutputElement.getElementsByTagName("Signature").item(0).getTextContent());
-        Element certificateElement      = (Element) signingOutputElement.getElementsByTagName("Certificate").item(0);
-        byte[] userEncodedCertificate   = DatatypeConverter.parseHexBinary(certificateElement.getElementsByTagName("User").item(0).getTextContent());
-        byte[] intermEncodedCertificate = DatatypeConverter.parseHexBinary(certificateElement.getElementsByTagName("Intermediate").item(0).getTextContent());
-        byte[] rootEncodedCertificate   = DatatypeConverter.parseHexBinary(certificateElement.getElementsByTagName("Root").item(0).getTextContent());
-
-        CertificateFactory certFactory  = CertificateFactory.getInstance("X.509", "BC");
-        InputStream encodedStream       = new ByteArrayInputStream(userEncodedCertificate);
-        X509Certificate userCertificate = (X509Certificate) certFactory.generateCertificate(encodedStream);
-        encodedStream                   = new ByteArrayInputStream(intermEncodedCertificate);
-        X509Certificate intermCertificate = (X509Certificate) certFactory.generateCertificate(encodedStream);
-        encodedStream                   = new ByteArrayInputStream(rootEncodedCertificate);
-        X509Certificate rootCertificate = (X509Certificate) certFactory.generateCertificate(encodedStream);
-
+        Element signingOutputElement = (Element) document.getElementsByTagName("SigningOutput").item(0);
+        String masterDigest = signingOutputElement.getElementsByTagName("MasterDigest").item(0).getTextContent().toLowerCase();
+        String signedBy = signingOutputElement.getElementsByTagName("SignedBy").item(0).getTextContent();
+        Date signedAt = new SimpleDateFormat("yyyy-MM-dd 'at' HH:mm:ss").parse(signingOutputElement.getElementsByTagName("SignedAt").item(0).getTextContent());
+        byte[] signature = DatatypeConverter.parseHexBinary(signingOutputElement.getElementsByTagName("Signature").item(0).getTextContent());
+        Element certificateElement = (Element) signingOutputElement.getElementsByTagName("Certificate").item(0);
+        byte[] userEncodedCertificate;
+        byte[] intermEncodedCertificate;
+        byte[] rootEncodedCertificate;
         List<X509Certificate> certificateChain = new ArrayList<>();
-        certificateChain.add(userCertificate);
-        certificateChain.add(intermCertificate);
-        certificateChain.add(rootCertificate);
+
+        try {
+            userEncodedCertificate = DatatypeConverter.parseHexBinary(certificateElement.getElementsByTagName("User").item(0).getTextContent());
+        } catch (Exception e) {
+            throw new BulkSignException("Error while parsing the user certificate.\nThe signature file might be corrupted.");
+        }
+        try {
+            intermEncodedCertificate = DatatypeConverter.parseHexBinary(certificateElement.getElementsByTagName("Intermediate").item(0).getTextContent());
+        } catch (Exception e) {
+            throw new BulkSignException("Error while parsing the intermediate certificate.\nThe signature file might be corrupted.");
+        }
+        try {
+            rootEncodedCertificate = DatatypeConverter.parseHexBinary(certificateElement.getElementsByTagName("Root").item(0).getTextContent());
+        } catch (Exception e) {
+            throw new BulkSignException("Error while parsing the root certificate.\nThe signature file might be corrupted.");
+        }
+        CertificateFactory certFactory = CertificateFactory.getInstance("X.509", "BC");
+        InputStream encodedStream = new ByteArrayInputStream(userEncodedCertificate);
+        try {
+            X509Certificate userCertificate = (X509Certificate) certFactory.generateCertificate(encodedStream);
+            certificateChain.add(userCertificate);
+        } catch (Exception e) {
+            throw new BulkSignException("Error while creating user certificate.\nThe signature file might be corrupted.");
+        }
+        encodedStream = new ByteArrayInputStream(intermEncodedCertificate);
+        try {
+            X509Certificate intermCertificate = (X509Certificate) certFactory.generateCertificate(encodedStream);
+            certificateChain.add(intermCertificate);
+        } catch (Exception e) {
+            throw new BulkSignException("Error while creating intermediate certificate.\nThe signature file might be corrupted.");
+        }
+        encodedStream = new ByteArrayInputStream(rootEncodedCertificate);
+        try {
+            X509Certificate rootCertificate = (X509Certificate) certFactory.generateCertificate(encodedStream);
+            certificateChain.add(rootCertificate);
+        } catch (Exception e){
+            throw new BulkSignException("Error while creating root certificate.\nThe signature file might be corrupted.");
+        }
 
         return new SigningOutput(masterDigest, signature, certificateChain, signedBy, signedAt);
     }
@@ -331,8 +356,8 @@ public class VerifySigningService {
         }
         return found;
     }
-    public VerifySigningOutput verifyCertificates(List<X509Certificate> certificateChain, VerifySigningOutput vOut) throws CertificateException, NoSuchAlgorithmException, InvalidKeyException, NoSuchProviderException, SignatureException, IOException {
-
+    public VerifySigningOutput verifyCertificates(List<X509Certificate> certificateChain, VerifySigningOutput vOut)
+            throws CertificateException, NoSuchAlgorithmException, InvalidKeyException, NoSuchProviderException, SignatureException, IOException {
         if (this.isCertificateChainValid(certificateChain))
             vOut.certChainValid = true;
 
