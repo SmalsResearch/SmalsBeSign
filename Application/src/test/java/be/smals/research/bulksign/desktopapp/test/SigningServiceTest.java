@@ -35,11 +35,11 @@ public class SigningServiceTest {
         }
         FileInputStream[] filesToSign = new FileInputStream[5];
         try {
-            filesToSign[0] = new FileInputStream(new File(getClass().getClassLoader().getResource("file.txt").getPath()));
-            filesToSign[1] = new FileInputStream(new File(getClass().getClassLoader().getResource("file.txt").getPath()));
-            filesToSign[2] = new FileInputStream(new File(getClass().getClassLoader().getResource("file.txt").getPath()));
-            filesToSign[3] = new FileInputStream(new File(getClass().getClassLoader().getResource("file.txt").getPath()));
-            filesToSign[4] = new FileInputStream(new File(getClass().getClassLoader().getResource("file.txt").getPath()));
+            filesToSign[0] = new FileInputStream(new File(getClass().getClassLoader().getResource("files/file.txt").getPath()));
+            filesToSign[1] = new FileInputStream(new File(getClass().getClassLoader().getResource("files/file.txt").getPath()));
+            filesToSign[2] = new FileInputStream(new File(getClass().getClassLoader().getResource("files/file.txt").getPath()));
+            filesToSign[3] = new FileInputStream(new File(getClass().getClassLoader().getResource("files/file.txt").getPath()));
+            filesToSign[4] = new FileInputStream(new File(getClass().getClassLoader().getResource("files/file.txt").getPath()));
 
             byte[] signature = this.signingService.signWithMock(filesToSign);
 
