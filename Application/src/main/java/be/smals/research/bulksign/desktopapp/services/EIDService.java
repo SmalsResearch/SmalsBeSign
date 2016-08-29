@@ -1,9 +1,11 @@
 package be.smals.research.bulksign.desktopapp.services;
 
+import be.fedict.commons.eid.client.BeIDCard;
 import be.fedict.commons.eid.client.BeIDCards;
 import be.fedict.commons.eid.client.CancelledException;
 import be.fedict.commons.eid.client.FileType;
 import be.fedict.commons.eid.client.impl.BeIDDigest;
+import be.fedict.commons.eid.client.impl.CCID;
 import be.fedict.commons.eid.client.spi.UserCancelledException;
 
 import javax.smartcardio.CardException;
@@ -51,7 +53,11 @@ public class EIDService {
      * @throws CardException
      */
     public byte[] signWithBeID (byte[] masterDigest) throws CancelledException, CardException, UserCancelledException, InterruptedException, IOException {
-        return this.beID.getOneBeIDCard().sign(masterDigest, BeIDDigest.SHA_1, FileType.NonRepudiationCertificate, false);
+        BeIDCard card = this.beID.getOneBeIDCard();
+        if (card.cardTerminalHasCCIDFeature(CCID.FEATURE.EID_PIN_PAD_READER))
+            return this.beID.getOneBeIDCard().sign(masterDigest, BeIDDigest.SHA_1, FileType.NonRepudiationCertificate, true);
+        else
+            return this.beID.getOneBeIDCard().sign(masterDigest, BeIDDigest.SHA_1, FileType.NonRepudiationCertificate, false);
     }
 
     // ----- PIN -------------------------------------------------------------------------------------------------------

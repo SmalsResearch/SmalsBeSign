@@ -207,22 +207,23 @@ public class VerifyController extends Controller {
                     verifySigningOutput.errorMessage = filename+"\nError while parsing the signature file\nThe signature file might be corrupted.";
                     results.add(verifySigningOutput);
                 }
-            } catch (SignatureException | NoSuchAlgorithmException | InvalidKeyException | CertificateException |
+            } catch (SignatureException | NoSuchAlgorithmException | CertificateException |
                     NoSuchProviderException | ParserConfigurationException | IOException | SAXException | ParseException e) {
+                e.printStackTrace();
                 filename = (filename=="" || filename==null) ? signedFile.getName() : filename;
                 verifySigningOutput.errorDuringVerification = true;
-                verifySigningOutput.errorMessage = filename+"\n- "+e.getMessage();
+                verifySigningOutput.errorMessage = filename+" - FAILED\n- "+e.getMessage();
                 results.add(verifySigningOutput);
-            } catch (BulkSignException e) {
+            } catch (InvalidKeyException | BulkSignException e) {
                 filename = (filename=="" || filename==null) ? signedFile.getName() : filename;
                 verifySigningOutput.errorDuringVerification = true;
-                verifySigningOutput.errorMessage = filename+"\n"+e.getMessage();
+                verifySigningOutput.errorMessage = filename+" - FAILED\n- "+e.getMessage();
                 results.add(verifySigningOutput);
             } catch (Exception e) {
                 e.printStackTrace();
                 filename = (filename.equals("") || filename==null) ? signedFile.getName() : filename;
                 verifySigningOutput.errorDuringVerification = true;
-                verifySigningOutput.errorMessage = filename+"\n- "+e.getMessage();
+                verifySigningOutput.errorMessage = filename+" - FAILED\n- "+e.getMessage();
                 results.add(verifySigningOutput);
             }
             ind++;

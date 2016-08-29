@@ -45,10 +45,10 @@
       <JFXDialog fx:id="infoDialog">
           <JFXDialogLayout>
               <heading>
-                  <Label id="infoDialogTitle" fx:id="infoDialogTile" styleClass="color-info" />
+                  <Label id="infoDialogTitle" styleClass="color-info" text="No file to sign" />
               </heading>
               <body>
-                  <Label id="infoDialogBody" fx:id="infoDialogBody" />
+                  <Label id="infoDialogBody" text="Please, select at least one file before you proceed." />
               </body>
               <actions>
                   <JFXButton id="closeInfoDialogButton" styleClass="button-s">CLOSE</JFXButton>

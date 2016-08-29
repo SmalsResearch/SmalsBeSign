@@ -4,6 +4,7 @@ import be.fedict.commons.eid.client.BeIDCard;
 import be.fedict.commons.eid.client.CancelledException;
 import be.fedict.commons.eid.client.OutOfCardsException;
 import be.fedict.commons.eid.client.spi.BeIDCardsUI;
+import be.smals.research.bulksign.desktopapp.exception.BulkSignException;
 import be.smals.research.bulksign.desktopapp.services.DigestService;
 import be.smals.research.bulksign.desktopapp.services.EIDService;
 import be.smals.research.bulksign.desktopapp.services.SigningService;
@@ -316,6 +317,11 @@ public class SignController extends Controller implements BeIDCardsUI{
                             e.getMessage());
                     e.printStackTrace();
                 } catch (InterruptedException | CancelledException e) {
+                    e.printStackTrace();
+                } catch (BulkSignException e) {
+                    this.waitingDialog.close();
+                    this.showErrorDialog(errorDialog, masterSign, "Error while verifying...",
+                            e.getMessage());
                     e.printStackTrace();
                 }
             });

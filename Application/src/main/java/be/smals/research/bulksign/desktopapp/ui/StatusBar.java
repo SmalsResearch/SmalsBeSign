@@ -73,6 +73,7 @@ public class StatusBar extends HBox implements BeIDCardEventsListener, CardTermi
     public void terminalEventsInitialized() {}
     @Override
     public void terminalAttached(CardTerminal cardTerminal) {
+        System.out.println(cardTerminal.getName());
         Platform.runLater(() ->setMessage(MessageType.DEFAULT, "A new terminal has been attached"));
     }
     @Override

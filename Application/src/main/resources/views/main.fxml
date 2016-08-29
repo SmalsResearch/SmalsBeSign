@@ -35,10 +35,12 @@
        <JFXDialog fx:id="aboutDialog">
            <JFXDialogLayout>
                <heading>
-                   <Label styleClass="color">About BulkSign Desktop</Label>
+                   <Label styleClass="color">About SmalsBeSign</Label>
                </heading>
                <body>
-                   <Label>... to be added</Label>
+                   <ScrollPane style="-fx-background-color:WHITE">
+                        <Label id="aboutDialogContent" fx:id="aboutDialogContent"></Label>
+                   </ScrollPane>
                </body>
                <actions>
                    <JFXButton onAction="#handleCloseAboutDialogButtonAction" styleClass="button-s">CLOSE</JFXButton>

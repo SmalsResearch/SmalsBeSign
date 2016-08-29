@@ -8,11 +8,18 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
+import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
+import java.util.List;
 
 /**
  * Main screen controller
@@ -26,6 +33,7 @@ public class MainController extends Controller{
     @FXML private JFXDialog exitDialog;
     @FXML private JFXDialog aboutDialog;
     @FXML private JFXDialog waitingDialog;
+    @FXML private Label aboutDialogContent;
 
     /**
      * Constructor
@@ -39,6 +47,18 @@ public class MainController extends Controller{
     public void initController(MainController mainController, Stage stage) {
         super.initController(this, stage);
         aboutDialog.setTransitionType(JFXDialog.DialogTransition.TOP);
+
+        try {
+            InputStream is = this.getClass().getClassLoader().getResourceAsStream("files/README.txt");
+            File tempFile = File.createTempFile("README_SMALSBESIGN", ".txt");
+            Files.copy(is, tempFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            List<String> lines = Files.readAllLines(tempFile.toPath(), Charset.defaultCharset());
+            for (String line:lines) {
+                this.aboutDialogContent.setText(this.aboutDialogContent.getText()+"\n"+line);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
