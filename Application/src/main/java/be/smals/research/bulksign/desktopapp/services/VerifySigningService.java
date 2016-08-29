@@ -49,36 +49,23 @@ public class VerifySigningService {
      */
     public VerifySigningOutput verifySigning (File file, SigningOutput sOut)
             throws NoSuchAlgorithmException, IOException, NoSuchProviderException, InvalidKeyException,
-            SignatureException, CertificateException {
-        VerifySigningOutput vOut = new VerifySigningOutput(file.getName(), sOut.author, sOut.createdAt);
+            SignatureException, CertificateException, BulkSignException {
+        VerifySigningOutput verifySigningOutput = new VerifySigningOutput(file.getName(), sOut.author, sOut.createdAt);
 
         String fileDigest = DigestService.getInstance().computeIndividualDigest(new FileInputStream(file));
         if (!this.isIndividualDigestPartOfMasterDigest(sOut.masterDigest, fileDigest))
-            return vOut;
-        vOut.digestValid = true;
+            return verifySigningOutput;
+        verifySigningOutput.digestValid = true;
 
-        this.verifyCertificates(sOut.certificateChain, vOut);
+        this.verifyCertificates(sOut.certificateChain, verifySigningOutput);
 
         Signature signer = Signature.getInstance("SHA1withRSA", "BC");
         signer.initVerify(sOut.certificateChain.get(0).getPublicKey()); // [0] is the user certificate
         signer.update(sOut.masterDigest.getBytes());
         if (signer.verify(sOut.signature))
-            vOut.signatureValid = true;
+            verifySigningOutput.signatureValid = true;
 
-        // /!\ Only for test purpose
-//        vOut.digestValid         = true;
-//        vOut.certChainValid      = true;
-//        vOut.userCertChecked     = true;
-//        vOut.userCertValid       = true;
-//        vOut.intermCertChecked   = true;
-//        vOut.intermCertInCRL     = true;
-//        vOut.intermCertValid     = true;
-//        vOut.rootCertChecked     = true;
-//        vOut.rootCertInCRL       = true;
-//        vOut.rootCertValid       = true;
-//        vOut.signatureValid      = true;
-
-        return vOut;
+        return verifySigningOutput;
     }
     /**
      * Used to check if the certificate chain is valid
@@ -92,13 +79,26 @@ public class VerifySigningService {
      * @throws SignatureException
      */
     private boolean isCertificateChainValid(List<X509Certificate> certificateChain)
-            throws NoSuchAlgorithmException, CertificateException, NoSuchProviderException, InvalidKeyException, SignatureException {
+            throws NoSuchAlgorithmException, CertificateException, NoSuchProviderException, InvalidKeyException, SignatureException, BulkSignException {
         X509Certificate rootCert    = certificateChain.get(2);
         X509Certificate intermCert  = certificateChain.get(1);
         X509Certificate userCert    = certificateChain.get(0);
-        boolean userCertValid       = this.isCertificateValid(userCert, intermCert.getPublicKey());
-        boolean intermCertValid     = this.isCertificateValid(intermCert, rootCert.getPublicKey());
-        boolean rootCertValid       = this.isCertificateValid(rootCert, rootCert.getPublicKey());
+        boolean userCertValid, intermCertValid, rootCertValid;
+        try {
+            userCertValid = this.isCertificateValid(userCert, intermCert.getPublicKey());
+        } catch (Exception e) {
+            throw new BulkSignException("Unable to validate the user certificate");
+        }
+        try {
+            intermCertValid = this.isCertificateValid(intermCert, rootCert.getPublicKey());
+        } catch (Exception e) {
+            throw new BulkSignException("Unable to validate the intermediate certificate");
+        }
+        try {
+            rootCertValid = this.isCertificateValid(rootCert, rootCert.getPublicKey());
+        } catch (Exception e) {
+            throw new BulkSignException("Unable to validate the root certificate");
+        }
         return userCertValid && intermCertValid && rootCertValid;
     }
     /**
@@ -173,7 +173,6 @@ public class VerifySigningService {
         }
         return false;
     }
-
     /**
      *
      * @param certificate
@@ -276,10 +275,15 @@ public class VerifySigningService {
      */
     public SigningOutput getSigningOutput (File signingOutputFile)
             throws ParserConfigurationException, IOException, SAXException, CertificateException, NoSuchProviderException, ParseException, BulkSignException {
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        DocumentBuilder builder = factory.newDocumentBuilder();
-        Document document = builder.parse(signingOutputFile);
-        document.getDocumentElement().normalize();
+        Document document;
+        try {
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder builder = factory.newDocumentBuilder();
+            document = builder.parse(signingOutputFile);
+            document.getDocumentElement().normalize();
+        } catch (Exception e) {
+            throw new BulkSignException("Unable to parse the signature file.\nThe file might be corrupted.");
+        }
 
         Element signingOutputElement, certificateElement;
         List<X509Certificate> certificateChain = new ArrayList<>();
@@ -383,9 +387,11 @@ public class VerifySigningService {
         return found;
     }
     public VerifySigningOutput verifyCertificates(List<X509Certificate> certificateChain, VerifySigningOutput verifySigningOutput)
-            throws CertificateException, NoSuchAlgorithmException, InvalidKeyException, NoSuchProviderException, SignatureException, IOException {
+            throws CertificateException, NoSuchAlgorithmException, InvalidKeyException, NoSuchProviderException, SignatureException, IOException, BulkSignException {
         if (this.isCertificateChainValid(certificateChain))
             verifySigningOutput.certChainValid = true;
+        else
+            return verifySigningOutput;
 
         if (Utilities.getInstance().isInternetReachable()) {
             verifySigningOutput.userCertChecked = true;

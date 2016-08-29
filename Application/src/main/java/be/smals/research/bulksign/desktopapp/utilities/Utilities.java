@@ -1,5 +1,6 @@
 package be.smals.research.bulksign.desktopapp.utilities;
 
+import be.smals.research.bulksign.desktopapp.exception.BulkSignException;
 import be.smals.research.bulksign.desktopapp.ui.FileListItem;
 import javafx.collections.ObservableList;
 import javafx.scene.control.ListView;
@@ -113,7 +114,7 @@ public class Utilities {
      * @param signedFile
      * @return a map matching files with they identity
      */
-    public Map<String, VerifySigningOutput.FileWithAltName> getFilesFromSignedFile(File signedFile) throws IOException {
+    public Map<String, VerifySigningOutput.FileWithAltName> getFilesFromSignedFile(File signedFile) throws IOException, BulkSignException {
         byte[] buffer = new byte[1024];
         Map<String, VerifySigningOutput.FileWithAltName> files = new HashMap<>();
         ZipInputStream zipInputStream   = new ZipInputStream(new FileInputStream(signedFile));
@@ -140,8 +141,17 @@ public class Utilities {
             fileCount++;
             zipEntry = zipInputStream.getNextEntry();
         }
-        if (fileCount != 3)
-            throw new IOException("Unable to retrieve necessary files");
+        if (fileCount != 3) {
+            String message = "- Unable to retrieve necessary files";
+            if (!files.containsKey("FILE") || files.get("FILE") == null)
+                message += "\n--- The original file is missing";
+            if (!files.containsKey("SIGNATURE") || files.get("SIGNATURE") == null)
+                message += "\n--- The signature file is missing";
+            if (!files.containsKey("README") || files.get("README") == null)
+                message += "\n--- The readme file is missing";
+
+            throw new BulkSignException(message);
+        }
 
         zipInputStream.closeEntry();
         zipInputStream.close();

@@ -148,9 +148,9 @@
                   </Label>
                   <Pane fx:id="readerPane" GridPane.rowIndex="1" />
                </children>
-               <padding>
-                  <Insets left="12.0" top="24.0" />
-               </padding>
+                <padding>
+                    <Insets bottom="24.0" left="12.0" right="24.0" top="24.0" />
+                </padding>
             </GridPane>
             </items>
          <StackPane.margin>
