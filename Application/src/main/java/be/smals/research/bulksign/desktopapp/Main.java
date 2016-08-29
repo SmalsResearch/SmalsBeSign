@@ -51,7 +51,6 @@ public class Main extends Application {
         BeIDCardManager beIDCardManager = new BeIDCardManager();
         beIDCardManager.addBeIDCardEventListener(statusBar);
         beIDCardManager.start();
-        EIDService.getInstance().registerAsEIDServiceObserver(statusBar);
         root.setBottom(statusBar);
         // ----- TOP ---------------------------------------------------------------------------------------------------
         createTop(controller, root);

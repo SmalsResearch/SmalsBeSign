@@ -4,7 +4,6 @@ import be.fedict.commons.eid.client.BeIDCard;
 import be.fedict.commons.eid.client.CancelledException;
 import be.fedict.commons.eid.client.OutOfCardsException;
 import be.fedict.commons.eid.client.spi.BeIDCardsUI;
-import be.smals.research.bulksign.desktopapp.eid.EIDObserver;
 import be.smals.research.bulksign.desktopapp.services.DigestService;
 import be.smals.research.bulksign.desktopapp.services.EIDService;
 import be.smals.research.bulksign.desktopapp.services.SigningService;
@@ -17,16 +16,13 @@ import be.smals.research.bulksign.desktopapp.utilities.VerifySigningOutput;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXCheckBox;
 import com.jfoenix.controls.JFXDialog;
-import com.jfoenix.controls.JFXPasswordField;
-import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
-import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -55,15 +51,17 @@ import java.security.SignatureException;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Sign screen controller
  *
  * Handles events from Sign view
  */
-public class SignController extends Controller implements EIDObserver, BeIDCardsUI{
+public class SignController extends Controller implements BeIDCardsUI{
 
     private SigningService signingService;
     private VerifySigningService verifySigningService;
@@ -107,7 +105,6 @@ public class SignController extends Controller implements EIDObserver, BeIDCards
     @Override
     public void initController(MainController mainController, Stage stage) {
         super.initController(mainController, stage);
-        EIDService.getInstance().registerAsEIDObserver(this);
 
         this.viewerFx = new OpenViewerFX(readerPane, getClass().getClassLoader().getResource("lib/OpenViewerFx/preferences/custom.xml").getPath());
         this.viewerFx.getRoot().prefWidthProperty().bind(readerPane.widthProperty());
@@ -261,31 +258,6 @@ public class SignController extends Controller implements EIDObserver, BeIDCards
 
     // ---------- ------------------------------------------------------------------------------------------------------
     /**
-     * @TODO delete this and eID
-     * Validates the user pin code
-     *
-     * @return true if the PIN code is correct
-     */
-    private boolean askAndVerifyPin() {
-        Dialog<String> pinDialog = new Dialog<>();
-        pinDialog.setTitle("PIN Code");
-        pinDialog.setHeaderText("Please, enter your Pin code");
-        JFXPasswordField passwordField = new JFXPasswordField();
-        passwordField.setFocusColor(Color.web("#52BBFE"));
-        passwordField.setPrefWidth(200);
-        ButtonType validateButtonType = new ButtonType("Ok", ButtonBar.ButtonData.OK_DONE);
-        pinDialog.getDialogPane().getButtonTypes().add(validateButtonType);
-        pinDialog.getDialogPane().setContent(passwordField);
-        Platform.runLater( () -> passwordField.requestFocus());
-
-        Optional<String> result = pinDialog.showAndWait();
-        if (result.isPresent()) {
-                return false;
-        }
-
-        return false;
-    }
-    /**
      * Performs signing with eID card process
      *
      * @param selectedFiles files to sign
@@ -396,11 +368,6 @@ public class SignController extends Controller implements EIDObserver, BeIDCards
         this.fileCountLabel.setText("");
     }
 
-    // ---------- Observable notifications
-    @Override
-    public void getPinCode() {
-        this.askAndVerifyPin();
-    }
     // BeIDCards UI ----------------------------------------------------------------------------------------------------
     @Override
     public void setLocale(Locale locale) {
