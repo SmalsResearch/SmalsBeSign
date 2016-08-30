@@ -44,33 +44,6 @@ public class SigningService {
     public SigningService() throws IOException, PKCS11Exception {}
 
     /**
-     * Computes the digest of given files and sign them
-     *
-     * @param inputStreams files to sign
-     * @return the signature
-     */
-    public byte[] signWithMock (InputStream[] inputStreams) {
-        byte[] signErrorOutput = new byte[0];
-
-        try {
-            try {
-                this.masterDigest = DigestService.getInstance().computeMasterDigest(inputStreams);
-                byte[] signature;
-
-                MockSigningService.getInstance().initSign(this.masterDigest);
-                signature = MockSigningService.getInstance().sign();
-
-                return (signature);
-            } catch (Exception e) {
-                System.out.println("[Catch] Exception: " + e.getMessage());
-                return (signErrorOutput);
-            }
-        } catch (Exception e) {
-            System.out.println("[Catch] Exception: " + e.getMessage());
-            return (signErrorOutput);
-        }
-    }
-    /**
      * Sign the MasterDigest with an eID
      *
      * @return the signature

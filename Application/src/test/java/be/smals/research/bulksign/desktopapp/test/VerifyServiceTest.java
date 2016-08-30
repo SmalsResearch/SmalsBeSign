@@ -45,24 +45,42 @@ public class VerifyServiceTest {
         Assert.assertTrue(output.getOutputResult().equals(VerifySigningOutput.VerifyResult.OK)
                 || output.getOutputResult().equals(VerifySigningOutput.VerifyResult.WARNING));
     }
+
     /*
     ---------- Signature defect cases :
      */
-
     /**
-     * Signature case 01 : Missing Signature node from signature file
+     * Signature case 01 : Empty signature file
+     *
+     * Expect : BulkSignException with error message
      */
     @Test(expectedExceptions = BulkSignException.class)
     public void signatureCase01 () throws SAXException, ParseException, IOException, NoSuchProviderException, BulkSignException, ParserConfigurationException, CertificateException {
+        File signatureFile  = new File(getClass().getClassLoader().getResource("files/SignatureFile-empty.sig").getPath());
+        verifySigningService.getSigningOutput(signatureFile);
+    }
+    /**
+     * Signature case 02 : Missing Signature node from signature file
+     *
+     * Expect : BulkSignException with error message
+     */
+    @Test(expectedExceptions = BulkSignException.class)
+    public void signatureCase02 () throws SAXException, ParseException, IOException, NoSuchProviderException, BulkSignException, ParserConfigurationException, CertificateException {
         File signatureFile  = new File(getClass().getClassLoader().getResource("files/SignatureFile-no-signature-node.sig").getPath());
         verifySigningService.getSigningOutput(signatureFile);
     }
-    @Test public void signatureCase02 () throws SAXException, ParseException, IOException, NoSuchProviderException, BulkSignException, ParserConfigurationException, CertificateException, NoSuchAlgorithmException, InvalidKeyException, SignatureException {
+
+    /**
+     * Signature case 03 : Wrong signature
+     *
+     * Expect : Signature verification - FAILED AND Result - FAILED
+     */
+    @Test public void signatureCase03 () throws SAXException, ParseException, IOException, NoSuchProviderException, BulkSignException, ParserConfigurationException, CertificateException, NoSuchAlgorithmException, InvalidKeyException, SignatureException {
         File signedPdfFile  = new File(getClass().getClassLoader().getResource("files/signedPdf.pdf").getPath());
         File signatureFile  = new File(getClass().getClassLoader().getResource("files/SignatureFile-wrong-signature.sig").getPath());
         SigningOutput signature = verifySigningService.getSigningOutput(signatureFile);
         VerifySigningOutput output = verifySigningService.verifySigning(signedPdfFile, signature);
 
-        Assert.assertTrue(output.getOutputResult().equals(VerifySigningOutput.VerifyResult.FAILED));
+        Assert.assertTrue(!output.signatureValid && output.getOutputResult().equals(VerifySigningOutput.VerifyResult.FAILED));
     }
 }
