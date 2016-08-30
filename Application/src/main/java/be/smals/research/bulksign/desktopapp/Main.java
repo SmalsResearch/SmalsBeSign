@@ -4,6 +4,7 @@ import be.fedict.commons.eid.client.BeIDCardManager;
 import be.fedict.commons.eid.client.CardAndTerminalManager;
 import be.smals.research.bulksign.desktopapp.controllers.MainController;
 import be.smals.research.bulksign.desktopapp.ui.StatusBar;
+import be.smals.research.bulksign.desktopapp.utilities.ProxyFinder;
 import be.smals.research.bulksign.desktopapp.utilities.Settings;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -33,6 +34,7 @@ public class Main extends Application {
      * @param args arguments
      */
     public static void main(String[] args) {
+        ProxyFinder.main(args);
         launch(args);
     }
     /**

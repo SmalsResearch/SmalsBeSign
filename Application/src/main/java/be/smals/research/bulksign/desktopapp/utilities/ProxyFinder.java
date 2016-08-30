@@ -2,11 +2,13 @@ package be.smals.research.bulksign.desktopapp.utilities;
 
 import com.github.markusbernhardt.proxy.ProxySearch;
 import com.github.markusbernhardt.proxy.selector.misc.BufferedProxySelector;
+import com.github.markusbernhardt.proxy.util.Logger;
 import com.github.markusbernhardt.proxy.util.PlatformUtil;
 import org.apache.commons.io.IOUtils;
 
 import java.io.IOException;
 import java.net.*;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Scanner;
@@ -55,6 +57,17 @@ public class ProxyFinder {
         try {
             System.setProperty("java.net.useSystemProxies","true");
             ProxySearch ps = ProxySearch.getDefaultProxySearch();
+            Logger.setBackend(new Logger.LogBackEnd() {
+                @Override
+                public void log(Class<?> aClass, Logger.LogLevel logLevel, String s, Object... objects) {
+                    System.out.println("**proxy-vole** "+s+ " "+ Arrays.deepToString(objects));
+                }
+
+                @Override
+                public boolean isLogginEnabled(Logger.LogLevel logLevel) {
+                    return true;
+                }
+            });
             if (PlatformUtil.getCurrentPlattform() == PlatformUtil.Platform.WIN) {
                 System.out.println("OS: windows");
                 ps.addStrategy(ProxySearch.Strategy.IE);
