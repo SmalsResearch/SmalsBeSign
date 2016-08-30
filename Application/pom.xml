@@ -91,7 +91,6 @@
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
             <version>2.5</version>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>commons-logging</groupId>
@@ -110,6 +109,11 @@
             <artifactId>easymock</artifactId>
             <version>3.0</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.github.markusbernhardt</groupId>
+            <artifactId>proxy-vole</artifactId>
+            <version>1.0.2</version>
         </dependency>
     </dependencies>
 

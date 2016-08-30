@@ -2,7 +2,6 @@ package be.smals.research.bulksign.desktopapp;
 
 import be.fedict.commons.eid.client.BeIDCardManager;
 import be.smals.research.bulksign.desktopapp.controllers.MainController;
-import be.smals.research.bulksign.desktopapp.services.EIDService;
 import be.smals.research.bulksign.desktopapp.ui.StatusBar;
 import be.smals.research.bulksign.desktopapp.utilities.Settings;
 import javafx.application.Application;
