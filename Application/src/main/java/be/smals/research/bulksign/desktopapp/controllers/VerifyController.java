@@ -134,7 +134,6 @@ public class VerifyController extends Controller {
                         setFileInViewer(listItem);
                     } else {
                         try {
-                            System.out.println("//" +signedFile.file.getName());
                             Desktop.getDesktop().open(signedFile.file);
                             listItem.setFileViewed(true);
                         } catch (IOException e) {
