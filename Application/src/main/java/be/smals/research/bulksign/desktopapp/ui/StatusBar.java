@@ -60,12 +60,12 @@ public class StatusBar extends HBox implements BeIDCardEventsListener, CardTermi
     public void eIDCardEventsInitialized() {}
     @Override
     public void eIDCardInserted(CardTerminal cardTerminal, BeIDCard beIDCard) {
-        Platform.runLater(() ->setMessage(MessageType.DEFAULT, "eID Card inserted"));
+        Platform.runLater(() ->setMessage(MessageType.DEFAULT, "eID Card inserted inside "+cardTerminal.getName()+" reader."));
         Settings.getInstance().setEIDCardPresent(true);
     }
     @Override
     public void eIDCardRemoved(CardTerminal cardTerminal, BeIDCard beIDCard) {
-        Platform.runLater(() -> setMessage(MessageType.DEFAULT, "eID Card removed"));
+        Platform.runLater(() -> setMessage(MessageType.DEFAULT, "eID Card removed."));
         Settings.getInstance().setEIDCardPresent(false);
     }
     // ----- Terminal Events
@@ -73,10 +73,10 @@ public class StatusBar extends HBox implements BeIDCardEventsListener, CardTermi
     public void terminalEventsInitialized() {}
     @Override
     public void terminalAttached(CardTerminal cardTerminal) {
-        Platform.runLater(() ->setMessage(MessageType.DEFAULT, "The reader - "+cardTerminal.getName()+" - has been attached"));
+        Platform.runLater(() ->setMessage(MessageType.DEFAULT, cardTerminal.getName()+" reader has been attached."));
     }
     @Override
     public void terminalDetached(CardTerminal cardTerminal) {
-        Platform.runLater(() ->setMessage(MessageType.DEFAULT, "The reader - "+cardTerminal.getName()+" - has been detached"));
+        Platform.runLater(() ->setMessage(MessageType.DEFAULT, cardTerminal.getName()+" reader has been detached."));
     }
 }

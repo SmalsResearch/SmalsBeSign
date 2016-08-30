@@ -47,6 +47,11 @@ public class MainController extends Controller{
     public void initController(MainController mainController, Stage stage) {
         super.initController(this, stage);
         aboutDialog.setTransitionType(JFXDialog.DialogTransition.TOP);
+        waitingDialog.setTransitionType(JFXDialog.DialogTransition.TOP);
+        exitDialog.setTransitionType(JFXDialog.DialogTransition.TOP);
+        aboutDialog.setOverlayClose(false);
+        waitingDialog.setOverlayClose(false);
+        exitDialog.setOverlayClose(false);
 
         try {
             InputStream is = this.getClass().getClassLoader().getResourceAsStream("files/README.txt");

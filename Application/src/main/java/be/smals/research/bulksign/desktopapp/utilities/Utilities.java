@@ -141,7 +141,7 @@ public class Utilities {
             fileCount++;
             zipEntry = zipInputStream.getNextEntry();
         }
-        String message = "- Unable to retrieve necessary files";
+        String message = "Unable to retrieve necessary files";
         if (!files.containsKey("FILE") || files.get("FILE") == null) {
             message += "\n--- The original file is missing";
             throw new BulkSignException(message);

@@ -32,6 +32,9 @@ public class HomeController extends Controller{
         this.infoDialog.setTransitionType(JFXDialog.DialogTransition.TOP);
         this.errorDialog.setTransitionType(JFXDialog.DialogTransition.TOP);
         this.successDialog.setTransitionType(JFXDialog.DialogTransition.TOP);
+        this.infoDialog.setOverlayClose(false);
+        this.errorDialog.setOverlayClose(false);
+        this.successDialog.setOverlayClose(false);
     }
 
     /**

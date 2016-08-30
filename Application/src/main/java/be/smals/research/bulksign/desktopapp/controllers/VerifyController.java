@@ -94,7 +94,10 @@ public class VerifyController extends Controller {
         this.errorDialog.setTransitionType(JFXDialog.DialogTransition.TOP);
         this.waitingDialog.setTransitionType(JFXDialog.DialogTransition.TOP);
         this.verifyResultDialog.setTransitionType(JFXDialog.DialogTransition.TOP);
-
+        this.infoDialog.setOverlayClose(false);
+        this.errorDialog.setOverlayClose(false);
+        this.waitingDialog.setOverlayClose(false);
+        this.verifyResultDialog.setOverlayClose(false);
     }
     /**
      * Returns selected files from the file list

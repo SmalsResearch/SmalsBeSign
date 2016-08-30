@@ -115,6 +115,11 @@ public class SignController extends Controller implements BeIDCardsUI{
         this.errorDialog.setTransitionType(JFXDialog.DialogTransition.TOP);
         this.successDialog.setTransitionType(JFXDialog.DialogTransition.TOP);
         this.signResultDialog.setTransitionType(JFXDialog.DialogTransition.TOP);
+        this.infoDialog.setOverlayClose(false);
+        this.errorDialog.setOverlayClose(false);
+        this.successDialog.setOverlayClose(false);
+        this.waitingDialog.setOverlayClose(false);
+        this.signResultDialog.setOverlayClose(false);
     }
 
     private void setupViewer() {
