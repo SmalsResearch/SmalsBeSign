@@ -125,6 +125,7 @@ public class VerifyController extends Controller {
                     FileWithAltName signedFile = signedZipFiles.get("FILE");
                     // Check extension to display in viewer or not
                     if (Utilities.getInstance().getFileExtension(signedFile.name).equalsIgnoreCase("pdf")) {
+                        viewerFx.getPdfDecoder().closePdfFile();
                         Object[] args = {signedFile.file};
                         viewerFx.executeCommand(Commands.OPENFILE, args);
                         readerTitle.setText(file.getName());
@@ -133,7 +134,7 @@ public class VerifyController extends Controller {
                         setFileInViewer(listItem);
                     } else {
                         try {
-                            Desktop.getDesktop().open(file);
+                            Desktop.getDesktop().open(signedFile.file);
                             listItem.setFileViewed(true);
                         } catch (IOException e) {
                             this.showErrorDialog(errorDialog, masterVerify, "Unable to open the file...",
@@ -259,10 +260,12 @@ public class VerifyController extends Controller {
      * Signed files selection action
      */
     @FXML private void handleSelectSignFileButtonAction () {
-        this.fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Signed Files (SIGNED.ZIP)", "*.signed.zip"));
+        this.fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Signed Files (SIGNED.ZIP)", "*.zip"));
+        this.fileChooser.setInitialDirectory(this.lastDirectory);
         List<File> files = this.fileChooser.showOpenMultipleDialog(this.stage);
         this.fileChooser.getExtensionFilters().clear();
         if (files != null) {
+            this.lastDirectory = files.get(0).getParentFile();
             files.stream().filter(file -> !this.filesToVerify.contains(file)).forEach(file -> this.filesToVerify.add(file));
             this.filesToSignCount.textProperty().set(this.filesToVerify.size() +" file(s)");
             this.populateListView();
@@ -286,5 +289,8 @@ public class VerifyController extends Controller {
         this.filesListView.getItems().clear();
         this.selectAllCheckBox.setSelected(false);
         this.filesToSignCount.setText("");
+
+        this.readerTitle.setText("No file in viewer");
+        this.viewerFx.getPdfDecoder().closePdfFile();
     }
 }

@@ -6,12 +6,15 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
+import java.io.File;
+
 /**
  * Controllers superclass
  */
 public abstract class Controller {
     protected Stage stage;
     protected MainController mainController;
+    protected File lastDirectory;
 
     /**
      * Gives to controllers access to the main stage and controller
@@ -42,7 +45,6 @@ public abstract class Controller {
         titleLabel.setText(title);
         bodyLabel.setText(message);
     }
-
     /**
      * Displays a classic SuccessDialog
      *
@@ -61,7 +63,6 @@ public abstract class Controller {
         titleLabel.setText(title);
         bodyLabel.setText(message);
     }
-
     /**
      * Displays a classic ErrorDialog
      *

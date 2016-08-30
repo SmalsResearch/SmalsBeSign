@@ -4,6 +4,7 @@ import be.fedict.commons.eid.client.BeIDCard;
 import be.fedict.commons.eid.client.CancelledException;
 import be.fedict.commons.eid.client.OutOfCardsException;
 import be.fedict.commons.eid.client.spi.BeIDCardsUI;
+import be.fedict.commons.eid.client.spi.UserCancelledException;
 import be.smals.research.bulksign.desktopapp.exception.BulkSignException;
 import be.smals.research.bulksign.desktopapp.services.DigestService;
 import be.smals.research.bulksign.desktopapp.services.EIDService;
@@ -107,6 +108,16 @@ public class SignController extends Controller implements BeIDCardsUI{
     public void initController(MainController mainController, Stage stage) {
         super.initController(mainController, stage);
 
+        this.setupViewer();
+
+        // Setup dialogs
+        this.infoDialog.setTransitionType(JFXDialog.DialogTransition.TOP);
+        this.errorDialog.setTransitionType(JFXDialog.DialogTransition.TOP);
+        this.successDialog.setTransitionType(JFXDialog.DialogTransition.TOP);
+        this.signResultDialog.setTransitionType(JFXDialog.DialogTransition.TOP);
+    }
+
+    private void setupViewer() {
         this.viewerFx = new OpenViewerFX(readerPane, getClass().getClassLoader().getResource("lib/OpenViewerFx/preferences/custom.xml").getPath());
         this.viewerFx.getRoot().prefWidthProperty().bind(readerPane.widthProperty());
         this.viewerFx.getRoot().prefHeightProperty().bind(readerPane.heightProperty());
@@ -116,13 +127,8 @@ public class SignController extends Controller implements BeIDCardsUI{
         viewerPane.setTop(null);
         HBox bottomPane = (HBox) viewerPane.getBottom();
         bottomPane.getChildren().remove(0, 2);
-
-        // Setup dialogs
-        this.infoDialog.setTransitionType(JFXDialog.DialogTransition.TOP);
-        this.errorDialog.setTransitionType(JFXDialog.DialogTransition.TOP);
-        this.successDialog.setTransitionType(JFXDialog.DialogTransition.TOP);
-        this.signResultDialog.setTransitionType(JFXDialog.DialogTransition.TOP);
     }
+
     /**
      * Handles the output file saving process
      *
@@ -134,9 +140,11 @@ public class SignController extends Controller implements BeIDCardsUI{
     private void saveSigningOutput(List<File> files, byte[] signature, List<X509Certificate> certificateChain,
                                    VerifySigningOutput verifySigningOutput) throws IOException, ParserConfigurationException, TransformerException {
         this.directoryChooser.setTitle("Save the signing output");
+        this.directoryChooser.setInitialDirectory(this.lastDirectory);
         File dir = this.directoryChooser.showDialog(this.stage);
         if (dir != null) {
             try {
+                this.lastDirectory = dir;
                 this.updateWaitingDialogMessage("Saving...");
                 SigningOutput signingOutput = new SigningOutput(null, signature, certificateChain);
                 this.signingService.saveSigningOutput(files, signingOutput, dir.getAbsolutePath()+File.separator+"SignatureFile.sig");
@@ -182,6 +190,7 @@ public class SignController extends Controller implements BeIDCardsUI{
             EventHandler event;
             if (listItem.getFileExtension().equalsIgnoreCase("pdf")) {
                 event = event1 -> {
+                    viewerFx.getPdfDecoder().closePdfFile();
                     Object[] args = {file};
                     viewerFx.executeCommand(Commands.OPENFILE, args);
                     readerTitle.setText(file.getName());
@@ -249,8 +258,10 @@ public class SignController extends Controller implements BeIDCardsUI{
      * Defines the selected file
      */
     @FXML private void handleSelectFilesToSignButtonAction() {
+        this.fileChooser.setInitialDirectory(this.lastDirectory);
         List<File> files = fileChooser.showOpenMultipleDialog(this.stage);
         if (files != null) {
+            this.lastDirectory = files.get(0).getParentFile();
             files.stream().filter(file -> !this.filesToSign.contains(file)).forEach(file -> this.filesToSign.add(file));
             this.fileCountLabel.textProperty().set(this.filesToSign.size() + " file(s)");
             this.populateListView();
@@ -342,7 +353,26 @@ public class SignController extends Controller implements BeIDCardsUI{
     }
     private void signWithBeIDAndSave(List<File> selectedFiles, Task<String> prepareTask,
                                      List<X509Certificate> certificateChain, VerifySigningOutput verifySigningOutput) {
-        byte[] signature = this.signingService.signWithEID(prepareTask.getValue());
+        byte[] signature = new byte[0];
+        try {
+            signature = this.signingService.signWithEID(prepareTask.getValue());
+        } catch (IOException | InterruptedException | NoSuchAlgorithmException e) {
+            e.printStackTrace();
+            waitingDialog.close();
+            return;
+        } catch (CardException cardException) {
+            this.showErrorDialog(errorDialog, masterSign, "Signing error", "Make sure all required drivers are installed!");
+            waitingDialog.close();
+            return;
+        } catch (CancelledException | UserCancelledException e) {
+            this.showErrorDialog(errorDialog, masterSign, "Signing canceled!", "Signing operation canceled!");
+            waitingDialog.close();
+            return;
+        } catch (BulkSignException e) {
+            this.showErrorDialog(errorDialog, masterSign, "Signing failed!", e.getMessage());
+            waitingDialog.close();
+            return;
+        }
         if (signature != null && signature.length!=0) {
             try {
                 this.showWaitingDialog(waitingDialog, masterSign, "Saving\nFiles...");
@@ -356,8 +386,8 @@ public class SignController extends Controller implements BeIDCardsUI{
             }
         } else {
             waitingDialog.close();
-            showErrorDialog(errorDialog, masterSign, "Signing FAILED",
-                    "Error while signing with eID");
+            showErrorDialog(errorDialog, masterSign, "Signing failed",
+                    "Error while signing with the eID card.\n- Did you typed in your correct PIN code ?\n- Do you have you reader's drivers installed ?");
         }
     }
     /**
@@ -372,6 +402,9 @@ public class SignController extends Controller implements BeIDCardsUI{
         this.filesListView.getItems().clear();
         this.selectAllCheckBox.setSelected(false);
         this.fileCountLabel.setText("");
+
+        this.readerTitle.setText("No file in viewer");
+        this.viewerFx.getPdfDecoder().closePdfFile();
     }
 
     // BeIDCards UI ----------------------------------------------------------------------------------------------------

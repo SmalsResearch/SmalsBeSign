@@ -45,6 +45,11 @@
 
     <dependencies>
         <dependency>
+            <groupId>net.sf.launch4j</groupId>
+            <artifactId>launch4j</artifactId>
+            <version>3.9</version>
+        </dependency>
+        <dependency>
             <groupId>be.fedict.commons-eid</groupId>
             <artifactId>commons-eid-jca</artifactId>
         </dependency>

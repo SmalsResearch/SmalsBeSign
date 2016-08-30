@@ -1,6 +1,7 @@
 package be.smals.research.bulksign.desktopapp;
 
 import be.fedict.commons.eid.client.BeIDCardManager;
+import be.fedict.commons.eid.client.CardAndTerminalManager;
 import be.smals.research.bulksign.desktopapp.controllers.MainController;
 import be.smals.research.bulksign.desktopapp.ui.StatusBar;
 import be.smals.research.bulksign.desktopapp.utilities.Settings;
@@ -8,7 +9,9 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuItem;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
@@ -37,8 +40,8 @@ public class Main extends Application {
      */
     @Override public void start(Stage primaryStage) throws Exception {
         Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
-        FXMLLoader loader   = new FXMLLoader(getClass().getClassLoader().getResource("views/main.fxml"));
-        StackPane masterPane       = loader.load();
+        FXMLLoader loader       = new FXMLLoader(getClass().getClassLoader().getResource("views/main.fxml"));
+        StackPane masterPane    = loader.load();
         primaryStage.setTitle(APP_NAME);
 
         MainController controller = loader.getController();
@@ -48,8 +51,12 @@ public class Main extends Application {
         // ----- BOTTOM ------------------------------------------------------------------------------------------------
         StatusBar statusBar = new StatusBar();
         BeIDCardManager beIDCardManager = new BeIDCardManager();
+        CardAndTerminalManager cardAndTerminalManager = new CardAndTerminalManager();
+
+        cardAndTerminalManager.addCardTerminalListener(statusBar);
         beIDCardManager.addBeIDCardEventListener(statusBar);
         beIDCardManager.start();
+        cardAndTerminalManager.start();
         root.setBottom(statusBar);
         // ----- TOP ---------------------------------------------------------------------------------------------------
         createTop(controller, root);

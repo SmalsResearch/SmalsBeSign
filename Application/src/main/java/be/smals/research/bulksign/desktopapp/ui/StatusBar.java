@@ -14,9 +14,10 @@ import javafx.scene.layout.Priority;
 
 import javax.smartcardio.CardTerminal;
 
-public class StatusBar extends HBox implements BeIDCardEventsListener, CardTerminalEventsListener{
+public class StatusBar extends HBox implements BeIDCardEventsListener, CardTerminalEventsListener {
     private Label messageLabel;
     private JFXSpinner spinner;
+
     public StatusBar () {
         this.messageLabel   = new Label();
         this.spinner        = new JFXSpinner();
@@ -30,8 +31,7 @@ public class StatusBar extends HBox implements BeIDCardEventsListener, CardTermi
 
         this.setMessage(MessageType.DEFAULT, "Welcome!");
     }
-
-    public void setMessage (MessageType messageType, String message) {
+    private void setMessage (MessageType messageType, String message) {
         this.messageLabel.setText(message);
 
         switch (messageType) {
@@ -73,11 +73,10 @@ public class StatusBar extends HBox implements BeIDCardEventsListener, CardTermi
     public void terminalEventsInitialized() {}
     @Override
     public void terminalAttached(CardTerminal cardTerminal) {
-        System.out.println(cardTerminal.getName());
-        Platform.runLater(() ->setMessage(MessageType.DEFAULT, "A new terminal has been attached"));
+        Platform.runLater(() ->setMessage(MessageType.DEFAULT, "The reader - "+cardTerminal.getName()+" - has been attached"));
     }
     @Override
     public void terminalDetached(CardTerminal cardTerminal) {
-        Platform.runLater(() ->setMessage(MessageType.DEFAULT, "A terminal has been detached"));
+        Platform.runLater(() ->setMessage(MessageType.DEFAULT, "The reader - "+cardTerminal.getName()+" - has been detached"));
     }
 }
