@@ -140,9 +140,11 @@ public class SignController extends Controller implements BeIDCardsUI{
     private void saveSigningOutput(List<File> files, byte[] signature, List<X509Certificate> certificateChain,
                                    VerifySigningOutput verifySigningOutput) throws IOException, ParserConfigurationException, TransformerException {
         this.directoryChooser.setTitle("Save the signing output");
+        this.directoryChooser.setInitialDirectory(this.lastDirectory);
         File dir = this.directoryChooser.showDialog(this.stage);
         if (dir != null) {
             try {
+                this.lastDirectory = dir;
                 this.updateWaitingDialogMessage("Saving...");
                 SigningOutput signingOutput = new SigningOutput(null, signature, certificateChain);
                 this.signingService.saveSigningOutput(files, signingOutput, dir.getAbsolutePath()+File.separator+"SignatureFile.sig");
@@ -256,8 +258,10 @@ public class SignController extends Controller implements BeIDCardsUI{
      * Defines the selected file
      */
     @FXML private void handleSelectFilesToSignButtonAction() {
+        this.fileChooser.setInitialDirectory(this.lastDirectory);
         List<File> files = fileChooser.showOpenMultipleDialog(this.stage);
         if (files != null) {
+            this.lastDirectory = files.get(0).getParentFile();
             files.stream().filter(file -> !this.filesToSign.contains(file)).forEach(file -> this.filesToSign.add(file));
             this.fileCountLabel.textProperty().set(this.filesToSign.size() + " file(s)");
             this.populateListView();

@@ -120,7 +120,7 @@ public class Utilities {
         ZipInputStream zipInputStream   = new ZipInputStream(new FileInputStream(signedFile));
         ZipEntry zipEntry               = zipInputStream.getNextEntry();
         int fileCount = 0;
-        while (zipEntry != null && fileCount<3) {
+        while (zipEntry != null && fileCount < 4) {
             String fileName         = zipEntry.getName();
             File newFile            = File.createTempFile(signedFile.getParent()+File.separator+fileName, "."+getFileExtension(fileName));
             FileOutputStream fos    = new FileOutputStream(newFile);
@@ -141,14 +141,12 @@ public class Utilities {
             fileCount++;
             zipEntry = zipInputStream.getNextEntry();
         }
-        if (fileCount != 3) {
+        if (fileCount < 2) {
             String message = "- Unable to retrieve necessary files";
             if (!files.containsKey("FILE") || files.get("FILE") == null)
                 message += "\n--- The original file is missing";
             if (!files.containsKey("SIGNATURE") || files.get("SIGNATURE") == null)
                 message += "\n--- The signature file is missing";
-            if (!files.containsKey("README") || files.get("README") == null)
-                message += "\n--- The readme file is missing";
 
             throw new BulkSignException(message);
         }

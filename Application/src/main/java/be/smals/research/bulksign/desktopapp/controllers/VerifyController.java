@@ -260,10 +260,12 @@ public class VerifyController extends Controller {
      * Signed files selection action
      */
     @FXML private void handleSelectSignFileButtonAction () {
-        this.fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Signed Files (SIGNED.ZIP)", "*.signed.zip"));
+        this.fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Signed Files (SIGNED.ZIP)", "*.zip"));
+        this.fileChooser.setInitialDirectory(this.lastDirectory);
         List<File> files = this.fileChooser.showOpenMultipleDialog(this.stage);
         this.fileChooser.getExtensionFilters().clear();
         if (files != null) {
+            this.lastDirectory = files.get(0).getParentFile();
             files.stream().filter(file -> !this.filesToVerify.contains(file)).forEach(file -> this.filesToVerify.add(file));
             this.filesToSignCount.textProperty().set(this.filesToVerify.size() +" file(s)");
             this.populateListView();
