@@ -346,8 +346,10 @@ public class SignController extends Controller implements BeIDCardsUI{
         byte[] signature = new byte[0];
         try {
             signature = this.signingService.signWithEID(prepareTask.getValue());
-        } catch (IOException | CardException | InterruptedException | NoSuchAlgorithmException e) {
+        } catch (IOException | InterruptedException | NoSuchAlgorithmException e) {
             e.printStackTrace();
+        } catch (CardException cardException) {
+            this.showErrorDialog(errorDialog, masterSign, "Signing error", "Make sure all required drivers are installed!");
         } catch (CancelledException | UserCancelledException e) {
             this.showErrorDialog(errorDialog, masterSign, "Signing canceled!", "Signing operation canceled!");
         }

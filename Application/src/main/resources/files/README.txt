@@ -10,9 +10,7 @@
 
 
 
------------------------
-- CONTEXT AND PURPOSE -
------------------------
++++++ CONTEXT AND PURPOSE +++++
 
 The Belgian eID is a classic smartcard integrating standard public-key cryptography technology. 
 One of its functionalities allows its owner to sign digital documents. 
@@ -30,13 +28,13 @@ It can be downloaded at www.smalsresearch.be/tools/smalsbesign/
 
 
 
-------------------
-- SIGN DOCUMENTS -
-------------------
++++++ SIGN DOCUMENTS +++++
+
 
 The signature software SmalsBeSign can be used to sign documents with the Belgian eID card.
 
-*** Procedure ***
+
+** Procedure **
 
 - Download and install the software by following the instructions provided on the webpage www.smalsresearch.be/tools/smalsbesign/
 - Open the software "SmalsBeSign".
@@ -53,7 +51,8 @@ The signature software SmalsBeSign can be used to sign documents with the Belgia
 	- the original document,
 	- the signature file in XML format.
 
-*** Result ***
+
+** Result **
 
 The software outputs a message saying that the zip file(s) has(have) been correctly saved.
 Since the software checks if the chain certificates is correct, it may output an ORANGE/WARNING when it could not verify one or several problematic certificates because
@@ -62,13 +61,13 @@ Since the software checks if the chain certificates is correct, it may output an
 
 
 
-----------------------
-- VERIFY A SIGNATURE -
-----------------------
++++++ VERIFY A SIGNATURE +++++
+
 
 The signature software SmalsBeSign can be used to verify the signature of a document that has been performed with the Belgian eID card and the software itself (see previous section "SIGN DOCUMENTS").
 
-*** Procedure ***
+
+** Procedure **
 
 - Download and install the software by following the instructions provided on the webpage www.smalsresearch.be/tools/smalsbesign/
 - Open the software "SmalsBeSign".
@@ -78,7 +77,8 @@ The signature software SmalsBeSign can be used to verify the signature of a docu
   Other types of documents can be opened with their default software (e.g. Microsoft Word or PowerPoint).
 - Click on "Verify signed files". The result is simply outputted on the screen.
 
-*** Result ***
+
+** Result **
 
 Depending on the success of the verifications performed by the software, several outputs are possible.
 - GREEN/OK: Every verification is OK.
@@ -89,13 +89,13 @@ Depending on the success of the verifications performed by the software, several
 
 
 
-----------------------------------------
-- CRYPTOGRAPHIC EXPLANATION (ADVANCED) -
-----------------------------------------
++++++ CRYPTOGRAPHIC EXPLANATION (ADVANCED) +++++
+
 
 This section aims to explain in details the cryptographic computation and verification of the signature.
 
-*** Computation of the signature (in details) ***
+
+** Computation of the signature (in details) **
 
 Let's imagine that a user wants to sign 3 documents D1, D2 and D3.
 In order to do so, the user first gives these documents to the software.
@@ -115,7 +115,8 @@ Finally the software outputs a zip file for each signed document that contains t
 	- the signature (tag <Signature>),
 	- the 3 certificates that form the certificate chain of trust of the user certificate: the user certificate (tag <User>), the intermediate certificate (tag <Intermediate>), and the root certificate (tag <Root>).
 
-*** Verification of the signature (in details) ***
+
+** Verification of the signature (in details) **
 
 Let's imagine that a user wants to verify a zip file containing a document D and a signature file.
 First, the software hashes the document D contained in the given zip file. It thus obtains the value H.

@@ -5,6 +5,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.text.TextFlow?>
 <StackPane fx:id="masterPane" stylesheets="@css/common.css"
            xmlns="http://javafx.com/javafx/8.0.101" xmlns:fx="http://javafx.com/fxml/1"
            fx:controller="be.smals.research.bulksign.desktopapp.controllers.MainController">
@@ -38,8 +39,10 @@
                    <Label styleClass="color">About SmalsBeSign</Label>
                </heading>
                <body>
-                   <ScrollPane style="-fx-background-color:WHITE">
-                        <Label id="aboutDialogContent" fx:id="aboutDialogContent"></Label>
+                   <ScrollPane styleClass="edge-to-edge" style="-fx-pref-width:400.0px;" fitToWidth="true">
+                        <Label id="aboutDialogContent" fx:id="aboutDialogContent">
+                            <!-- README content here - MainController constructor -->
+                        </Label>
                    </ScrollPane>
                </body>
                <actions>
