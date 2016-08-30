@@ -19,8 +19,12 @@ public class ProxyFinder {
     private Proxy proxy = null;
 
     public static void main(String[] args) {
+        //todo example:
+
         ProxyFinder finder = new ProxyFinder();
         Proxy p = finder.getProxy();
+        Proxy.Type t = p.type();
+        System.out.println(t);
 
         try {
             URL url = new URL("http://www.google.com");
@@ -31,8 +35,13 @@ public class ProxyFinder {
             connection.setRequestProperty("Accept", "text/xml, application/xml");
             connection.setRequestMethod("GET");
             connection.connect();
-            String response = IOUtils.toString(connection.getInputStream(), "");
+            System.out.println(connection.usingProxy());
+            String response = IOUtils.toString(connection.getInputStream(), "UTF-8");
+            System.out.println(connection.usingProxy());
             System.out.println(response);
+            //todo if the below is 200, all ok, if it is 407, proxy auth required
+            System.out.println(connection.getResponseCode());
+            System.out.println(connection.usingProxy());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -72,9 +81,11 @@ public class ProxyFinder {
                 if(addr == null) {
                     System.out.println("No Proxy");
                 } else {
+                    //todo show this to the user when asking proxy credentials somehow
                     System.out.println("proxy hostname : " + addr.getHostName());
                     System.out.println("proxy port : " + addr.getPort());
                     this.proxy = proxy;
+                    //todo only do the following if, after a test, you get responsecode 407 (proxy auth required)
                     changeAuthenticator();
                 }
             }
@@ -84,25 +95,34 @@ public class ProxyFinder {
     }
 
     private void changeAuthenticator() {
-        Authenticator.setDefault(new Authenticator() {
-            @Override
-            protected PasswordAuthentication getPasswordAuthentication() {
-                if (getRequestorType() == RequestorType.PROXY) {
-                    //todo get this using an observer of some kind and ask the user's credentials if needed
-                    Scanner in = new Scanner(System.in);
-                    System.out.println("Username: ");
-                    String name = in.nextLine();
-                    System.out.println("Password: ");
-                    String pass =in.nextLine();
-                    in.close();
-                    return new PasswordAuthentication(name,pass.toCharArray());
-                } else {
-                    return super.getPasswordAuthentication();
-                }
-            }
-        });
+        Authenticator.setDefault(new PassWordAuthenticator());
     }
 
+    private static final class PassWordAuthenticator extends Authenticator {
+        private String proxyUserName = "";
+        private String proxyPassword = "";
+
+        //todo get this using an observer of some kind and ask the user's credentials before making connections
+        //todo check if proxy is not null; if it isnt, ask the password and save it (allow the user to cancel
+        //todo giving a password, the proxy may not need it sometimes. If the user cancels, DO NOT change the authenticator, but use the rpoxy without credentials
+        public PassWordAuthenticator() {
+            Scanner in = new Scanner(System.in);
+            System.out.print("Username: ");
+            proxyUserName = in.nextLine();
+            System.out.print("Password: ");
+            proxyPassword = in.nextLine();
+            in.close();
+        }
+
+        @Override
+        protected PasswordAuthentication getPasswordAuthentication() {
+            if (getRequestorType() == RequestorType.PROXY) {
+                return new PasswordAuthentication(proxyUserName,proxyPassword.toCharArray());
+            } else {
+                return super.getPasswordAuthentication();
+            }
+        }
+    }
 
     public Proxy getProxy() {
         return proxy;
