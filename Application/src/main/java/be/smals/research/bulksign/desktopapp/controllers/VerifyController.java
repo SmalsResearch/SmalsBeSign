@@ -125,6 +125,7 @@ public class VerifyController extends Controller {
                     FileWithAltName signedFile = signedZipFiles.get("FILE");
                     // Check extension to display in viewer or not
                     if (Utilities.getInstance().getFileExtension(signedFile.name).equalsIgnoreCase("pdf")) {
+                        viewerFx.getPdfDecoder().closePdfFile();
                         Object[] args = {signedFile.file};
                         viewerFx.executeCommand(Commands.OPENFILE, args);
                         readerTitle.setText(file.getName());
@@ -133,7 +134,8 @@ public class VerifyController extends Controller {
                         setFileInViewer(listItem);
                     } else {
                         try {
-                            Desktop.getDesktop().open(file);
+                            System.out.println("//" +signedFile.file.getName());
+                            Desktop.getDesktop().open(signedFile.file);
                             listItem.setFileViewed(true);
                         } catch (IOException e) {
                             this.showErrorDialog(errorDialog, masterVerify, "Unable to open the file...",
@@ -286,5 +288,8 @@ public class VerifyController extends Controller {
         this.filesListView.getItems().clear();
         this.selectAllCheckBox.setSelected(false);
         this.filesToSignCount.setText("");
+
+        this.readerTitle.setText("No file in viewer");
+        this.viewerFx.getPdfDecoder().closePdfFile();
     }
 }

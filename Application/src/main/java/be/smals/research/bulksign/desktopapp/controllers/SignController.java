@@ -108,6 +108,16 @@ public class SignController extends Controller implements BeIDCardsUI{
     public void initController(MainController mainController, Stage stage) {
         super.initController(mainController, stage);
 
+        this.setupViewer();
+
+        // Setup dialogs
+        this.infoDialog.setTransitionType(JFXDialog.DialogTransition.TOP);
+        this.errorDialog.setTransitionType(JFXDialog.DialogTransition.TOP);
+        this.successDialog.setTransitionType(JFXDialog.DialogTransition.TOP);
+        this.signResultDialog.setTransitionType(JFXDialog.DialogTransition.TOP);
+    }
+
+    private void setupViewer() {
         this.viewerFx = new OpenViewerFX(readerPane, getClass().getClassLoader().getResource("lib/OpenViewerFx/preferences/custom.xml").getPath());
         this.viewerFx.getRoot().prefWidthProperty().bind(readerPane.widthProperty());
         this.viewerFx.getRoot().prefHeightProperty().bind(readerPane.heightProperty());
@@ -117,13 +127,8 @@ public class SignController extends Controller implements BeIDCardsUI{
         viewerPane.setTop(null);
         HBox bottomPane = (HBox) viewerPane.getBottom();
         bottomPane.getChildren().remove(0, 2);
-
-        // Setup dialogs
-        this.infoDialog.setTransitionType(JFXDialog.DialogTransition.TOP);
-        this.errorDialog.setTransitionType(JFXDialog.DialogTransition.TOP);
-        this.successDialog.setTransitionType(JFXDialog.DialogTransition.TOP);
-        this.signResultDialog.setTransitionType(JFXDialog.DialogTransition.TOP);
     }
+
     /**
      * Handles the output file saving process
      *
@@ -183,6 +188,7 @@ public class SignController extends Controller implements BeIDCardsUI{
             EventHandler event;
             if (listItem.getFileExtension().equalsIgnoreCase("pdf")) {
                 event = event1 -> {
+                    viewerFx.getPdfDecoder().closePdfFile();
                     Object[] args = {file};
                     viewerFx.executeCommand(Commands.OPENFILE, args);
                     readerTitle.setText(file.getName());
@@ -358,6 +364,10 @@ public class SignController extends Controller implements BeIDCardsUI{
             this.showErrorDialog(errorDialog, masterSign, "Signing canceled!", "Signing operation canceled!");
             waitingDialog.close();
             return;
+        } catch (BulkSignException e) {
+            this.showErrorDialog(errorDialog, masterSign, "Signing failed!", e.getMessage());
+            waitingDialog.close();
+            return;
         }
         if (signature != null && signature.length!=0) {
             try {
@@ -372,8 +382,8 @@ public class SignController extends Controller implements BeIDCardsUI{
             }
         } else {
             waitingDialog.close();
-            showErrorDialog(errorDialog, masterSign, "Signing FAILED",
-                    "Error while signing with eID");
+            showErrorDialog(errorDialog, masterSign, "Signing failed",
+                    "Error while signing with the eID card.\n- Did you typed in your correct PIN code ?\n- Do you have you reader's drivers installed ?");
         }
     }
     /**
@@ -388,6 +398,9 @@ public class SignController extends Controller implements BeIDCardsUI{
         this.filesListView.getItems().clear();
         this.selectAllCheckBox.setSelected(false);
         this.fileCountLabel.setText("");
+
+        this.readerTitle.setText("No file in viewer");
+        this.viewerFx.getPdfDecoder().closePdfFile();
     }
 
     // BeIDCards UI ----------------------------------------------------------------------------------------------------

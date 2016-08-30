@@ -2,6 +2,7 @@ package be.smals.research.bulksign.desktopapp.services;
 
 import be.fedict.commons.eid.client.CancelledException;
 import be.fedict.commons.eid.client.spi.UserCancelledException;
+import be.smals.research.bulksign.desktopapp.exception.BulkSignException;
 import be.smals.research.bulksign.desktopapp.utilities.SigningOutput;
 import be.smals.research.bulksign.desktopapp.utilities.Utilities;
 import org.w3c.dom.Document;
@@ -48,7 +49,7 @@ public class SigningService {
      *
      * @return the signature
      */
-    public byte[] signWithEID(String masterDigest) throws NoSuchAlgorithmException, CardException, CancelledException, InterruptedException, UserCancelledException, IOException {
+    public byte[] signWithEID(String masterDigest) throws NoSuchAlgorithmException, CardException, CancelledException, InterruptedException, UserCancelledException, IOException, BulkSignException {
         this.masterDigest = masterDigest;
         return EIDService.getInstance().signWithBeID(Utilities.getInstance().getSha1(this.masterDigest.getBytes()));
     }

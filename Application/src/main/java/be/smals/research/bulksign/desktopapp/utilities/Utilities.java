@@ -122,7 +122,7 @@ public class Utilities {
         int fileCount = 0;
         while (zipEntry != null && fileCount<3) {
             String fileName         = zipEntry.getName();
-            File newFile            = File.createTempFile(signedFile.getParent()+File.separator+fileName, "");
+            File newFile            = File.createTempFile(signedFile.getParent()+File.separator+fileName, "."+getFileExtension(fileName));
             FileOutputStream fos    = new FileOutputStream(newFile);
             int len;
             while ((len = zipInputStream.read(buffer)) > 0) {
