@@ -23,7 +23,7 @@ This way, the user is in full control of his eID, of his PIN code and of his sig
 This is in opposition with many other softwares where the user is not in control of the material: the PIN code is usually cached and then used to perform as many signatures as documents to sign.
 Note that, even if the software computes one unique signature for a set of documents, it generates an independent signature result (i.e. a zip file) for each document.
 
-The software SmalsBeSign works on Windows (7.0 or higher) and on UNIX-based systems, with internal or external Belgian eID card readers and appropriate middleware anready installed on the computer.
+The software SmalsBeSign works on Windows (7.0 or higher) and on UNIX-based systems, with internal or external Belgian eID card readers and appropriate middleware already installed on the computer.
 It can be downloaded at www.smalsresearch.be/tools/smalsbesign/ 
 
 

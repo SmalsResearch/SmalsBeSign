@@ -78,7 +78,7 @@ public class VerifyServiceTest {
      *
      * Expect : Digest validation - FAILED AND Result - FAILED
      */
-    @Test(expectedExceptions = BulkSignException.class)
+    @Test
     public void mdCase02 () throws SAXException, ParseException, IOException, NoSuchProviderException, BulkSignException, ParserConfigurationException, CertificateException, NoSuchAlgorithmException, InvalidKeyException, SignatureException {
         File signedPdfFile  = new File(getClass().getClassLoader().getResource("files/signedPdf.pdf").getPath());
         File signatureFile =  new File(getClass().getClassLoader().getResource("files/SignatureFile-wrong-md.sig").getPath());
@@ -94,7 +94,7 @@ public class VerifyServiceTest {
      *
      * Expect : Digest validation - FAILED AND Result - FAILED
      */
-    @Test(expectedExceptions = BulkSignException.class)
+    @Test
     public void mdCase03 () throws SAXException, ParseException, IOException, NoSuchProviderException, BulkSignException, ParserConfigurationException, CertificateException, NoSuchAlgorithmException, InvalidKeyException, SignatureException {
         File signedPdfFile  = new File(getClass().getClassLoader().getResource("files/signedPdf.pdf").getPath());
         File signatureFile =  new File(getClass().getClassLoader().getResource("files/SignatureFile-shorter-md.sig").getPath());
@@ -105,14 +105,14 @@ public class VerifyServiceTest {
                 && verifySigningOutput.getOutputResult().equals(VerifySigningOutput.VerifyResult.FAILED));
     }
     /**
-     * MasterDigest case 03 : Longer MD - Correct Master Digest but with 1 more byte
+     * MasterDigest case 04 : Longer MD - Correct Master Digest but with 1 more byte
      *
      * Expect :
      * ----- Digest validation - OK
      * ----- Signature validation - FAILED
      * ----- Result - FAILED
      */
-    @Test(expectedExceptions = BulkSignException.class)
+    @Test
     public void mdCase04 () throws SAXException, ParseException, IOException, NoSuchProviderException, BulkSignException, ParserConfigurationException, CertificateException, NoSuchAlgorithmException, InvalidKeyException, SignatureException {
         File signedPdfFile  = new File(getClass().getClassLoader().getResource("files/signedPdf.pdf").getPath());
         File signatureFile =  new File(getClass().getClassLoader().getResource("files/SignatureFile-longer-md.sig").getPath());
