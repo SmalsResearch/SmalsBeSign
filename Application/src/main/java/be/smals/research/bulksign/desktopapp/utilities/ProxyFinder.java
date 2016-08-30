@@ -33,6 +33,8 @@ public class ProxyFinder {
             });
             if (PlatformUtil.getCurrentPlattform() == PlatformUtil.Platform.WIN) {
                 System.out.println("OS: windows");
+                ps.addStrategy(ProxySearch.Strategy.WIN);
+                ps.addStrategy(ProxySearch.Strategy.OS_DEFAULT);
                 ps.addStrategy(ProxySearch.Strategy.IE);
                 ps.addStrategy(ProxySearch.Strategy.FIREFOX);
                 ps.addStrategy(ProxySearch.Strategy.JAVA);
