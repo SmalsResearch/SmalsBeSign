@@ -27,6 +27,9 @@
                   <JFXSpinner radius="48" />
                   <Label id="waitingDialogMessage" alignment="CENTER" styleClass="color-info" />
               </body>
+              <actions>
+                  <JFXButton id="closeWaitingDialogButton" styleClass="button-s">CLOSE</JFXButton>
+              </actions>
           </JFXDialogLayout>
       </JFXDialog>
       <JFXDialog fx:id="successDialog">

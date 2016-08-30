@@ -27,6 +27,9 @@
                     <JFXSpinner radius="48" />
                     <Label id="waitingDialogMessage" alignment="CENTER" styleClass="color-success" />
                 </body>
+                <actions>
+                    <JFXButton id="closeWaitingDialogButton" styleClass="button-s">CLOSE</JFXButton>
+                </actions>
             </JFXDialogLayout>
         </JFXDialog>
         <JFXDialog fx:id="infoDialog">
@@ -77,7 +80,8 @@
                     <TextFlow id="resultDialogBody" styleClass="text-flow" />
                 </body>
                 <actions>
-                    <JFXButton id="closeResultDialogButton" styleClass="button-s">CLOSE</JFXButton>
+                    <JFXButton id="openResultFolderButton" styleClass="button-s">Open files location</JFXButton>
+                    <JFXButton id="closeResultDialogButton" styleClass="button-s-danger">CLOSE</JFXButton>
                 </actions>
             </JFXDialogLayout>
         </JFXDialog>

@@ -4,7 +4,7 @@ import be.fedict.commons.eid.client.BeIDCardManager;
 import be.fedict.commons.eid.client.CardAndTerminalManager;
 import be.smals.research.bulksign.desktopapp.controllers.MainController;
 import be.smals.research.bulksign.desktopapp.ui.StatusBar;
-import be.smals.research.bulksign.desktopapp.utilities.ProxyFinder;
+import be.smals.research.bulksign.desktopapp.utilities.TestProxyFinder;
 import be.smals.research.bulksign.desktopapp.utilities.Settings;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -24,17 +24,13 @@ import java.security.Security;
  */
 public class Main extends Application {
 
-    private static double WIDTH_MIN = 600;
-    private static double HEIGHT_MIN = 460;
-    private static String APP_NAME = "SmalsBeSign";
-
     /**
      * Application entry point
      *
      * @param args arguments
      */
     public static void main(String[] args) {
-        ProxyFinder.main(args);
+        TestProxyFinder.main(args);
         launch(args);
     }
     /**
@@ -44,7 +40,7 @@ public class Main extends Application {
         Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
         FXMLLoader loader       = new FXMLLoader(getClass().getClassLoader().getResource("views/main.fxml"));
         StackPane masterPane    = loader.load();
-        primaryStage.setTitle(APP_NAME);
+        primaryStage.setTitle(Settings.APP_NAME + " - Version " + Settings.APP_VERSION);
 
         MainController controller = loader.getController();
         controller.initController(controller, primaryStage);
@@ -66,8 +62,8 @@ public class Main extends Application {
         createCenter (controller);
 
         primaryStage.setScene(new Scene(masterPane, 800, 480));
-        primaryStage.setMinWidth(WIDTH_MIN);
-        primaryStage.setMinHeight(HEIGHT_MIN);
+        primaryStage.setMinWidth(Settings.WIDTH_MIN);
+        primaryStage.setMinHeight(Settings.HEIGHT_MIN);
         primaryStage.show();
     }
     /**
@@ -89,7 +85,6 @@ public class Main extends Application {
         MenuItem aboutMenuItem  = new MenuItem("About");
         exitMenuItem.setId("exitMenuItem");
 
-        Settings.getInstance().setSigner(Settings.Signer.EID);
         fileMenu.getItems().addAll(homeMenuItem, exitMenuItem);
         taskMenu.getItems().addAll(signMenuItem, verifyMenuItem);
         helpMenu.getItems().addAll(aboutMenuItem);

@@ -10,6 +10,7 @@
 
 
 
+
 +++++ CONTEXT AND PURPOSE +++++
 
 The Belgian eID is a classic smartcard integrating standard public-key cryptography technology. 
@@ -24,6 +25,7 @@ This is in opposition with many other softwares where the user is not in control
 Note that, even if the software computes one unique signature for a set of documents, it generates an independent signature result (i.e. a zip file) for each document.
 
 The software SmalsBeSign works on Windows (7.0 or higher) and on UNIX-based systems, with internal or external Belgian eID card readers and appropriate middleware already installed on the computer.
+It requires Java 1.8.
 It can be downloaded at www.smalsresearch.be/tools/smalsbesign/ 
 
 
@@ -45,6 +47,7 @@ The signature software SmalsBeSign can be used to sign documents with the Belgia
 - Put the eID card inside the card reader. On the bottom bar, it then indicates "Ready to sign!".
 - Click on "Sign files".
 - Enter the eID PIN code.
+  BE CAREFUL: You have only 3 attempts to enter the correct PIN code, otherwise the eID card gets automatically blocked (for security reasons).
 - Choose the folder to store the result files.
 - For each document that has been signed, the result file is a zip file (named name_of_the_document.signed.zip) containing:
 	- this README,
@@ -55,7 +58,7 @@ The signature software SmalsBeSign can be used to sign documents with the Belgia
 ** Result **
 
 The software outputs a message saying that the zip file(s) has(have) been correctly saved.
-Since the software checks if the chain certificates is correct, it may output an ORANGE/WARNING when it could not verify one or several problematic certificates because
+Since the software checks if the chain of certificates is correct, it may output an ORANGE/WARNING when it could not verify one or several problematic certificates because
 	- either there was no internet connexion allowing to check the validity and revocation of certificates (e.g. proxy used),
 	- or the problematic certificate(s) has(have) already been revoked.
 
@@ -109,6 +112,7 @@ Finally the software outputs a zip file for each signed document that contains t
 - this README,
 - the document (D1, D2 or D3 in our example),
 - the signature file in XML format that contains
+	- the version number of the software SmalsbeSign used to compute the signature (tag <SoftwareVersion>),
 	- the user whose eID has been used to compute the signature (tag <SignedBy>),
 	- the system date when the signature has been computed (tag <SignedAt>),
 	- the master digest (tag <MasterDigest>),
@@ -126,3 +130,16 @@ Thus the verification fails and stops.
 If H is found in the master digest, then the software checks two points. 
 - First, it verifies that the certificate chain of trust is correct, including, when there is an internet connection, whether the certificates are revoked or not on the official webpage http://repository.eid.belgium.be/ . 
 - Then it verifies if the signature of the master digest is valid with the public key of the user (this key is stored in the user certificate field of the signature file). 
+
+
+
+
+#
+# DISCLAIMER OF WARRANTY
+# -------------------------
+# THIS SOFTWARE IS PROVIDED BY THE AUTHORS ``AS IS'' WITHOUT ANY WARRANTIES OR GUARANTEES, EITHER EXPRESSED OR 
+# IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR 
+# PURPOSE. IN NO EVENT SHALL THE AUTHORS BE LIABLE FOR ANY DAMAGES OR LOSSES CAUSED BY THE USE OR THE MISUSE OF
+# THE SOFTWARE. USE OF THE PRODUCT BY A USER IS AT THE USER'S RISK; THE AUTHORS ARE UNDER NO OBLIGATION TO PROVIDE
+# SUPPORT, SERVICE, CORRECTIONS, OR UPGRADES TO THE SOFTWARE.
+#

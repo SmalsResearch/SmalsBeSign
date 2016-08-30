@@ -92,6 +92,11 @@ public abstract class Controller {
     public void showWaitingDialog (JFXDialog dialog, StackPane masterPane, String message) {
         dialog.show(masterPane);
         Label messageLabel         = (Label) this.stage.getScene().lookup("#waitingDialogMessage");
+
+        JFXButton closeButton   = (JFXButton) this.stage.getScene().lookup("#closeWaitingDialogButton");
+        if (closeButton != null)
+            closeButton.setOnAction(event -> dialog.close());
+
         messageLabel.setText(message);
     }
     public void updateWaitingDialogMessage(String message) {

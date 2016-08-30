@@ -16,7 +16,7 @@ import javafx.stage.Stage;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
@@ -53,17 +53,7 @@ public class MainController extends Controller{
         waitingDialog.setOverlayClose(false);
         exitDialog.setOverlayClose(false);
 
-        try {
-            InputStream is = this.getClass().getClassLoader().getResourceAsStream("files/README.txt");
-            File tempFile = File.createTempFile("README_SMALSBESIGN", ".txt");
-            Files.copy(is, tempFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-            List<String> lines = Files.readAllLines(tempFile.toPath(), Charset.defaultCharset());
-            for (String line:lines) {
-                this.aboutDialogContent.setText(this.aboutDialogContent.getText()+"\n"+line);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        this.handleShowReadme();
     }
 
     /**
@@ -158,5 +148,34 @@ public class MainController extends Controller{
      */
     @FXML private void handleCloseAboutDialogButtonAction () {
         this.aboutDialog.close();
+    }
+
+    @FXML public void handleShowReadme() {
+        this.showFileInAboutDialog("README");
+    }
+    @FXML public void handleShowVersion() {
+        this.showFileInAboutDialog("VERSION");
+    }
+    @FXML public void handleShowLicense() {
+        this.showFileInAboutDialog("LICENSE");
+    }
+    private void showFileInAboutDialog (String filename) {
+        try {
+            InputStream is = this.getClass().getClassLoader().getResourceAsStream("files/"+filename+".txt");
+            File tempFile = File.createTempFile(filename+"_SMALSBESIGN", ".txt");
+            Files.copy(is, tempFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            List<String> lines = Files.readAllLines(tempFile.toPath(), StandardCharsets.UTF_8);
+            this.aboutDialogContent.setText("");
+            String content;
+            for (String line:lines) {
+                if (line.equals(lines.get(lines.size()-1)))
+                    content = this.aboutDialogContent.getText()+line;
+                else
+                    content = this.aboutDialogContent.getText()+line+"\n";
+                this.aboutDialogContent.setText(content);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

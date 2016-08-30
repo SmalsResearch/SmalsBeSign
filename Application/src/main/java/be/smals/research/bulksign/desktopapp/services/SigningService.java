@@ -92,6 +92,10 @@ public class SigningService {
         document.setXmlVersion("1.1");
         Element rootElement = document.createElement("SigningOutput");
         document.appendChild(rootElement);
+        // Software version
+        Element softwareVersionDigestElement = document.createElement("SoftwareVersion");
+        softwareVersionDigestElement.appendChild(document.createTextNode(signingOutput.softwareVersion));
+        rootElement.appendChild(softwareVersionDigestElement);
         // Signed by
         Element signedByDigestElement = document.createElement("SignedBy");
         signedByDigestElement.appendChild(document.createTextNode(signingOutput.author));

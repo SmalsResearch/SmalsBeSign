@@ -150,10 +150,10 @@ public class SignController extends Controller implements BeIDCardsUI{
         if (dir != null) {
             try {
                 this.lastDirectory = dir;
-                this.updateWaitingDialogMessage("Saving...");
+                this.showWaitingDialog(waitingDialog, masterSign,"Saving...");
                 SigningOutput signingOutput = new SigningOutput(null, signature, certificateChain);
                 this.signingService.saveSigningOutput(files, signingOutput, dir.getAbsolutePath()+File.separator+"SignatureFile.sig");
-                waitingDialog.close();
+                this.waitingDialog.close();
                 Text line1 = new Text("Signature(s) successfully computed!\nSigned file(s) can be found at "+dir.getAbsolutePath());
                 if (verifySigningOutput.getOutputResult().equals(VerifySigningOutput.VerifyResult.WARNING)) {
                     Text line2 = new Text(verifySigningOutput.outputCertificateResult());
@@ -177,7 +177,17 @@ public class SignController extends Controller implements BeIDCardsUI{
         Label titleLabel     = (Label) this.stage.getScene().lookup("#resultDialogTitle");
         TextFlow bodyText      = (TextFlow) this.stage.getScene().lookup("#resultDialogBody");
         JFXButton closeButton   = (JFXButton) this.stage.getScene().lookup("#closeResultDialogButton");
+        JFXButton openButton   = (JFXButton) this.stage.getScene().lookup("#openResultFolderButton");
+
         closeButton.setOnAction(event -> signResultDialog.close());
+        openButton.setOnAction(event -> {
+            try {
+                Desktop.getDesktop().open(this.lastDirectory);
+            } catch (IOException e) {
+                this.showErrorDialog(errorDialog, masterSign, "Open directory", "Unable to open the directory : "+this.lastDirectory
+                        +"\nMake sure you have required permissions.");
+            }
+        });
         titleLabel.setText(title);
         bodyText.getChildren().clear();
         for (Object text:textList){
@@ -358,7 +368,7 @@ public class SignController extends Controller implements BeIDCardsUI{
     }
     private void signWithBeIDAndSave(List<File> selectedFiles, Task<String> prepareTask,
                                      List<X509Certificate> certificateChain, VerifySigningOutput verifySigningOutput) {
-        byte[] signature = new byte[0];
+        byte[] signature;
         try {
             signature = this.signingService.signWithEID(prepareTask.getValue());
         } catch (IOException | InterruptedException | NoSuchAlgorithmException e) {
@@ -380,9 +390,8 @@ public class SignController extends Controller implements BeIDCardsUI{
         }
         if (signature != null && signature.length!=0) {
             try {
-                this.showWaitingDialog(waitingDialog, masterSign, "Saving\nFiles...");
-                this.saveSigningOutput(selectedFiles, signature, certificateChain, verifySigningOutput);
                 waitingDialog.close();
+                this.saveSigningOutput(selectedFiles, signature, certificateChain, verifySigningOutput);
             } catch (IOException | ParserConfigurationException | TransformerException e) {
                 waitingDialog.close();
                 showErrorDialog(errorDialog, masterSign, "Saving error",

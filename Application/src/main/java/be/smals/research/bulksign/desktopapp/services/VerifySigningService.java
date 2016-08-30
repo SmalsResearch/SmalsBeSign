@@ -288,7 +288,7 @@ public class VerifySigningService {
         Element signingOutputElement, certificateElement;
         List<X509Certificate> certificateChain = new ArrayList<>();
         byte[] signature, userEncodedCertificate,intermEncodedCertificate,rootEncodedCertificate;
-        String masterDigest, signedBy;
+        String masterDigest, signedBy, softwareVersion;
         Date signedAt;
         InputStream encodedStream;
 
@@ -304,8 +304,16 @@ public class VerifySigningService {
         } catch (Exception e) {
             throw new BulkSignException("Unable to retrieve the MasterDigest.\nThe signature file might be corrupted.");
         }
+
         try {
+            softwareVersion = signingOutputElement.getElementsByTagName("SoftwareVersion").item(0).getTextContent();
+        } catch (Exception e) {
+            throw new BulkSignException("Unable to retrieve the signing date.\nThe signature file might be corrupted.");
+        }try {
             signedBy = signingOutputElement.getElementsByTagName("SignedBy").item(0).getTextContent();
+        } catch (Exception e) {
+            throw new BulkSignException("Unable to retrieve the signer name.\nThe signature file might be corrupted.");
+        }try {
             signedAt = new SimpleDateFormat("yyyy-MM-dd 'at' HH:mm:ss").parse(signingOutputElement.getElementsByTagName("SignedAt").item(0).getTextContent());
         } catch (Exception e) {
             throw new BulkSignException("Unable to retrieve the signing date.\nThe signature file might be corrupted.");
@@ -360,7 +368,7 @@ public class VerifySigningService {
             throw new BulkSignException("Error while creating root certificate.\nThe signature file might be corrupted.");
         }
 
-        return new SigningOutput(masterDigest, signature, certificateChain, signedBy, signedAt);
+        return new SigningOutput(masterDigest, signature, certificateChain, signedBy, signedAt, softwareVersion);
     }
     /**
      * Returns true if the individualDigest is a part of the masterDigest

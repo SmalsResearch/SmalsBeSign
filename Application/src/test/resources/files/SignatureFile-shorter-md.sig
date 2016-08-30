@@ -1,5 +1,7 @@
 <?xml version="1.1" encoding="UTF-8" standalone="no"?>
 <SigningOutput>
+  <SoftwareVersion>0.1</SoftwareVersion>
+
   <SignedBy>Carlos Avimadjessi</SignedBy>
   <SignedAt>2016-08-29 at 11:23:06</SignedAt>
   <MasterDigest>8D5F1C2C978F5D9F6168E53D3003C6E220EF31C475A7FD16DACF41B05502A23</MasterDigest>

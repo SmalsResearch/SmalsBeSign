@@ -19,6 +19,7 @@ public class SigningOutput {
     public String masterDigest;
     public byte[] signature;
     public List<X509Certificate> certificateChain;
+    public String softwareVersion;
 
     /**
      * Constructor
@@ -40,6 +41,7 @@ public class SigningOutput {
         System.out.println();
         this.author             = username;
         this.createdAt          = new Date();
+        this.softwareVersion    = Settings.APP_VERSION+"";
     }
 
     /**
@@ -51,11 +53,12 @@ public class SigningOutput {
      * @param author eID owner first and last name
      * @param createdAt sysDate
      */
-    public SigningOutput (String masterDigest, byte[] signature, List<X509Certificate> certificate, String author, Date createdAt) {
+    public SigningOutput (String masterDigest, byte[] signature, List<X509Certificate> certificate, String author, Date createdAt, String softwareVersion) {
         this.masterDigest       = masterDigest;
         this.signature          = signature;
         this.certificateChain   = certificate;
         this.author             = author;
         this.createdAt          = createdAt;
+        this.softwareVersion    = softwareVersion;
     }
 }

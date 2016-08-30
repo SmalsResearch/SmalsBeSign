@@ -46,7 +46,10 @@
                    </ScrollPane>
                </body>
                <actions>
-                   <JFXButton onAction="#handleCloseAboutDialogButtonAction" styleClass="button-s">CLOSE</JFXButton>
+                   <JFXButton styleClass="button-s" onAction="#handleShowReadme">README</JFXButton>
+                   <JFXButton styleClass="button-s" onAction="#handleShowVersion">VERSION</JFXButton>
+                   <JFXButton styleClass="button-s" onAction="#handleShowLicense">LICENSE</JFXButton>
+                   <JFXButton onAction="#handleCloseAboutDialogButtonAction" styleClass="button-s-danger" style="-fx-pref-width:96px;">CLOSE</JFXButton>
                </actions>
            </JFXDialogLayout>
        </JFXDialog>
