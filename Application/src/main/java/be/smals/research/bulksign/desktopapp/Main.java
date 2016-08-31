@@ -31,7 +31,19 @@ public class Main extends Application {
      * @param args arguments
      */
     public static void main(String[] args) {
+        /*
+         * //todo fait-ça qq part comme parti du config proxy settings:
+         * // if you work behind proxy, configure the proxy.
+        System.setProperty("http.proxyHost", "proxyhost, eg proxy.smals-mvm.be");
+        System.setProperty("http.proxyPort", "proxyport, eg 8080");
+         *
+         *
+         */
+
+        //todo remove this when you no longer need the test:
         TestProxyFinder.main(args);
+
+
         launch(args);
     }
     /**
