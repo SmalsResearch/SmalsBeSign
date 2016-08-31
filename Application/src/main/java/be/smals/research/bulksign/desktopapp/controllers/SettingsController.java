@@ -52,6 +52,11 @@ public class SettingsController extends Controller{
         RequiredFieldValidator requiredFieldValidator = new RequiredFieldValidator();
         requiredFieldValidator.setMessage("Input Required");
         // ...
+        this.useProxySettingsCheckBox.setSelected(Settings.getInstance().useProxy);
+        if (Settings.getInstance().useProxy && Settings.getInstance().proxy != null) {
+            this.proxyAddress.setText(Settings.getInstance().proxy.address().toString().split(":")[0]);
+            this.proxyPort.setText(Settings.getInstance().proxy.address().toString().split(":")[1]);
+        }
 
         // Setup dialogs
         this.infoDialog.setTransitionType(JFXDialog.DialogTransition.TOP);
@@ -63,7 +68,6 @@ public class SettingsController extends Controller{
     }
 
     @FXML public void handleTestProxyButtonAction () {
-//        this.showWaitingDialog(waitingDialog, masterSettings, "Testing\nProxy");
         String address = this.proxyAddress.getText().trim();
         String portStr = this.proxyPort.getText().trim();
         int port = Integer.parseInt(portStr);
@@ -71,11 +75,9 @@ public class SettingsController extends Controller{
             this.showErrorDialog(infoDialog, masterSettings, "Proxy testing", "Address and port fields are required!");
         }
 
-//        String username = this.proxyUsername.getText().trim();
-//        String password = this.proxyPassword.getText().trim();
         Proxy proxy = ProxyFinder.getInstance().getProxy (address, port);
         try {
-            boolean result = ProxyFinder.getInstance().testConnexionTo(proxy, new URL("http://www.google.com"));
+            boolean result = ProxyFinder.getInstance().testConnectionTo(proxy, new URL("http://www.google.com"));
             if (result) {
                 this.showInfoDialog(infoDialog, masterSettings, "Proxy testing - Succeed", "Internet connection succeed with the proxy :\n"+proxy.address().toString());
                 Label bodyLabel         = (Label) this.stage.getScene().lookup("#infoDialogBody");
@@ -104,7 +106,6 @@ public class SettingsController extends Controller{
             bodyLabel.getStyleClass().remove("color-success");
             bodyLabel.getStyleClass().add("color-danger");
         }
-//        this.waitingDialog.close();
     }
     @FXML public void handleProxyLookupButtonAction () {
         Proxy proxy = ProxyFinder.getInstance().find();

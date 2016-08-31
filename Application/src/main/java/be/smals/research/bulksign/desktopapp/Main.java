@@ -14,6 +14,7 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
+import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
@@ -62,6 +63,8 @@ public class Main extends Application {
         // ----- CENTER ------------------------------------------------------------------------------------------------
         createCenter (controller);
 
+
+        primaryStage.getIcons().add(new Image(this.getClass().getClassLoader().getResourceAsStream("images/icon.png")));
         primaryStage.setScene(new Scene(masterPane, 800, 480));
         primaryStage.setMinWidth(Settings.WIDTH_MIN);
         primaryStage.setMinHeight(Settings.HEIGHT_MIN);

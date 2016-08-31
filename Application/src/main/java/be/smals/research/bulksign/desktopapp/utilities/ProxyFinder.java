@@ -86,7 +86,7 @@ public class ProxyFinder {
 
         return proxy;
     }
-    public boolean testConnexionTo (Proxy proxy, URL url) {
+    public boolean testConnectionTo(Proxy proxy, URL url) {
         try {
             URLConnection connection = url.openConnection(proxy);
             try {
