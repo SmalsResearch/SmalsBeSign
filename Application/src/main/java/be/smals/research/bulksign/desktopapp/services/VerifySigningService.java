@@ -1,6 +1,7 @@
 package be.smals.research.bulksign.desktopapp.services;
 
 import be.smals.research.bulksign.desktopapp.exception.BulkSignException;
+import be.smals.research.bulksign.desktopapp.utilities.Settings;
 import be.smals.research.bulksign.desktopapp.utilities.SigningOutput;
 import be.smals.research.bulksign.desktopapp.utilities.Utilities;
 import be.smals.research.bulksign.desktopapp.utilities.VerifySigningOutput;
@@ -205,7 +206,11 @@ public class VerifySigningService {
             throws IOException, CertificateException, NoSuchProviderException {
         // Download
         URL beCertURL = new URL (fileURL);
-        URLConnection connection    = beCertURL.openConnection();
+        URLConnection connection;
+        if (Settings.getInstance().useProxy && Settings.getInstance().proxy!=null)
+            connection    = beCertURL.openConnection(Settings.getInstance().proxy);
+        else
+            connection    = beCertURL.openConnection();
         InputStream in              = connection.getInputStream();
         byte[] buffer   = new byte[1024];
         int len;
@@ -409,8 +414,11 @@ public class VerifySigningService {
                     verifySigningOutput.userCertValid = true;
                 else if (response.getCertStatus().equals(OCSP.RevocationStatus.CertStatus.UNKNOWN))
                     verifySigningOutput.userCertChecked = false;
+                else
+                    verifySigningOutput.userCertValid = false;
             } catch (CertPathValidatorException e) {
                 e.printStackTrace();
+                verifySigningOutput.userCertChecked = false;
             }
         }
         if (Utilities.getInstance().isInternetReachable()) {

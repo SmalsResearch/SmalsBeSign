@@ -14,7 +14,7 @@ public class Settings {
 
     public boolean eIDCardIsPresent;
     public boolean useProxy;
-    private Proxy proxy;
+    public Proxy proxy;
 
     private Settings () {}
 

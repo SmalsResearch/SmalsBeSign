@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.MalformedURLException;
 import java.net.Socket;
+import java.net.URL;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
@@ -84,11 +85,25 @@ public class Utilities {
      * @throws IOException
      */
     public boolean isInternetReachable () throws IOException {
-        try {
-        return testInet("google.com") && testInet("certs.eid.belgium.be");
-
-        } catch (java.io.IOException e) {
-            System.out.println("Unknown host - No internet connection!");
+        String googleLink   = "http://www.google.com";
+        String eIDBeLink    = "http://certs.eid.belgium.be";
+        if (Settings.getInstance().useProxy) {
+            if (Settings.getInstance().proxy == null)
+                return false;
+            try {
+            URL googleURL = new URL(googleLink);
+            URL eIDBelgiumURL = new URL(eIDBeLink);
+            return ProxyFinder.getInstance().testConnectionTo(Settings.getInstance().proxy, googleURL)
+                    && ProxyFinder.getInstance().testConnectionTo(Settings.getInstance().proxy, eIDBelgiumURL);
+            } catch (Exception e) {
+                return false;
+            }
+        } else {
+            try {
+                return testInet("google.com") && testInet("certs.eid.belgium.be");
+            } catch (java.io.IOException e) {
+                System.out.println("Unknown host - No internet connection!");
+            }
         }
 
         return false;
