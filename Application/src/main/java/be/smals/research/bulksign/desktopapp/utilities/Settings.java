@@ -1,5 +1,6 @@
 package be.smals.research.bulksign.desktopapp.utilities;
 
+import java.net.InetSocketAddress;
 import java.net.Proxy;
 
 public class Settings {
@@ -14,12 +15,21 @@ public class Settings {
 
     public boolean eIDCardIsPresent;
     public boolean useProxy;
-    public Proxy proxy;
+    private Proxy proxy;
 
     private Settings () {}
 
     public static Settings getInstance () {
         return instance;
+    }
+    public void setProxy (Proxy proxy) {
+        this.proxy = proxy;
+        System.out.println(proxy.type().name()+"//"+proxy.address().toString());
+        System.setProperty("http.proxyHost", ((InetSocketAddress)proxy.address()).getHostName());
+        System.setProperty("http.proxyPort", ((InetSocketAddress)proxy.address()).getPort()+"");
+    }
+    public Proxy getProxy () {
+        return this.proxy;
     }
 
 }

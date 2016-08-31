@@ -13,6 +13,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
+import java.net.InetSocketAddress;
 import java.net.MalformedURLException;
 import java.net.Proxy;
 import java.net.URL;
@@ -29,6 +30,7 @@ public class SettingsController extends Controller{
     @FXML private JFXDialog errorDialog;
     @FXML private JFXDialog successDialog;
     @FXML private JFXDialog waitingDialog;
+    @FXML private JFXDialog proxyDialog;
     // Proxy info
     @FXML private JFXTextField proxyAddress;
     @FXML private JFXTextField proxyPort;
@@ -53,18 +55,19 @@ public class SettingsController extends Controller{
         requiredFieldValidator.setMessage("Input Required");
         // ...
         this.useProxySettingsCheckBox.setSelected(Settings.getInstance().useProxy);
-        if (Settings.getInstance().useProxy && Settings.getInstance().proxy != null) {
-            this.proxyAddress.setText(Settings.getInstance().proxy.address().toString().split(":")[0]);
-            this.proxyPort.setText(Settings.getInstance().proxy.address().toString().split(":")[1]);
+        if (Settings.getInstance().getProxy() != null) {
+            this.setProxyInfo(Settings.getInstance().getProxy());
         }
 
         // Setup dialogs
         this.infoDialog.setTransitionType(JFXDialog.DialogTransition.TOP);
         this.errorDialog.setTransitionType(JFXDialog.DialogTransition.TOP);
         this.successDialog.setTransitionType(JFXDialog.DialogTransition.TOP);
+        this.proxyDialog.setTransitionType(JFXDialog.DialogTransition.TOP);
         this.infoDialog.setOverlayClose(false);
         this.errorDialog.setOverlayClose(false);
         this.successDialog.setOverlayClose(false);
+        this.proxyDialog.setOverlayClose(false);
     }
 
     @FXML public void handleTestProxyButtonAction () {
@@ -86,7 +89,8 @@ public class SettingsController extends Controller{
                 bodyLabel.getStyleClass().remove("color-success");
                 bodyLabel.getStyleClass().add("color-success");
 
-                Settings.getInstance().proxy = proxy;
+                Settings.getInstance().setProxy(proxy);
+                this.setProxyInfo(proxy);
             } else {
                 this.showInfoDialog(infoDialog, masterSettings, "Proxy testing - Failed", "Internet connection failed with the proxy :\n"+proxy.address().toString());
 
@@ -111,13 +115,15 @@ public class SettingsController extends Controller{
         Proxy proxy = ProxyFinder.getInstance().find();
         if (proxy == null) {
             this.showErrorDialog(errorDialog, masterSettings, "Proxy lookup", "Proxy not found!\nEnter your proxy information then save.");
-            Settings.getInstance().proxy = proxy;
+            Settings.getInstance().setProxy(proxy);
         } else {
             this.showInfoDialog(infoDialog, masterSettings, "Proxy lookup", "Lookup succeed !\n"+proxy.address());
-            this.proxyAddress.setText(proxy.address().toString().split(":")[0]);
-            this.proxyPort.setText(proxy.address().toString().split(":")[1]);
-            System.out.println(this.proxyAddress.getText()+" // "+this.proxyPort.getText());
+            this.setProxyInfo(proxy);
         }
+    }
+    private void setProxyInfo (Proxy proxy) {
+        this.proxyAddress.setText(((InetSocketAddress)proxy.address()).getHostName());
+        this.proxyPort.setText(((InetSocketAddress)proxy.address()).getPort()+"");
     }
 
     public void handleUseProxySettingsChoice() {

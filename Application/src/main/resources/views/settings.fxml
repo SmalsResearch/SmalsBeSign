@@ -4,6 +4,7 @@
 <?import com.jfoenix.controls.JFXCheckBox?>
 <?import com.jfoenix.controls.JFXDialog?>
 <?import com.jfoenix.controls.JFXDialogLayout?>
+<?import com.jfoenix.controls.JFXPasswordField?>
 <?import com.jfoenix.controls.JFXSpinner?>
 <?import com.jfoenix.controls.JFXTextField?>
 <?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
@@ -18,6 +19,19 @@
 
 <StackPane fx:id="masterSettings" xmlns="http://javafx.com/javafx/8.0.101" xmlns:fx="http://javafx.com/fxml/1" fx:controller="be.smals.research.bulksign.desktopapp.controllers.SettingsController">
    <children>
+       <JFXDialog fx:id="proxyDialog">
+           <JFXDialogLayout>
+               <body>
+                   <Label id="proxyDialogMessage" alignment="CENTER" styleClass="color-success" text="Proxy credentials required" />
+                   <JFXTextField id="proxyUsername" styleClass="jfx-text-field" />
+                   <JFXPasswordField id="proxyPassword" styleClass="jfx-text-field" />
+               </body>
+               <actions>
+                   <JFXButton id="closeProxyDialogButton" styleClass="button-s">Test proxy settings</JFXButton>
+                   <JFXButton id="closeProxyDialogButton" styleClass="button-s-danger">CANCEL</JFXButton>
+               </actions>
+           </JFXDialogLayout>
+       </JFXDialog>
        <JFXDialog fx:id="waitingDialog">
            <JFXDialogLayout>
                <body>
@@ -116,7 +130,7 @@
                         <Insets right="8.0" />
                      </GridPane.margin>
                   </JFXButton>
-                  <JFXCheckBox fx:id="useProxySettingsCheckBox" mnemonicParsing="false" onAction="#handleUseProxySettingsChoice" text="Use proxy">
+                  <JFXCheckBox fx:id="useProxySettingsCheckBox" checkedColor="#52bbfe" mnemonicParsing="false" onAction="#handleUseProxySettingsChoice" text="Use proxy">
                      <font>
                         <Font name="System Bold" size="12.0" />
                      </font>

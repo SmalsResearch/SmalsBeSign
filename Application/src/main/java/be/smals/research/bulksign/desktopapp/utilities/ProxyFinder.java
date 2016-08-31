@@ -9,10 +9,38 @@ import java.io.IOException;
 import java.net.*;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Scanner;
 
 public class ProxyFinder {
 
     private static ProxyFinder instance = new ProxyFinder();
+    private static final class ProxyPasswordAuthenticator extends Authenticator {
+        private String proxyUserName = "";
+        private String proxyPassword = "";
+
+        //todo get this using an observer of some kind and ask the user's credentials before making connections
+        //todo check if proxy is not null; if it is'nt, test to see if it requires auth. If it does, ask the password and save it (allow the user to cancel)
+        //todo If the user cancels, DO NOT change the authenticator, but use the proxy without credentials
+        //todo this may give an error, but then it's his fault; inform him the proxy is not working, redemand password maybe?.
+        ProxyPasswordAuthenticator() {
+            Scanner in = new Scanner(System.in);
+            System.out.print("Username: ");
+            proxyUserName = in.nextLine();
+            System.out.print("Password: ");
+            proxyPassword = in.nextLine();
+            in.close();
+        }
+
+        @Override
+        protected PasswordAuthentication getPasswordAuthentication() {
+            if (getRequestorType() == RequestorType.PROXY) {
+                return new PasswordAuthentication(proxyUserName,proxyPassword.toCharArray());
+            } else {
+                return super.getPasswordAuthentication();
+            }
+        }
+    }
+
     public ProxyFinder () {}
     public static ProxyFinder getInstance () {
         return instance;
@@ -68,12 +96,12 @@ public class ProxyFinder {
                 if (addr == null)
                     return null;
 
-                //todo show this to the user when asking proxy credentials somehow
-                System.out.println("proxy hostname : " + addr.getHostName());
-                System.out.println("proxy port : " + addr.getPort());
                 proxy = tmpProxy;
                 //todo only do the following if, after a test, you get responsecode 407 (proxy auth required)
-                //changeAuthenticator();
+                if (this.testConnectionTo(proxy, new URL("http://www.google.com/")))
+                    return proxy;
+
+                return null;
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -88,21 +116,32 @@ public class ProxyFinder {
     }
     public boolean testConnectionTo(Proxy proxy, URL url) {
         try {
-            URLConnection connection = url.openConnection(proxy);
-            try {
-                if (connection.getInputStream() == null)
-                    return false;
-            } catch (UnknownHostException e) {
-                System.out.println("UNKNOW HOST // "+e.getMessage());
+            //use the proxy in a http connection if it is not null:
+            HttpURLConnection conn = (HttpURLConnection) (proxy==null?url.openConnection():url.openConnection(proxy));
+            conn.setDoOutput(true);
+            conn.setDoInput(true);
+            conn.setRequestProperty("Content-type", "text/xml");
+            conn.setRequestProperty("Accept", "text/xml, application/xml");
+            conn.setRequestMethod("GET");
+            conn.connect();
+            int responseCode = conn.getResponseCode();
+            if (responseCode == 200)
+                return true;
+            else if (responseCode == 407) {
+//                this.changeAuthenticator();
+            } else
                 return false;
-            } catch (Exception e) {
-                // --- Timeout and others
-                return false;
-            }
+
         } catch (IOException e) {
             e.printStackTrace();
             return false;
         }
         return true;
     }
+    public void changeAuthenticator() {
+        Authenticator.setDefault(new ProxyPasswordAuthenticator());
+    }
+
+
+
 }

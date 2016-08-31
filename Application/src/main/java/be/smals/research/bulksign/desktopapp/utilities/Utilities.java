@@ -88,13 +88,13 @@ public class Utilities {
         String googleLink   = "http://www.google.com";
         String eIDBeLink    = "http://certs.eid.belgium.be";
         if (Settings.getInstance().useProxy) {
-            if (Settings.getInstance().proxy == null)
+            if (Settings.getInstance().getProxy() == null)
                 return false;
             try {
             URL googleURL = new URL(googleLink);
             URL eIDBelgiumURL = new URL(eIDBeLink);
-            return ProxyFinder.getInstance().testConnectionTo(Settings.getInstance().proxy, googleURL)
-                    && ProxyFinder.getInstance().testConnectionTo(Settings.getInstance().proxy, eIDBelgiumURL);
+            return ProxyFinder.getInstance().testConnectionTo(Settings.getInstance().getProxy(), googleURL)
+                    && ProxyFinder.getInstance().testConnectionTo(Settings.getInstance().getProxy(), eIDBelgiumURL);
             } catch (Exception e) {
                 return false;
             }

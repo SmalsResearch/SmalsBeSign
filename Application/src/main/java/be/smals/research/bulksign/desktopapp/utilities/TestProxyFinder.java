@@ -118,10 +118,10 @@ public class TestProxyFinder {
      * //todo give it a callback to an observer to ask username and password, informing the user his proxy requires that
      */
     public void changeAuthenticator() {
-        Authenticator.setDefault(new ProxyPassWordAuthenticator());
+        Authenticator.setDefault(new ProxyPasswordAuthenticator());
     }
 
-    private static final class ProxyPassWordAuthenticator extends Authenticator {
+    private static final class ProxyPasswordAuthenticator extends Authenticator {
         private String proxyUserName = "";
         private String proxyPassword = "";
 
@@ -129,7 +129,7 @@ public class TestProxyFinder {
         //todo check if proxy is not null; if it is'nt, test to see if it requires auth. If it does, ask the password and save it (allow the user to cancel)
         //todo If the user cancels, DO NOT change the authenticator, but use the proxy without credentials
         //todo this may give an error, but then it's his fault; inform him the proxy is not working, redemand password maybe?.
-        ProxyPassWordAuthenticator() {
+        ProxyPasswordAuthenticator() {
             Scanner in = new Scanner(System.in);
             System.out.print("Username: ");
             proxyUserName = in.nextLine();
