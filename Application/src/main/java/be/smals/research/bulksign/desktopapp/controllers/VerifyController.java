@@ -207,9 +207,7 @@ public class VerifyController extends Controller {
                     verifySigningOutput = verifySigningService.verifySigning(files.get("FILE").file, signingOutput);
                     results.add(verifySigningOutput);
                 } else {
-                    verifySigningOutput.errorDuringVerification = true;
-                    verifySigningOutput.errorMessage = filename+"\nError while parsing the signature file\nThe signature file might be corrupted.";
-                    results.add(verifySigningOutput);
+                    throw new BulkSignException("Error while parsing the signature file\n--- The signature file might be corrupted.");
                 }
             } catch (SignatureException | NoSuchAlgorithmException | CertificateException |
                     NoSuchProviderException | ParserConfigurationException | IOException | SAXException | ParseException e) {
@@ -263,7 +261,7 @@ public class VerifyController extends Controller {
      * Signed files selection action
      */
     @FXML private void handleSelectSignFileButtonAction () {
-        this.fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Signed Files (SIGNED.ZIP)", "*.zip"));
+        this.fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Signed Files (ZIP)", "*.zip"));
         this.fileChooser.setInitialDirectory(this.lastDirectory);
         List<File> files = this.fileChooser.showOpenMultipleDialog(this.stage);
         this.fileChooser.getExtensionFilters().clear();

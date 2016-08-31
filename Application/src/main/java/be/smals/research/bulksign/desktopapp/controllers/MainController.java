@@ -123,6 +123,21 @@ public class MainController extends Controller{
         }
     }
     /**
+     * Settings MenuItem - Leads to settings screen
+     */
+    public void settingsMenuItemAction () {
+        FXMLLoader settingsViewLoader = new FXMLLoader(getClass().getClassLoader().getResource("views/settings.fxml"));
+        try {
+            Parent settingsPane = settingsViewLoader.load();
+            root.setCenter(settingsPane);
+
+            SettingsController settingsController = settingsViewLoader.getController();
+            settingsController.initController(this.mainController, this.stage);
+        } catch (IOException e1) {
+            e1.printStackTrace();
+        }
+    }
+    /**
      * About MenuItem - Displays About dialog
      */
     public void aboutMenuItemAction () {
@@ -166,14 +181,12 @@ public class MainController extends Controller{
             Files.copy(is, tempFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
             List<String> lines = Files.readAllLines(tempFile.toPath(), StandardCharsets.UTF_8);
             this.aboutDialogContent.setText("");
-            String content;
+            String content = "";
             for (String line:lines) {
-                if (line.equals(lines.get(lines.size()-1)))
-                    content = this.aboutDialogContent.getText()+line;
-                else
-                    content = this.aboutDialogContent.getText()+line+"\n";
+                content = this.aboutDialogContent.getText()+line+"\n";
                 this.aboutDialogContent.setText(content);
             }
+            this.aboutDialogContent.setText(this.aboutDialogContent.getText().trim());
         } catch (IOException e) {
             e.printStackTrace();
         }

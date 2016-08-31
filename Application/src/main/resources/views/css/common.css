@@ -15,9 +15,13 @@
 /*
 ========== TEXT FIELD ==================================================================================================
 */
-.jfx-text-field {
+.jfx-text-field, .jfx-password-field{
+	-fx-background-color: transparent;
+    /*-fx-prompt-text-fill: #808080;*/
+    -fx-alignment: top-left ;
     -fx-focus-color: #52BBFE;
-    -pref-width: 200px;
+    -fx-unfocus-color: #4d4d4d;
+    -fx-max-width: 300;
 }
 /*
 ========== BUTTON ======================================================================================================

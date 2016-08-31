@@ -4,9 +4,7 @@ import com.github.markusbernhardt.proxy.ProxySearch;
 import com.github.markusbernhardt.proxy.selector.misc.BufferedProxySelector;
 import com.github.markusbernhardt.proxy.util.Logger;
 import com.github.markusbernhardt.proxy.util.PlatformUtil;
-import org.apache.commons.io.IOUtils;
 
-import java.io.IOException;
 import java.net.*;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -23,31 +21,31 @@ public class TestProxyFinder {
     public static void main(String[] args) {
         //todo example:
 
-        //use this class to get proxy object:
-        TestProxyFinder finder = new TestProxyFinder();
-        Proxy p = finder.getProxy();
-
-        try {
-            URL url = new URL("http://www.google.com");
-            //use the proxy in a http connection if it is not null:
-            HttpURLConnection conn = (HttpURLConnection) (p==null?url.openConnection():url.openConnection(p));
-            conn.setDoOutput(true);
-            conn.setDoInput(true);
-            conn.setRequestProperty("Content-type", "text/xml");
-            conn.setRequestProperty("Accept", "text/xml, application/xml");
-            conn.setRequestMethod("GET");
-            conn.connect();
-            System.out.println(conn.usingProxy());
-            String response = IOUtils.toString(conn.getInputStream(), "UTF-8");
-            System.out.println(conn.usingProxy());
-            System.out.println(response);
-            //todo if the below is 200, all ok, if it is 407, proxy auth required
-            System.out.println(conn.getResponseCode());
-
-            System.out.println(conn.usingProxy());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+//        //use this class to get proxy object:
+//        TestProxyFinder finder = new TestProxyFinder();
+//        Proxy p = finder.getProxy();
+//
+//        try {
+//            URL url = new URL("http://www.google.com");
+//            //use the proxy in a http connection if it is not null:
+//            HttpURLConnection conn = (HttpURLConnection) (p==null?url.openConnection():url.openConnection(p));
+//            conn.setDoOutput(true);
+//            conn.setDoInput(true);
+//            conn.setRequestProperty("Content-type", "text/xml");
+//            conn.setRequestProperty("Accept", "text/xml, application/xml");
+//            conn.setRequestMethod("GET");
+//            conn.connect();
+//            System.out.println(conn.usingProxy());
+//            String response = IOUtils.toString(conn.getInputStream(), "UTF-8");
+//            System.out.println(conn.usingProxy());
+//            System.out.println(response);
+//            //todo if the below is 200, all ok, if it is 407, proxy auth required
+//            System.out.println(conn.getResponseCode());
+//
+//            System.out.println(conn.usingProxy());
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
     }
 
     /**

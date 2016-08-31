@@ -282,7 +282,7 @@ public class VerifySigningService {
             document = builder.parse(signingOutputFile);
             document.getDocumentElement().normalize();
         } catch (Exception e) {
-            throw new BulkSignException("Unable to parse the signature file.\nThe file might be corrupted.");
+            throw new BulkSignException("Unable to parse the signature file.\n--- The signature file might be corrupted.");
         }
 
         Element signingOutputElement, certificateElement;
@@ -297,53 +297,53 @@ public class VerifySigningService {
             if (signingOutputElement == null || !signingOutputElement.hasChildNodes())
                 throw new BulkSignException();
         } catch (Exception e) {
-            throw new BulkSignException("Missing signing output.\nThe signature file might be corrupted.");
+            throw new BulkSignException("Missing signing output.\n--- The signature file might be corrupted.");
         }
         try {
             masterDigest = signingOutputElement.getElementsByTagName("MasterDigest").item(0).getTextContent().toLowerCase();
         } catch (Exception e) {
-            throw new BulkSignException("Unable to retrieve the MasterDigest.\nThe signature file might be corrupted.");
+            throw new BulkSignException("Unable to retrieve the MasterDigest.\n--- The signature file might be corrupted.");
         }
 
         try {
             softwareVersion = signingOutputElement.getElementsByTagName("SoftwareVersion").item(0).getTextContent();
         } catch (Exception e) {
-            throw new BulkSignException("Unable to retrieve the signing date.\nThe signature file might be corrupted.");
+            throw new BulkSignException("Unable to retrieve the software version.\n--- The signature file might be corrupted.");
         }try {
             signedBy = signingOutputElement.getElementsByTagName("SignedBy").item(0).getTextContent();
         } catch (Exception e) {
-            throw new BulkSignException("Unable to retrieve the signer name.\nThe signature file might be corrupted.");
+            throw new BulkSignException("Unable to retrieve the signer name.\n--- The signature file might be corrupted.");
         }try {
             signedAt = new SimpleDateFormat("yyyy-MM-dd 'at' HH:mm:ss").parse(signingOutputElement.getElementsByTagName("SignedAt").item(0).getTextContent());
         } catch (Exception e) {
-            throw new BulkSignException("Unable to retrieve the signing date.\nThe signature file might be corrupted.");
+            throw new BulkSignException("Unable to retrieve the signing date.\n--- The signature file might be corrupted.");
         }
         try {
             signature = DatatypeConverter.parseHexBinary(signingOutputElement.getElementsByTagName("Signature").item(0).getTextContent());
         } catch (Exception e) {
-            throw new BulkSignException("Unable to retrieve the signature.\nThe signature file might be corrupted.");
+            throw new BulkSignException("Unable to retrieve the signature.\n--- The signature file might be corrupted.");
         }
         try {
             certificateElement = (Element) signingOutputElement.getElementsByTagName("Certificate").item(0);
             if (certificateElement == null || !certificateElement.hasChildNodes())
-                throw new BulkSignException("Unable to retrieve certificates.\nThe signature file might be corrupted.");
+                throw new BulkSignException("Unable to retrieve certificates.\n--- The signature file might be corrupted.");
         } catch (Exception e) {
-            throw new BulkSignException("Missing certificates.\nThe signature file might be corrupted.");
+            throw new BulkSignException("Missing certificates.\n--- The signature file might be corrupted.");
         }
         try {
             userEncodedCertificate = DatatypeConverter.parseHexBinary(certificateElement.getElementsByTagName("User").item(0).getTextContent());
         } catch (Exception e) {
-            throw new BulkSignException("Error while parsing the user certificate.\nThe signature file might be corrupted.");
+            throw new BulkSignException("Error while parsing the user certificate.\n--- The signature file might be corrupted.");
         }
         try {
             intermEncodedCertificate = DatatypeConverter.parseHexBinary(certificateElement.getElementsByTagName("Intermediate").item(0).getTextContent());
         } catch (Exception e) {
-            throw new BulkSignException("Error while parsing the intermediate certificate.\nThe signature file might be corrupted.");
+            throw new BulkSignException("Error while parsing the intermediate certificate.\n--- The signature file might be corrupted.");
         }
         try {
             rootEncodedCertificate = DatatypeConverter.parseHexBinary(certificateElement.getElementsByTagName("Root").item(0).getTextContent());
         } catch (Exception e) {
-            throw new BulkSignException("Error while parsing the root certificate.\nThe signature file might be corrupted.");
+            throw new BulkSignException("Error while parsing the root certificate.\n--- The signature file might be corrupted.");
         }
         CertificateFactory certFactory = CertificateFactory.getInstance("X.509", "BC");
         try {
@@ -351,21 +351,21 @@ public class VerifySigningService {
             X509Certificate userCertificate = (X509Certificate) certFactory.generateCertificate(encodedStream);
             certificateChain.add(userCertificate);
         } catch (Exception e) {
-            throw new BulkSignException("Error while creating user certificate.\nThe signature file might be corrupted.");
+            throw new BulkSignException("Error while re-building user certificate.\n--- The signature file might be corrupted.");
         }
         try {
             encodedStream = new ByteArrayInputStream(intermEncodedCertificate);
             X509Certificate intermCertificate = (X509Certificate) certFactory.generateCertificate(encodedStream);
             certificateChain.add(intermCertificate);
         } catch (Exception e) {
-            throw new BulkSignException("Error while creating intermediate certificate.\nThe signature file might be corrupted.");
+            throw new BulkSignException("Error while re-building intermediate certificate.\n--- The signature file might be corrupted.");
         }
         try {
             encodedStream = new ByteArrayInputStream(rootEncodedCertificate);
             X509Certificate rootCertificate = (X509Certificate) certFactory.generateCertificate(encodedStream);
             certificateChain.add(rootCertificate);
         } catch (Exception e){
-            throw new BulkSignException("Error while creating root certificate.\nThe signature file might be corrupted.");
+            throw new BulkSignException("Error while re-building root certificate.\n--- The signature file might be corrupted.");
         }
 
         return new SigningOutput(masterDigest, signature, certificateChain, signedBy, signedAt, softwareVersion);

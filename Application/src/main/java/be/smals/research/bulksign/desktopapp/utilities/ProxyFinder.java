@@ -5,10 +5,8 @@ import com.github.markusbernhardt.proxy.selector.misc.BufferedProxySelector;
 import com.github.markusbernhardt.proxy.util.Logger;
 import com.github.markusbernhardt.proxy.util.PlatformUtil;
 
-import java.net.InetSocketAddress;
-import java.net.Proxy;
-import java.net.ProxySelector;
-import java.net.URI;
+import java.io.IOException;
+import java.net.*;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
@@ -16,7 +14,8 @@ import java.util.List;
 public class ProxyFinder {
 
     private Proxy proxy;
-    private ProxyFinder () {
+    public ProxyFinder () {}
+    public void find () {
         try {
             System.setProperty("java.net.useSystemProxies","true");
             ProxySearch ps = ProxySearch.getDefaultProxySearch();
@@ -77,5 +76,29 @@ public class ProxyFinder {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+    public Proxy getProxy (String address, int port) {
+        Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(address, port));
+
+        return proxy;
+    }
+    public boolean testConnexionTo (Proxy proxy, URL url) {
+        try {
+            URLConnection connection = url.openConnection(proxy);
+            try {
+                if (connection.getInputStream() == null)
+                    return false;
+            } catch (UnknownHostException e) {
+                System.out.println("UNKNOW HOST // "+e.getMessage());
+                return false;
+            } catch (Exception e) {
+                // --- Timeout and others
+                return false;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
     }
 }

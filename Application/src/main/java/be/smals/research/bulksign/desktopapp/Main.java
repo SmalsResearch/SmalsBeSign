@@ -13,6 +13,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
@@ -79,13 +80,15 @@ public class Main extends Application {
         Menu helpMenu           = new Menu("Help");
         menuBar.getMenus().addAll(fileMenu, taskMenu, helpMenu);
         MenuItem homeMenuItem   = new MenuItem("Home");
+        MenuItem settingsMenuItem   = new MenuItem("Settings");
+        SeparatorMenuItem separator = new SeparatorMenuItem();
         MenuItem exitMenuItem   = new MenuItem("Exit...");
         MenuItem signMenuItem   = new MenuItem("Sign");
         MenuItem verifyMenuItem = new MenuItem("Verify");
         MenuItem aboutMenuItem  = new MenuItem("About");
         exitMenuItem.setId("exitMenuItem");
 
-        fileMenu.getItems().addAll(homeMenuItem, exitMenuItem);
+        fileMenu.getItems().addAll(homeMenuItem, settingsMenuItem, separator, exitMenuItem);
         taskMenu.getItems().addAll(signMenuItem, verifyMenuItem);
         helpMenu.getItems().addAll(aboutMenuItem);
         root.setTop(menuBar);
@@ -94,7 +97,8 @@ public class Main extends Application {
         exitMenuItem.setOnAction( event -> controller.exitMenuItemAction ());
         signMenuItem.setOnAction( event -> controller.signMenuItemAction ());
         verifyMenuItem.setOnAction( event -> controller.verifyMenuItemAction ());
-        homeMenuItem.setOnAction( event -> controller.homeMenuItemAction());
+        homeMenuItem.setOnAction( event -> controller.homeMenuItemAction ());
+        settingsMenuItem.setOnAction( event -> controller.settingsMenuItemAction ());
     }
     /**
      *  Creates home screen
