@@ -298,7 +298,7 @@ public class SignController extends Controller implements BeIDCardsUI{
             throws CardException, CertificateException, IOException, ParserConfigurationException, TransformerException {
 
         FileInputStream[] inputFiles = new FileInputStream[selectedFiles.size()];
-        if (!Settings.getInstance().isEIDCardPresent()) {
+        if (!Settings.getInstance().eIDCardIsPresent) {
             this.showInfoDialog(infoDialog, masterSign, "Missing eID card...",
                     "You must insert your eID card inside the reader before you proceed.");
         } else {

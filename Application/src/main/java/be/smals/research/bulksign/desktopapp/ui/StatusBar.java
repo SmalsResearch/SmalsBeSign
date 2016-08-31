@@ -61,12 +61,12 @@ public class StatusBar extends HBox implements BeIDCardEventsListener, CardTermi
     @Override
     public void eIDCardInserted(CardTerminal cardTerminal, BeIDCard beIDCard) {
         Platform.runLater(() ->setMessage(MessageType.DEFAULT, "eID Card inserted inside "+cardTerminal.getName()+" card reader."));
-        Settings.getInstance().setEIDCardPresent(true);
+        Settings.getInstance().eIDCardIsPresent = true;
     }
     @Override
     public void eIDCardRemoved(CardTerminal cardTerminal, BeIDCard beIDCard) {
         Platform.runLater(() -> setMessage(MessageType.DEFAULT, "eID Card removed."));
-        Settings.getInstance().setEIDCardPresent(false);
+        Settings.getInstance().eIDCardIsPresent = false;
     }
     // ----- Terminal Events
     @Override

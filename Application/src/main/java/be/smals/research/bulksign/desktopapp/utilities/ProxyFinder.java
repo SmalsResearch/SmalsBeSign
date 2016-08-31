@@ -8,14 +8,17 @@ import com.github.markusbernhardt.proxy.util.PlatformUtil;
 import java.io.IOException;
 import java.net.*;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 
 public class ProxyFinder {
 
-    private Proxy proxy;
+    private static ProxyFinder instance = new ProxyFinder();
     public ProxyFinder () {}
-    public void find () {
+    public static ProxyFinder getInstance () {
+        return instance;
+    }
+    public Proxy find () {
+        Proxy proxy = null;
         try {
             System.setProperty("java.net.useSystemProxies","true");
             ProxySearch ps = ProxySearch.getDefaultProxySearch();
@@ -51,31 +54,32 @@ public class ProxyFinder {
             ProxySelector selector = ps.getProxySelector();
             if (selector==null) {
                 System.out.println("No proxies found.");
-                return;
+                return null;
             }
             List l = selector.select(new URI("http://www.google.com/"));
 
             //... Now just do what the original did ...
-            for (Iterator iter = l.iterator(); iter.hasNext(); ) {
-                Proxy proxy = (Proxy) iter.next();
+            for (Object aL : l) {
+                Proxy tmpProxy = (Proxy) aL;
 
-                System.out.println("proxy type : " + proxy.type());
-                InetSocketAddress addr = (InetSocketAddress) proxy.address();
+                System.out.println("proxy type : " + tmpProxy.type());
+                InetSocketAddress addr = (InetSocketAddress) tmpProxy.address();
 
-                if(addr == null) {
-                    System.out.println("No Proxy");
-                } else {
-                    //todo show this to the user when asking proxy credentials somehow
-                    System.out.println("proxy hostname : " + addr.getHostName());
-                    System.out.println("proxy port : " + addr.getPort());
-                    this.proxy = proxy;
-                    //todo only do the following if, after a test, you get responsecode 407 (proxy auth required)
-                    //changeAuthenticator();
-                }
+                if (addr == null)
+                    return null;
+
+                //todo show this to the user when asking proxy credentials somehow
+                System.out.println("proxy hostname : " + addr.getHostName());
+                System.out.println("proxy port : " + addr.getPort());
+                proxy = tmpProxy;
+                //todo only do the following if, after a test, you get responsecode 407 (proxy auth required)
+                //changeAuthenticator();
             }
         } catch (Exception e) {
             e.printStackTrace();
+            return null;
         }
+        return proxy;
     }
     public Proxy getProxy (String address, int port) {
         Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(address, port));

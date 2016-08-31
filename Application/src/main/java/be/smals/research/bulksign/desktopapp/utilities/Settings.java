@@ -1,9 +1,10 @@
 package be.smals.research.bulksign.desktopapp.utilities;
 
+import java.net.Proxy;
+
 public class Settings {
     private static Settings instance = new Settings();
 
-    private boolean eIDCardIsPresent;
 
     public static final double WIDTH_MIN         = 600;
     public static final double HEIGHT_MIN        = 460;
@@ -11,15 +12,14 @@ public class Settings {
     public static final String APP_VERSION_NAME  = "First release";
     public static final String APP_NAME          = "SmalsBeSign";
 
+    public boolean eIDCardIsPresent;
+    public boolean useProxy;
+    private Proxy proxy;
+
     private Settings () {}
 
     public static Settings getInstance () {
         return instance;
     }
-    public void setEIDCardPresent (boolean connected) {
-        this.eIDCardIsPresent = connected;
-    }
-    public boolean isEIDCardPresent () {
-        return this.eIDCardIsPresent;
-    }
+
 }

@@ -86,7 +86,7 @@
                   <RowConstraints percentHeight="40.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                  <JFXTextField id="proxyAddress" fx:id="proxyAddress" alignment="CENTER" nodeOrientation="LEFT_TO_RIGHT" prefWidth="240.0" promptText="Address" styleClass="jfx-text-field" GridPane.columnIndex="1" />
+                  <JFXTextField id="proxyAddress" fx:id="proxyAddress" alignment="CENTER" nodeOrientation="LEFT_TO_RIGHT" promptText="Address" styleClass="jfx-text-field" GridPane.columnIndex="1" />
                   <Label text="Proxy Settings">
                      <font>
                         <Font name="System Bold" size="12.0" />
@@ -94,12 +94,12 @@
                   <JFXTextField id="proxyPort" fx:id="proxyPort" alignment="CENTER" promptText="PortNumber" text="8080" GridPane.columnIndex="2" />
                   <JFXPasswordField id="proxyPassword" fx:id="proxyPassword" promptText="Password" GridPane.columnIndex="2" GridPane.rowIndex="1" />
                   <JFXTextField id="proxyUsername" fx:id="proxyUsername" promptText="Username" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                  <JFXButton mnemonicParsing="false" styleClass="button-s" text="Auto lookup" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="2">
+                  <JFXButton mnemonicParsing="false" onAction="#handleProxyLookupButtonAction" styleClass="button-s" text="Auto lookup" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="2">
                      <graphic>
                         <FontAwesomeIconView fill="WHITE" glyphName="SEARCH" size="1.2em" strokeType="OUTSIDE" strokeWidth="0.0" />
                      </graphic>
                   </JFXButton>
-                  <JFXButton mnemonicParsing="false" onAction="#handleTestProxyButtonAction" styleClass="button-s-success" text="Test proxy" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="2">
+                  <JFXButton mnemonicParsing="false" onAction="#handleTestProxyButtonAction" styleClass="button-s-success" text="Test proxy" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="2">
                      <graphic>
                         <FontAwesomeIconView fill="WHITE" glyphName="CHECK" size="1.2em" strokeType="OUTSIDE" strokeWidth="0.0" />
                      </graphic>
