@@ -1,4 +1,3 @@
-
 #
 # SmalsBeSign
 #
@@ -9,7 +8,7 @@
 # it under the terms of the GNU Lesser General Public License version 3
 # as published by the Free Software Foundation.
 #
-# As allowed for by provision 7 "Additional Terms" of aforementions
+# As allowed for by provision 7 "Additional Terms" of aforementioned
 # License, you are required to identify "SmalsResearch" as the author
 # of the Program by clearly including this name in all relevant notices
 # attached to or part of any Covered Work, as defined in provision 0
