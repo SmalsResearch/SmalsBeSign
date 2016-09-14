@@ -48,7 +48,7 @@
       <JFXDialog fx:id="infoDialog">
           <JFXDialogLayout>
               <heading>
-                  <Label id="infoDialogTitle" styleClass="color-info" text="No file to sign" />
+                  <Label id="infoDialogTitle" styleClass="color-info" text="No file to verify" />
               </heading>
               <body>
                   <Label id="infoDialogBody" text="Please, select at least one file before you proceed." />
