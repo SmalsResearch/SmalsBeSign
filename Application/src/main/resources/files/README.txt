@@ -62,7 +62,7 @@ generates an independent signature result (i.e. a zip file) for each document.
 The software SmalsBeSign works on Windows (7.0 or higher) and on UNIX-based
 systems, with internal or external Belgian eID card readers and appropriate
 middleware already installed on the computer.
-It requires Java 1.8.
+It requires Java 1.8.0_101.
 It can be downloaded at www.smalsresearch.be/tools/smalsbesign/
 
 

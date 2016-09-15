@@ -39,8 +39,8 @@
                    <Label styleClass="color">About SmalsBeSign</Label>
                </heading>
                <body>
-                   <ScrollPane styleClass="edge-to-edge" style="-fx-pref-width:400.0px;" fitToWidth="true">
-                        <Label id="aboutDialogContent" fx:id="aboutDialogContent">
+                   <ScrollPane styleClass="edge-to-edge" style="-fx-pref-width:600px;-fx-pref-height:600px;" fitToWidth="true">
+                        <Label id="aboutDialogContent" style="-fx-pref-width:600px;" fx:id="aboutDialogContent">
                             <!-- README content here - MainController constructor -->
                         </Label>
                    </ScrollPane>
